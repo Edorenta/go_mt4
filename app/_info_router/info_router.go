@@ -3,18 +3,11 @@ package main
 import(
 		"net"
 		"fmt"
-		"log"
 		// "time"
 		"bufio"
 		//"strings"
 		"strconv"
 )
-
-func handle_error(msg string, err error) {
-	// fmt.Println(msg)
-	log.Fatalln(msg + "\n", err.Error())
-	panic(err)
-}
 
 func server_init()(net.Listener) {
 	ln, err := net.Listen("tcp", ":" + strconv.Itoa(int(PORT)))
