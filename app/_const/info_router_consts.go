@@ -1,6 +1,8 @@
 package _const
 
-const ( //string
+const ( //strings?
+	IR_PORT	uint16 = 20001	//info routing port
+	N_BROKERS int = 3		//brokers: [pepperstone,forex.com,xm.com]
 	//MT4 global data queries
 	MSG_QUOTE_CONCAT = "001"
 	MSG_ACCOUNT_INFO_CONCAT = "002"

@@ -1,14 +1,17 @@
-package main
+package _price_router
 
 import(
-		"net"
-		"fmt"
-		"bufio"
-		"strings"
-		//"encoding/csv"
-		"strconv"
+	"os"
+	"net"
+	"fmt"
+	"bufio"
+	"strings"
+	//"encoding/csv"
+	"strconv"
+	_c "../_const"
+	"../_error"
+	"../_logger"
 )
-
 
 type Server struct {
 	ln net.Listener
@@ -25,90 +28,135 @@ type Tick struct {
 
 type Feed struct {
 	tick Tick
+	quote string
 	line string
-	new_line bool
-	new_data bool
+	// new_line bool
+	// new_data bool
 }
 
 type PriceRouter struct {
 	server Server
 	feed Feed
-	port uint16
-	err error
+	logger _logger.Logger
+	Mode_log bool
+	Mode_pub bool
+	Mode_calc bool
+	clients []int
+	Port uint16
 }
 
 func (pr *PriceRouter)ServerInit() {
-	pr.server.ln, pr.err = net.Listen("tcp", ":" + strconv.Itoa(int(pr.port)))
-	if (pr.err != nil) { handle_error("net.Listen() failed", pr.err) }
-	fmt.Println("Price server deployed on port", pr.port)
+	var err error
+
+	pr.server.ln, err = net.Listen("tcp", ":" + strconv.Itoa(int(pr.Port)))
+	if (err != nil) { _error.Handle("net.Listen() failed", err) }
+	fmt.Println("Price server deployed on port", pr.Port)
 }
 
 func (pr *PriceRouter)FeederConnect() { // method = ptr or not ptr?
+	var err error
+
 	fmt.Println("Waiting for Feeder to connect")
-	pr.server.conn, pr.err = pr.server.ln.Accept()
-	if (pr.err != nil) { handle_error("ln.Accept() failed", pr.err) }
+	pr.server.conn, err = pr.server.ln.Accept()
+	if (err != nil) { _error.Handle("ln.Accept() failed", err) }
 	fmt.Println("Feeder connected")
 	pr.server.scanner = *(bufio.NewScanner(pr.server.conn))
 	fmt.Println("Scanner set")
 }
 
 func (pr *PriceRouter)GetFeed() {
+	var err error
+
 	for {
 		if (pr.server.scanner.Scan() == false) {
 			fmt.Println("Stoped Scanning")
-			pr.err = pr.server.scanner.Err()
-			if (pr.err != nil) { handle_error("scanner.Scan() failed", pr.err) }
-			s.FeederConnect()
-			continue
+			err = pr.server.scanner.Err()
+			if (err != nil) {
+				_error.Handle("scanner.Scan() failed", err)
+				pr.FeederConnect()
+				continue
+			}
 		}
-		f.line = s.scanner.Text()
-		if (f.line != "") {
-			f.new_line = true
-			go f.Parse()
+		pr.feed.line = pr.server.scanner.Text()
+		if (pr.feed.line != "") {
+			// pr.feed.new_line = true
+			if pr.Mode_pub == true { go pr.Pub() }
+			if pr.Mode_log == true { go pr.feed.Log() }
+			if pr.Mode_calc == true { go pr.feed.Parse() }
 		}
 	}
+}
+
+func (pr *PriceRouter)Pub() {
+	// send feed.line to websocket of every subscriber
+}
+
+func (f *Feed)Log() {
+	if f.log_file == nil {
+		var err error
+		f.log_file, err = os.Create("../../data/log/" + f.quote + ".csv")
+		// defer f.log_file.Close()
+		f.writer = bufio.NewWriter(f.log_file)
+		if err != nil { _error.Handle("Failed to open the log file", err) }
+	}
+	_, err := f.writer.WriteString(f.line)
+	if err != nil { _error.Handle("Failed to write to the log file", err) }
+	f.writer.Flush()
+}
+
+func (f *Feed)Parse() {
+	var s []string//init?
+	var err error
+
+	// if (f.new_line) {
+		// f.new_line = false
+		s = strings.Split(f.line, ",")
+		f.tick.time, err = strconv.ParseUint(s[0], 10, 32)
+		f.tick.ask, err = strconv.ParseFloat(s[1], 64)
+		f.tick.bid, err = strconv.ParseFloat(s[2], 64)
+		if (err != nil) { _error.Handle("Failed to parse in handle_feed()", err) }
+		// f.new_data = true
+		f.Handle()
+	// }
+}
+
+func (f *Feed)Handle() {
+	// if (f.new_data) {
+		// f.new_data = false
+		fmt.Println(f.tick.time, f.tick.bid, f.tick.ask)
+	// }
+}
+
+func (pr *PriceRouter)AddClient(client int) {
+	pr.Mode_pub = true
+	pr.clients = append(pr.clients, client)
 }
 
 func (pr *PriceRouter)Start(is_ready chan bool) {
 	pr.ServerInit()
 	pr.FeederConnect()
-	is_ready = true
+	is_ready <- true
 	pr.GetFeed()
 }
 
-func (f *Feed)Parse() {
-	var s []string//init?
-
-	// for {
-		if (f.new_line) {
-			f.new_line = false
-			s = strings.Split(f.line, ",")
-			f.tick.time, f.err = strconv.ParseUint(s[0], 10, 32)
-			f.tick.ask, f.err = strconv.ParseFloat(s[1], 64)
-			f.tick.bid, f.err = strconv.ParseFloat(s[2], 64)
-			if (f.err != nil) { handle_error("Failed to parse in handle_feed()", f.err) }
-			f.new_data = true
-			go f.Handle()
-			// time, ask, bid = s[0], s[1], s[2]
-		}
-	// }
+func (pr *PriceRouter)StartLogger() {
+	if pr.logger == nil {
+		pr.logger = *_logger.NewLogger("../../data/log/", pr.feed.quote, "csv")
+		pr.Mode_log = true
+	}
 }
 
-func (f *Feed)Handle() {
-	// for {
-		if (f.new_data) {
-			f.new_data = false
-			fmt.Println(f.tick.time, f.tick.bid, f.tick.ask)
-		}
-	// }
-}
-
-func NewPriceRouter(port uint16)(*PriceRouter) {
+func NewPriceRouter(port uint16, client int, mode string)(*PriceRouter) {
 	var pr PriceRouter
 	
-	pr.port = port
-	pr.feed.new_line = false //feed cannot be fetched yet
-	pr.feed.new_data = false //feed cannot be parsed yet
+	pr.Port = port
+	pr.feed.quote = _c.PortToSymbol(port)
+	pr.logger = nil
+	if mode == "sub" { pr.AddClient(client) } else { pr.Mode_pub = false }
+	if mode == "log" { pr.StartLogger() } else { pr.Mode_log = false }
+	if mode == "calc" { pr.Mode_calc = true } else { pr.Mode_calc = false }
+	// pr.feed.new_line = false //feed cannot be fetched yet
+	// pr.feed.new_data = false //feed cannot be parsed yet
 	is_ready := make(chan bool)
 	go pr.Start(is_ready)
 	<- is_ready

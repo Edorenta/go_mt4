@@ -1,62 +1,95 @@
+// package _info_router
 package main
 
 import(
-		"net"
-		"fmt"
-		// "time"
-		"bufio"
-		//"strings"
-		"strconv"
+	"net"
+	"fmt"
+	"bufio"
+	"strconv"
+	_c "../_const" // only for test main
+	"../_error"
 )
 
-func server_init()(net.Listener) {
-	ln, err := net.Listen("tcp", ":" + strconv.Itoa(int(PORT)))
-	if (err != nil) { handle_error("net.Listen() failed", err) }
-	fmt.Println("Requesting server deployed on port", PORT)
-	return (ln)
+type Server struct {
+	conn net.Conn
+	scanner bufio.Scanner
 }
 
-func get_client(ln net.Listener)(net.Conn, bufio.Scanner) {
-	// var err error
-	// var conn net.Conn
-	// var scanner bufio.Scanner
-
-	fmt.Println("Waiting for client to connect")
-	conn, err := ln.Accept()
-	if (err != nil) { handle_error("ln.Accept() failed", err) }
-	fmt.Println("Client connected")
-	scanner := *(bufio.NewScanner(conn))
-	fmt.Println("Scanner set")
-	return conn, scanner
+type InfoRouter struct {
+	ln net.Listener
+	server map[string]*Server
+	Port uint16
 }
 
-func main() {
-	var msg_in string = ""
-	var msg_out string = ""
+func (ir *InfoRouter)ServerInit() {
+	var err error
 
-	listener := server_init()
-	conn, scanner := get_client(listener);
-	
-	//TEST REQUEST
-	msg_out = MSG_QUOTE_CONCAT + "\n"//+ ",EURUSD\n"
-	//
+	ir.ln, err = net.Listen("tcp", ":" + strconv.Itoa(int(ir.Port)))
+	if (err != nil) { _error.Handle("net.Listen() failed", err) }
+	fmt.Println("Request server deployed on port", ir.Port)
+}
 
+func (ir *InfoRouter)FeedConnect() { // method = ptr or not ptr?
+	ir.server = make(map[string]*Server)
+	for len(ir.server) < _c.N_BROKERS {
+		n := len(ir.server)
+		fmt.Println("Waiting for broker client", n, "/", _c.N_BROKERS, "to connect...")
+		conn, err := ir.ln.Accept()
+		// ir.server.conn, err = ir.ln.Accept()
+		if (err != nil) { _error.Handle("ln.Accept() failed", err) }
+		fmt.Println("Feeder", n,"connected")
+		scanner = *(bufio.NewScanner(conn))// ir.server.scanner = *(bufio.NewScanner(ir.server.conn))
+		s = Server{conn, scanner}
+		broker_name := s.ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+		fmt.Println("Scanner", n, "set on", "broker:", broker_name)
+		ir.server[broker_name] = &s
+	}
+}
+
+func (s *Server)ReqRes(req string)(string) {
+	var err error
+
+	// TEST REQUEST:
+	// req = MSG_QUOTE_CONCAT + "\n"//+ ",EURUSD\n"
 	for {
-		_, err := conn.Write([]byte(msg_out))
-		if (err != nil) { /*handle_error("conn.Write() failed", err) }*/
-			conn, scanner = get_client(listener)
+		_, err = s.conn.Write([]byte(req))
+		if (err != nil) { /*_error.Handle("conn.Write() failed", err) }*/
+Reconnect:
+			ir.FeedConnect()
 			continue
 		}
-		// err := net.Error()
-		if (scanner.Scan() == false) {
+		if (s.scanner.Scan() == false) {
 			fmt.Println("Stoped Scanning")
-			err = scanner.Err()
-			if (err != nil) { handle_error("scanner.Scan() failed", err) }
+			err = s.scanner.Err()
+			if (err != nil) { _error.Handle("scanner.Scan() failed", err); goto Reconnect }
 		}
-		msg_in = scanner.Text()
-		fmt.Println(msg_in) 
-		// time.Sleep(1000)
+		break
 	}
-	// if (err != nil) { handle_error("ParseFloat() failed", err) }
-	// fmt.Println(msg_in)
+	res := s.scanner.Text()
+	// fmt.Println("Req:", req)
+	// fmt.Println("Res:", res)
+	return res 
+}
+
+func (ir *InfoRouter)Start(is_ready chan bool) {
+	ir.ServerInit()
+	ir.FeedConnect()
+	is_ready <- true
+}
+
+func NewInfoRouter(port uint16)(*InfoRouter) {
+	var ir InfoRouter
+
+	ir.Port = port
+	is_ready := make(chan bool)
+	go ir.Start(is_ready)
+	<- is_ready
+	return &ir
+}
+
+func main() { // test main
+	ir := NewInfoRouter(_c.IR_PORT)
+	fmt.Println("Requesting on port", ir.Port)
+	// ir.server["Pepperstone Limited"]ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+	fmt.Println(ir.server) //prints map
 }
