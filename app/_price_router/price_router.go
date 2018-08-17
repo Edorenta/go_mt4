@@ -14,9 +14,21 @@ import(
 )
 
 type Server struct {
-	ln net.Listener
 	conn net.Conn
 	scanner bufio.Scanner
+	BrokerName string
+	feed Feed
+}
+
+type PriceRouter struct {
+	ln net.Listener
+	server map[int]*Server
+	logger _logger.Logger
+	// Mode_log bool
+	// Mode_pub bool
+	// Mode_calc bool
+	clients []int
+	Port uint16
 }
 
 type Tick struct {
@@ -34,17 +46,6 @@ type Feed struct {
 	// new_data bool
 }
 
-type PriceRouter struct {
-	server Server
-	feed Feed
-	logger _logger.Logger
-	Mode_log bool
-	Mode_pub bool
-	Mode_calc bool
-	clients []int
-	Port uint16
-}
-
 func (pr *PriceRouter)ServerInit() {
 	var err error
 
@@ -53,36 +54,40 @@ func (pr *PriceRouter)ServerInit() {
 	fmt.Println("Price server deployed on port", pr.Port)
 }
 
-func (pr *PriceRouter)FeederConnect() { // method = ptr or not ptr?
-	var err error
-
-	fmt.Println("Waiting for Feeder to connect")
-	pr.server.conn, err = pr.server.ln.Accept()
-	if (err != nil) { _error.Handle("ln.Accept() failed", err) }
-	fmt.Println("Feeder connected")
-	pr.server.scanner = *(bufio.NewScanner(pr.server.conn))
-	fmt.Println("Scanner set")
+func (pr *PriceRouter)FeedConnect() { // method = ptr or not ptr?
+	pr.server = make(map[int]*Server)
+	for len(pr.server) < _c.N_BROKERS {
+		n := len(pr.server)
+		fmt.Println("Waiting for broker client", n + 1, "/", _c.N_BROKERS, "to connect...")
+		conn, err := pr.ln.Accept()
+		// pr.server.conn, err = pr.ln.Accept()
+		if (err != nil) { _error.Handle("ln.Accept() failed", err) }
+		fmt.Println("Feeder", n,"connected")
+		scanner := *(bufio.NewScanner(conn))// pr.server.scanner = *(bufio.NewScanner(pr.server.conn))
+		s := Server{conn, scanner, ""}
+		s.BrokerName = s.ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+		fmt.Println("Scanner", n + 1, "set on:", s.BrokerName)
+		pr.server[n] = &s
+	}
 }
 
-func (pr *PriceRouter)GetFeed() {
+
+func (s *Server)GetFeed(broker_index int) {
 	var err error
 
 	for {
-		if (pr.server.scanner.Scan() == false) {
+		if (s.scanner.Scan() == false) {
 			fmt.Println("Stoped Scanning")
-			err = pr.server.scanner.Err()
-			if (err != nil) {
-				_error.Handle("scanner.Scan() failed", err)
-				pr.FeederConnect()
-				continue
-			}
+			err = s.scanner.Err()
+			if (err != nil) { return "Err" }
+			 /*_error.Handle("scanner.Scan() failed", err)*/
 		}
-		pr.feed.line = pr.server.scanner.Text()
-		if (pr.feed.line != "") {
+		s.feed.line = s.scanner.Text()
+		if (s.feed.line != "") {
 			// pr.feed.new_line = true
-			if pr.Mode_pub == true { go pr.Pub() }
-			if pr.Mode_log == true { go pr.feed.Log() }
-			if pr.Mode_calc == true { go pr.feed.Parse() }
+			// if pr.Mode_pub == true { go pr.Pub() }
+			// if pr.Mode_log == true { go pr.feed.Log() }
+			// if pr.Mode_calc == true { go pr.feed.Parse() }
 		}
 	}
 }
@@ -128,13 +133,13 @@ func (f *Feed)Handle() {
 }
 
 func (pr *PriceRouter)AddClient(client int) {
-	pr.Mode_pub = true
+	// pr.Mode_pub = true
 	pr.clients = append(pr.clients, client)
 }
 
 func (pr *PriceRouter)Start(is_ready chan bool) {
 	pr.ServerInit()
-	pr.FeederConnect()
+	pr.FeedConnect()
 	is_ready <- true
 	pr.GetFeed()
 }
@@ -146,15 +151,15 @@ func (pr *PriceRouter)StartLogger() {
 	}
 }
 
-func NewPriceRouter(port uint16, client int, mode string)(*PriceRouter) {
+func NewPriceRouter(port uint16/*,client int, mode string*/)(*PriceRouter) {
 	var pr PriceRouter
 	
 	pr.Port = port
 	pr.feed.quote = _c.PortToSymbol(port)
 	pr.logger = nil
-	if mode == "sub" { pr.AddClient(client) } else { pr.Mode_pub = false }
-	if mode == "log" { pr.StartLogger() } else { pr.Mode_log = false }
-	if mode == "calc" { pr.Mode_calc = true } else { pr.Mode_calc = false }
+	// if mode == "sub" { pr.AddClient(client) } else { pr.Mode_pub = false }
+	// if mode == "log" { pr.StartLogger() } else { pr.Mode_log = false }
+	// if mode == "calc" { pr.Mode_calc = true } else { pr.Mode_calc = false }
 	// pr.feed.new_line = false //feed cannot be fetched yet
 	// pr.feed.new_data = false //feed cannot be parsed yet
 	is_ready := make(chan bool)

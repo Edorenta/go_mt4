@@ -3,3 +3,67 @@ package _db
 import(
 	"github.com/lib/pq"
 )
+
+/*
+>>> POSTGRES TYPES <<<
+
+>>> BOOLEAN:
+bool / boolean (yes/y/t/true/1 = true, no/n/f/false/0 = false)
+
+>>> NUMERIC:
+smallint = ushort (16 bits unsigned integer)
+int = 32 bits integer
+bigint = 64 bits integer = long
+serial = 32 bits int > 0 et auto attribuée (1234...) = autoincrement
+bigserial = 64 bits autoincrement
+float(n) = float with with at least n bytes of precision, at most 8 (64 bits float = double = max precision)
+real / float4 = float 32 bits (6 decimal precision)
+double / float8 = double precision float 64 bits (15 decimal precision)
+numeric(p,s) / decimal(p,s) = up to 131072 digits before the decimal point (p); up to 16383 digits after the decimal point (s)
+
+>>> TEXT:
+char(n) = fixed char array with space as padding
+varchar(n) = char[n] variable string of n max chars
+text = unlimited length string
+
+>>> CURRENCY:
+money = -92233720368547758.08 to +92233720368547758.07 stored on 8 bytes
+
+>>> BYTES:
+bytea = 1 or 4 bytes plus the actual binary string = variable-length binary string
+
+>>> NETWORK:
+cidr = 7 or 19 bytes IPv4 and IPv6 networks
+inet = 7 or 19 bytes IPv4 and IPv6 hosts and networks
+macaddr = 6 bytes MAC addresses
+!!! whatever we will store IP addresses as string
+
+>>> DATES:
+!!! whatever we will store epoch unix timestamps as string
+
+>>> ENUM:
+https://www.postgresql.org/docs/9.5/static/datatype-enum.html
+
+...
+
+>>> SQL COMMANDS <<<
+https://www.postgresql.org/docs/9.1/static/sql-commands.html
+!!! we will use only a few as driver calls
+
+SQL commands can be broken into roughly three categories: DDL (Data Definition Language), DML (Data Manipulation Language), and DCL (Data Control Language).
+
+DDL is a set of commands used to define the overall structure or schema of how your data is going to be stored. In other words, you would use DDL to create a table, update the fields in an existing table, or any other operation where you are changing the structure of how you store data, but not actually changing the data itself.
+
+DML is a set of commands used to actually manipulate data stored in your database. This includes looking up records in your table, inserting new data into a table, deleting records, etc. This is where you will spend a large portion of your time when dealing with SQL, and can be further broken into roughly four main categories:
+
+Retrieving data
+Creating data
+Updating data
+Deleting data
+DCL is a set of commands used to dictate which users have permissions to do different things inside of your database. For example you might set up a user so that it has permission to read data in your database but it doesn’t have permission to create new records.
+
+>>> POSTGRES CONSTRAINTS <<<
+https://www.postgresql.org/docs/current/static/ddl-constraints.html
+!!! we won't use constraints but pre-store computed constraits (from Go)
+
+*/
