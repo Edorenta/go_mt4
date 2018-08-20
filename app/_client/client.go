@@ -3,18 +3,23 @@ package _client
 import(
 	"net"
 	"time"
-	"github.com/gorilla/sessions"
+	"github.com/gorilla/sessions" //session cookie manager
 	"github.com/gorilla/websocket"
 )
 
-type Info struct {
-	// id uint
+type UserData struct {
+	// id uint >> incremental serial number, internal only
 	ip			string		//last used ip (from net.IP.String())
 	email		string		//email address
+	p_hash		string 		//pwd hash
+	i_hash		string 		//acc info hash
 	user_name	string		//pseudonym
 	first_name	string		//first name
 	last_name	string		//last name
-	is_root		bool		//has admin rights?
+	dob_epoch	uint32		//dob date
+	reg_epoch	uint32		//registration date
+	log_epoch	uint32		//last login date
+	//is_root		bool		//has admin rights?
 }
 
 /*
@@ -37,9 +42,9 @@ type Client struct {
 	//browsing-time instant data
 	wsconn *websocket.Conn
 	conn_time time.Time
-	is_signed bool
+	// is_signed bool //if ud == nil user hasnt signed in
 	//persistant account data
-	info Info
+	ud UserData
 }
 
 // all the above can be retrieved from _db >> to do: retrieve methods
@@ -60,5 +65,5 @@ func (c *Client)LogTime()(time.Duration) {
 }
 
 func (c *Client)Elevate() {
-	c.is_root = true
+	c.is_root = true //insert root stamp into the user i_hash
 }

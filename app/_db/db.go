@@ -1,69 +1,146 @@
-package _db
+// package _db
+package main
 
 import(
-	"github.com/lib/pq"
+	"fmt"
+	"time"
+	"../_error"
+	_c "../_const"
+	"database/sql"
+	_ "github.com/lib/pq" //_ = silent driver import = blank identifier
 )
 
-/*
->>> POSTGRES TYPES <<<
+type Database struct {
+	driver *sql.DB
+	info string
+	tables []string
+	fields map[string]string
+}
 
->>> BOOLEAN:
-bool / boolean (yes/y/t/true/1 = true, no/n/f/false/0 = false)
+func main() {
+	db := NewDatabase(_c.DB_PORT, _c.DB_HOST, _c.DB_USER, _c.DB_NAME, "disable")
+	time.Sleep(100000)
+	fmt.Println(db.info)
+}
 
->>> NUMERIC:
-smallint = ushort (16 bits unsigned integer)
-int = 32 bits integer
-bigint = 64 bits integer = long
-serial = 32 bits int > 0 et auto attribuée (1234...) = autoincrement
-bigserial = 64 bits autoincrement
-float(n) = float with with at least n bytes of precision, at most 8 (64 bits float = double = max precision)
-real / float4 = float 32 bits (6 decimal precision)
-double / float8 = double precision float 64 bits (15 decimal precision)
-numeric(p,s) / decimal(p,s) = up to 131072 digits before the decimal point (p); up to 16383 digits after the decimal point (s)
+func NewDatabase(db_port uint16, db_host, db_user, db_name, db_ssl_mode string) *Database {
+	var db Database
+	var db_pwd string
+	var err error
 
->>> TEXT:
-char(n) = fixed char array with space as padding
-varchar(n) = char[n] variable string of n max chars
-text = unlimited length string
+	fmt.Print("Enter " + db_name + " database password:\n")
+	fmt.Print("\033[8m") // Hides input
+	fmt.Scanln(&db_pwd) //can use a bufio scanner also
+	fmt.Print("\033[28m") // Shows input
+	db.info = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+    db_host, db_port, db_user, db_pwd, db_name, db_ssl_mode)
+	db.driver, err = sql.Open("postgres", db.info)
+	if err != nil { _error.Handle("Wrong database credentials", err) }
+	defer db.driver.Close() //db connection will be closed on scope exit
+	if err = db.driver.Ping(); err != nil { _error.Handle("Unable to connect to database", err) }
+	db.fields = make(map[string]string)
+	db.GetTables()
+	db.GetFields()
+	fmt.Println("Database connection established")
+	return &db
+}
 
->>> CURRENCY:
-money = -92233720368547758.08 to +92233720368547758.07 stored on 8 bytes
+//GetTables takes the database table list and store it inside db.tables (string slice)
+func (db *Database)GetTables() {
+	sql_query :=
+	`
+	SELECT n.nspname as "Schema",
+	  c.relname as "Name",
+	  CASE c.relkind WHEN 'r' THEN 'table' WHEN 'v' THEN 'view' WHEN 'm' THEN 'materialized view' WHEN 'i' THEN 'index' WHEN 'S' THEN 'sequence' WHEN 's' THEN 'special' WHEN 'f' THEN 'foreign table' WHEN 'p' THEN 'table' END as "Type",
+	  pg_catalog.pg_get_userbyid(c.relowner) as "Owner"
+	FROM pg_catalog.pg_class c
+	     LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+	WHERE c.relkind IN ('r','p','')
+	      AND n.nspname <> 'pg_catalog'
+	      AND n.nspname <> 'information_schema'
+	      AND n.nspname !~ '^pg_toast'
+	  AND pg_catalog.pg_table_is_visible(c.oid)
+	ORDER BY 1,2;
+	`
+	rows, err := db.driver.Query(sql_query)
+	if err != nil { _error.Handle("Query failed", err) }
+	defer rows.Close()
+	var schema, name, ttype, owner string
+	for rows.Next() {
+		if err := rows.Scan(&schema, &name, &ttype, &owner); err != nil { _error.Handle("Query rows.Scan() method failed", err) }
+		db.tables = append(db.tables, name)
+	}
+	// fmt.Println(db.tables)
+}
 
->>> BYTES:
-bytea = 1 or 4 bytes plus the actual binary string = variable-length binary string
+//GetFields takes the database structure deeper (column titles and types) and store in in the db.fields map
+func (db *Database)GetFields() {
+	for i := 0; i < len(db.tables); i++ {
+		sql_query :=
+		`
+		SELECT column_name as "Name", data_type as "Type"
+		FROM information_schema.columns
+		WHERE table_schema = 'public'
+		  AND table_name  = '` + db.tables[i] + `';
+		`
+		rows, err := db.driver.Query(sql_query)
+		if err != nil { _error.Handle("Query failed", err) }
+		defer rows.Close()
+		var name, sqltype string
+		db.fields[db.tables[i]] = ""
+		for rows.Next() {
+			if err := rows.Scan(&name, &sqltype); err != nil { _error.Handle("Query rows.Scan() method failed", err) }
+			if i > 0 { db.fields[db.tables[i]] += " " }
+			db.fields[db.tables[i]] += name
+		}
+	}
+	// fmt.Println(db.fields["clients"]) //testing purposes
+}
 
->>> NETWORK:
-cidr = 7 or 19 bytes IPv4 and IPv6 networks
-inet = 7 or 19 bytes IPv4 and IPv6 hosts and networks
-macaddr = 6 bytes MAC addresses
-!!! whatever we will store IP addresses as string
+// func (DB *Database)MatchQuery(query_type int, table string, ret_field string) string {
+// 	ret := ""
+// 	switch query_type {
+// 		case _c.Q_INSERT:
+// 			ret += "INSERT INTO " + table + GetFields(table) + "VALUES " + GetInFmt(table)
+// 		case _c.Q_MODIFY:
+// 			ret += "UPDATE "
+// 		case _c.Q_DELETE:
+// 			ret += "DELETE FROM "
+// 		case _c.Q_GETVAL:
+// 			ret += "FROM "
+// 	}
+// 	ret += table
+// 	switch table {
+// 		case "clients":
+// 			 (age, email, first_name, last_name)
+// 			VALUES ($1, $2, $3, $4)
+// 			RETURNING id" //id is the first row (serialized int)
 
->>> DATES:
-!!! whatever we will store epoch unix timestamps as string
+// 	}	
+// }
 
->>> ENUM:
-https://www.postgresql.org/docs/9.5/static/datatype-enum.html
+// func (DB *Database)AddRow(table string, row string) {
+// 	sql_query := DB.MatchQuery(table, 'id')'
+// 	id := 0
+// 	err = db.QueryRow(sql_query, 30, "jon@calhoun.io", "Jonathan", "Calhoun").Scan(&id)
+// 	if err != nil { _error.Handle("db.Insert method failed", err) }
+// 	fmt.Println("New record ID is:", id)
+// }
 
-...
+// func (DB *Database)AlterRow(table, id_type, id, field, new_val string) {
+// 	sql_query := '
+// 	UPDATE ' + table + '
+// 	SET ' field + ' = $2
+// 	WHERE ' + id_type + ' = $1;'
+// 	res, err := db.Exec(sql_query, id, new_val)
+// 	if err != nil { _error.Handle("Query failed", err) }
+// 	count, err := res.RowsAffected()
+// 	if err != nil { _error.Handle("Query affected no fields", err) }
+// 	fmt.Println(count)
+// }
 
->>> SQL COMMANDS <<<
-https://www.postgresql.org/docs/9.1/static/sql-commands.html
-!!! we will use only a few as driver calls
+// func (DB *Database)DelRow(table string, field string, val string) {
+// }
 
-SQL commands can be broken into roughly three categories: DDL (Data Definition Language), DML (Data Manipulation Language), and DCL (Data Control Language).
-
-DDL is a set of commands used to define the overall structure or schema of how your data is going to be stored. In other words, you would use DDL to create a table, update the fields in an existing table, or any other operation where you are changing the structure of how you store data, but not actually changing the data itself.
-
-DML is a set of commands used to actually manipulate data stored in your database. This includes looking up records in your table, inserting new data into a table, deleting records, etc. This is where you will spend a large portion of your time when dealing with SQL, and can be further broken into roughly four main categories:
-
-Retrieving data
-Creating data
-Updating data
-Deleting data
-DCL is a set of commands used to dictate which users have permissions to do different things inside of your database. For example you might set up a user so that it has permission to read data in your database but it doesn’t have permission to create new records.
-
->>> POSTGRES CONSTRAINTS <<<
-https://www.postgresql.org/docs/current/static/ddl-constraints.html
-!!! we won't use constraints but pre-store computed constraits (from Go)
-
-*/
+// // func (DB *Database)UpdateTable(table string, from string, to string) {
+// // }

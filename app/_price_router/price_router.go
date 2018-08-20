@@ -71,7 +71,6 @@ func (pr *PriceRouter)FeedConnect() { // method = ptr or not ptr?
 	}
 }
 
-
 func (s *Server)GetFeed(broker_index int) {
 	var err error
 
