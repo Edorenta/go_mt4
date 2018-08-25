@@ -4,21 +4,19 @@ package main
 import(
 	//standard imports
 	"fmt"
-	"time"
 	"errors"
 	"strconv"
 	"syscall"
 	//local imports
+	_c "../_const"
+	_tx "../_toolbox"
 	"../_error"
 	"../_scrypt"
-	_c "../_const"
 	//sql and driver
 	"database/sql"
 	_ "github.com/lib/pq" //_ = silent driver import = blank identifier
 	//password entry
 	"golang.org/x/crypto/ssh/terminal"
-	//email validation
-	"github.com/badoux/checkmail"
 )
 
 type Database struct {
@@ -31,7 +29,7 @@ type Database struct {
 }
 
 type UserData struct {		//only used for UserData retrieval
-	id 			uint32 		//incremental serial number, internal only
+	id 			int64 		//incremental serial number, internal only
 	ip			string		//last used ip (from net.IP.String())
 	email		string		//email address
 	p_hash		string 		//pwd hash
@@ -39,67 +37,29 @@ type UserData struct {		//only used for UserData retrieval
 	user_name	string		//pseudonym
 	first_name	string		//first name
 	last_name	string		//last name
-	dob_epoch	uint32		//dob date
-	reg_epoch	uint32		//registration date
-	log_epoch	uint32		//last login date
+	dob_epoch	int64		//dob date
+	reg_epoch	int64		//registration date
+	log_epoch	int64		//last login date
 	//is_root		bool		//has admin rights?
 }
 
 //full tests
 func main() {
-
 	db := NewDatabase(_c.DB_PORT, _c.DB_HOST, _c.DB_USER, _c.DB_NAME, "disable")
 	fmt.Println(db.info)
 	fmt.Println("fields:", db.fields["clients"])
 	fmt.Println("sqltypes:", db.sqltypes["clients"])
 	fmt.Println("reqfmt:", db.reqfmt["clients"])
-	err := db.Delete("clients", "email", "test3@test.com")
+	if err := db.DeleteUser("edorenta@gmail.com"); err != nil { fmt.Println(err.Error()) }
+	usr, err := db.NewUser("8.8.8.8", "edorenta@gmail.com", "Test123456789", "r=f", "Mitch1", "Mitch", "Smith", 631148400)
+	if err != nil { fmt.Println(err.Error()) } else { fmt.Println("user:", usr) }
+	dob_epoch, err := db.LookupUser("edorenta@gmail.com", "dob_epoch")
 	if err != nil { fmt.Println(err.Error()) }
-	err = db.CreateUser(db.tables[0], "8.8.8.8", "test3@test.com", "pwd", "0", "Mitch3", "Mitch", "Smith", "631148400", "1514761200", "1514761200")
+	dob, err := _tx.EpochToTime(dob_epoch)
 	if err != nil { fmt.Println(err.Error()) }
-	usr, err := db.GetUserData("test3@test.com")
-	if err != nil { fmt.Println(err.Error()) } else { fmt.Println(usr) }
-	dob_epoch, err := db.LookupUser("test3@test.com", "dob_epoch")
-	if err != nil { fmt.Println(err.Error()) } else { fmt.Println("dob_epoch:", dob_epoch) }
-	dob, err := epoch_to_time(dob_epoch)
-	if err != nil { fmt.Println(err.Error()) }
-	dob_fmt, err := time_to_fmt(dob, "datetime full")
+	dob_fmt, err := _tx.TimeToFormat(dob, "datetime full")
 	if err != nil { fmt.Println(err.Error()) } else { fmt.Println("dob:", dob_fmt) }
-	err = db.ModifyUser("test3@test.com", "ip", "127.0.0.1")
-	if err != nil { fmt.Println(err.Error()) }
-	usr, err = db.GetUserData("test3@test.com")
-	if err != nil { fmt.Println(err.Error()) } else { fmt.Println(usr) }
-
-}
-
-//get time out of string epoch, i.e: t, err := epoch_to_time("1514761200")
-func epoch_to_time(s string) (time.Time, error) {
-	sec, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {	return time.Time{}, err	}
-	return time.Unix(sec, 0), nil
-}
-
-//get formated string time from time.Time, i.e: epoch := time_to_fmt(t, "epoch")
-//"Mon Jan 2 15:04:05 -0700 MST 2006" is the reference for time formatting	
-func time_to_fmt(t time.Time, format string) (string, error) {
-	switch format {
-		case "date full":
-			return fmt.Sprintf(t.Format(_c.F_DATE_FULL)), nil //t.Month().String()[:3] for 3 letters months
-		case "datetime full":
-			return fmt.Sprintf(t.Format(_c.F_DATETIME_FULL)), nil //t.Month().String()[:3] for 3 letters months
-		case "date":
-			return fmt.Sprintf(t.Format(_c.F_DATE)), nil //t.Month().String()[:3] for 3 letters months
-			// return fmt.Sprintf("%s %s %02d %d", t.Day(), t.Month(), t.Day(), t.Year()), nil //t.Month().String()[:3] for 3 letters months
-		case "time":
-			return fmt.Sprintf(t.Format(_c.F_TIME)), nil //t.Month().String()[:3] for 3 letters months
-			// return fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()), nil //t.Month().String()[:3] for 3 letters months
-		case "datetime":
-			return fmt.Sprintf(t.Format(_c.F_DATETIME)), nil //t.Month().String()[:3] for 3 letters months
-			// return fmt.Sprintf("%02d-%02d-%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second()), nil //t.Month().String()[:3] for 3 letters months
-		case "epoch":
-			return fmt.Sprint(t.Unix()), nil
-	}
-	return "", errors.New("Wrong format input") //can print t.UnixNano() for ms or t.String for full time with UTC offset
+	if err = db.ModifyUser(usr, "Test123456789", "ip", "127.0.0.1"); err != nil { fmt.Println(err.Error()) } else { fmt.Println(usr) }
 }
 
 func NewDatabase(db_port uint16, db_host, db_user, db_name, db_ssl_mode string) *Database {
@@ -308,98 +268,54 @@ CREATE TABLE clients (
 );
 
 CREATE TABLE salts (
+	id			SERIAL	PRIMARY KEY,
 	email		TEXT	UNIQUE NOT NULL,
 	hash 		TEXT
 );
 */
 
-func check_user_email(email string) error {
-	if err := checkmail.ValidateFormat(email); err != nil { return errors.New("Invalid email format") }
-	if err := checkmail.ValidateHost(email); err != nil {
-		if smtp_err, ok := err.(checkmail.SmtpError); ok { return errors.New("Invalid email account") }
-	} else { return errors.New("Invalid email host") }
-}
-
-func check_user_pwd(s string) error {
-	n := len(s)
-	if (n < 8) 				{ return errors.New("Password musts be at least 8 characters") }
-	if (n > 64) 			{ return errors.New("Password musts be at most 64 characters") }
-	upper := false; lower := false, digit := false
-    for _, c := range s {
-    	if (c >= 'a' && c <= 'z') { lower = true }	// lower case ok
-    	if (c >= 'A' && c <= 'Z') { upper = true }	// upper case ok
-    	if (c >= '0' && c <= '9') { digit = true }	// digit ok
-        if (c < '!' || c > '~') { return errors.New("Password musts contain only printable ascii characters") }	// non printable >> invalid
-    }
-	if !(lower && upper && digit) { return errors.New("Password musts contain at least an upper case and a lower case alphabetical character and a digit") }
+func check_user_info(email, pwd, info, user_name, first_name, last_name string, dob_epoch int64) error {
+	// if err := _tx.CheckUserEmail(email); err != nil { return err }
+	if err := _tx.CheckUserPwd(pwd); err != nil { return err }
+	if err := _tx.CheckUserInfo(info); err != nil { return err }
+	if err := _tx.CheckUserName(user_name, "User"); err != nil { return err }
+	if err := _tx.CheckUserName(first_name, "First"); err != nil { return err }
+	if err := _tx.CheckUserName(last_name, "Last"); err != nil { return err }
+	if err := _tx.CheckUserDOB(dob_epoch); err != nil { return err }
 	return nil
-}
-
-func check_user_name(s string, name_type string) error {
-	n := len(s)
-	if (n < 2) 				{ return errors.New(name_type + " name musts be at least 2 characters") }
-	if (n > 32) 			{ return errors.New(name_type + " name musts be at most 32 characters") }
-    if (name_type == "First" || name_type == "Last") {
-	    for _, c := range s {
-	    	if !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
-	    		return errors.New(name_type + " name musts be contain only alphabetical characters")
-	    	}
-	    }
-	} else if (name_type == "User") {
-		if !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == ' ') {
-    		return errors.New(name_type + " name musts be contain only alphanumeric characters")
-    	}
-    } else { return _error.Handle("check_user_name() failed", errors.New("function name_type unrecognized")) }
-	return nil
-}
-
-func check_user_info(s string) error {
-	is_root := s[0:3]
-	if (is_root == "r=t" || is_root == "r=f") { return nil } else { _error.Handle("check_user_info() failed", errors.New("Invalid user information hash")) }
-	return errors.New("Invalid user information hash") // which is not yet a hash
-}
-
-func check_user_dob(dob uint32) error {
-	if dob < 1535190451 { return errors.New("Would you really be here if you were born before 1900? Come on") }
-	birthdate := time.Unix(birthdate, 0)
-	if birthdate > time.Now() { return errors.New("Invalid birthdate") }
-	age := time.Since(birthdate)
-	if years := age.Years(); years < 18 { return errors.New("You need to be 18 or older to use this app") }
-}
-
-func check_user_info(email, pwd, info, user_name, first_name, last_name string, dob_epoch uint32) error {
-	if err := check_user_info(info); err != nil { return err }
-	if err := check_user_pwd(pwd); err != nil { return err }
-	if err := check_user_name(user_name, "User"); err != nil { return err }
-	if err := check_user_name(user_name, "First"); err != nil { return err }
-	if err := check_user_name(user_name, "Last"); err != nil { return err }
-	if err := check_user_email(email); err != nil { return err }
-	if err := check_user_dob(dob_epoch); err != nil { return err }
 }
 
 //RETRIEVE USER_DATA METHOD >> WHOLE ROW, ONLY FOR 'clients' TABLE
-func (db *Database)NewUser(ip, email, pwd, info, user_name, first_name, last_name string, dob_epoch uint32) (*UserData, error) {
+func (db *Database)NewUser(ip, email, pwd, info, user_name, first_name, last_name string, dob_epoch int64) (*UserData, error) {
 	var ud UserData
 
-	if err := check_user_info(email, pwd, info, user_name, first_name, last_name); err != nil { return err}
+	if err	 := check_user_info(email, pwd, info, user_name, first_name, last_name, dob_epoch); err != nil { return nil, err}
 	hash, salt, err := _scrypt.PwdHash(pwd)
 	if err != nil { _error.Handle("_db.CreateUser() method failed", err) }
-	ud.p_hash = hash
+	ud.ip = ip; ud.email = email; ud.p_hash = hash; ud.i_hash = info
+	ud.user_name = user_name; ud.first_name = first_name; ud.last_name = last_name
+	ud.dob_epoch = dob_epoch; ud.reg_epoch = _tx.NowInt64(); ud.log_epoch = ud.reg_epoch
 	if err = db.Insert("clients", ud.ip, ud.email, ud.p_hash, ud.i_hash,
 								ud.user_name, ud.first_name, ud.last_name,
-								strconv.FormatUint(uint64(ud.dob_epoch), 10),
-								strconv.FormatUint(uint64(ud.reg_epoch), 10),
-								strconv.FormatUint(uint64(ud.log_epoch), 10)); err != nil { return err }
-	if err = db.Insert("salts", ud.email, salt); err != nil { return err }
+								strconv.FormatInt(ud.dob_epoch, 10),
+								strconv.FormatInt(ud.reg_epoch, 10),
+								strconv.FormatInt(ud.log_epoch, 10)); err != nil { return nil, err }
+	if err = db.Insert("salts", ud.email, salt); err != nil { return nil, err }
 	return &ud, nil
 }
 
-func (db *Database)CheckUserPwd(id string, pwd string) error {
-	stored, err := db.Lookup("clients", "email", id, "p_hash")
+func (db *Database)DeleteUser(id string) error {
+	if err := db.Delete("clients", "email", id); err != nil { return err }
+	if err := db.Delete("salts", "email", id); err != nil { return err }
+	return nil
+}
+
+func (db *Database)PwdCheck(id string, pwd string) error {
+	stored, err := db.LookupUser(id, "p_hash")
 	if err != nil { return err }
 	salt, err := db.GetUserSalt(id)
 	if _scrypt.HashMatch(pwd, salt, stored) { return nil }
-	return errors.New("Wrong password")
+	return errors.New("Invalid password")
 }
 
 func (db *Database)GetUserData(id string) (*UserData, error) {
@@ -453,8 +369,7 @@ func (db *Database)GetUserSalt(id string) (string, error) {
 	return salt, nil
 }
 
-func (db *Database)ChangeUserPwd(id, pwd, new_pwd string) error {
-	if err := db.CheckUserPwd(id, pwd); err != nil { return err }
+func (db *Database)ChangeUserPwd(id, new_pwd string) error {
 	new_hash, new_salt, err := _scrypt.PwdHash(new_pwd)
 	if err != nil { _error.Handle("_db.ChangeUserPwd() method failed", err) }
 	if err = db.Modify("clients", "email", id, "p_hash", new_hash); err != nil { return err }
@@ -462,8 +377,21 @@ func (db *Database)ChangeUserPwd(id, pwd, new_pwd string) error {
 	return nil
 }
 
-func (db *Database)ModifyUser(id string, val_field string, val string) error {
-	if err := db.Modify("clients", "email", id, val_field, val); err != nil { return err }
+func (db *Database)ModifyUser(ud *UserData, pwd, val_field string, val string) error {
+	if err := db.PwdCheck(ud.email, pwd); err != nil { return err }
+	switch val_field {
+		case "ip": break
+		// case "email":		if err := _tx.CheckUserEmail(val); err != nil { return err }
+		case "pwd":			if err := _tx.CheckUserPwd(val); err != nil { return err } else { return db.ChangeUserPwd(ud.email, val) }
+		case "info":		if err := _tx.CheckUserInfo(val); err != nil { return err }
+		case "user_name":	if err := _tx.CheckUserName(val, "User"); err != nil { return err }
+		case "first_name":	if err := _tx.CheckUserName(val, "First"); err != nil { return err }
+		case "last_name":	if err := _tx.CheckUserName(val, "Last"); err != nil { return err }
+		case "dob_epoch":	dob, err := strconv.ParseUint(val, 10, 64); if err != nil { _error.Handle("ParseUint() failed", err) }
+							if err := _tx.CheckUserDOB(int64(dob)); err != nil { return err }
+		default: _error.Handle("db.ModifyUser() method failed", errors.New("Invalid field called"))
+	}
+	if err := db.Modify("clients", "email", ud.email, val_field, val); err != nil { return err }
 	return nil
 }
 

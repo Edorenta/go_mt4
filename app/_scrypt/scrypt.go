@@ -2,10 +2,11 @@
 package _scrypt
 
 import(
-	// "fmt" //only for main test
-	"golang.org/x/crypto/scrypt"
-	"math/rand"
+	"fmt" //only for main test
 	"time"
+	"math/rand"
+	"encoding/hex"
+	"golang.org/x/crypto/scrypt"
 )
 
 //HashGet related:
@@ -20,7 +21,7 @@ const(
 
 //SaltGenerate generator related:
 const(
-	alpha_bytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	alpha_bytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     byte_bits = 6                    // 6 bits to represent a letter index
     byte_mask = 1 << byte_bits - 1 // All 1-bits, as many as byte_bits
     max_alpha_bit  = 63 / byte_bits   // # of letter indices fitting in 63 bits
@@ -30,11 +31,12 @@ func HashGet(s string, salt string) string {
 	// salt := SaltGenerate(32)
 	byte_hash, err := scrypt.Key([]byte(s), []byte(salt), N, r, p, l)
 	if err != nil { return "" }
-	return string(byte_hash[:l])
+	return hex.EncodeToString(byte_hash[:l])//string(byte_hash[:l])
 }
 
 func HashMatch(s string, salt string, h string) bool {
 	h2 := HashGet(s, salt)
+	fmt.Println("h1:", h, "h2:", h2)
     return h == h2
 }
 
@@ -42,7 +44,7 @@ func PwdHash(pwd string) (string, string, error) {
 	salt := SaltGenerate(32)
 	hash, err := scrypt.Key([]byte(pwd), salt, N, r, p, l)
 	if err != nil { return "", "", err }
-	return string(hash), string(salt), nil
+	return hex.EncodeToString(hash), string(salt), nil
 }
 
 //IN ../_db
@@ -64,8 +66,8 @@ func SaltGenerate(n int) []byte {
         if remain == 0 {
             cache, remain = src.Int63(), max_alpha_bit
         }
-        if i := int(cache & byte_mask); i < len(alpha_bytes) {
-            salt[i] =	alpha_bytes[i]
+        if j := int(cache & byte_mask); j < len(alpha_bytes) {
+            salt[i] = alpha_bytes[j]
             i--
         }
         cache >>= byte_bits
