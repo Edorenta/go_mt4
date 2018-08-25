@@ -22,6 +22,30 @@ type InfoRouter struct {
 	Port uint16
 }
 
+func main() { // test main
+	ir := NewInfoRouter(_c.IR_PORT)
+	fmt.Println("Requesting on port", ir.Port)
+	// ir.server["Pepperstone Limited"]ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+	fmt.Println(ir.server) //prints map
+}
+
+func NewInfoRouter(port uint16)(*InfoRouter) {
+	var ir InfoRouter
+
+	ir.Port = port
+	is_ready := make(chan bool)
+	go ir.Start(is_ready)
+	//... simultaneous stuff
+	<- is_ready
+	return &ir
+}
+
+func (ir *InfoRouter)Start(is_ready chan bool) {
+	ir.ServerInit()
+	ir.FeedConnect()
+	is_ready <- true
+}
+
 func (ir *InfoRouter)ServerInit() {
 	var err error
 
@@ -70,28 +94,4 @@ func (s *Server)ReqRes(req string)(string) {
 	// fmt.Println("Req:", req)
 	// fmt.Println("Res:", res)
 	return res 
-}
-
-func (ir *InfoRouter)Start(is_ready chan bool) {
-	ir.ServerInit()
-	ir.FeedConnect()
-	is_ready <- true
-}
-
-func NewInfoRouter(port uint16)(*InfoRouter) {
-	var ir InfoRouter
-
-	ir.Port = port
-	is_ready := make(chan bool)
-	go ir.Start(is_ready)
-	//... simultaneous stuff
-	<- is_ready
-	return &ir
-}
-
-func main() { // test main
-	ir := NewInfoRouter(_c.IR_PORT)
-	fmt.Println("Requesting on port", ir.Port)
-	// ir.server["Pepperstone Limited"]ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
-	fmt.Println(ir.server) //prints map
 }

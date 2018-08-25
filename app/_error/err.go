@@ -13,6 +13,6 @@ func SetLogFile(file_name string) { // default filename = "logfile.txt"
 }
 func Handle(msg string, err error) {
 	// fmt.Println(msg)
-	log.Fatalln(msg + "\n", err.Error())
+	log.Fatalln(msg + "\n" + err.Error())
 	panic(err)
 }

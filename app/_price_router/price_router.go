@@ -46,6 +46,30 @@ type Feed struct {
 	// new_data bool
 }
 
+func NewPriceRouter(port uint16/*,client int, mode string*/)(*PriceRouter) {
+	var pr PriceRouter
+	
+	pr.Port = port
+	pr.feed.quote = _c.PortToSymbol(port)
+	pr.logger = nil
+	// if mode == "sub" { pr.AddClient(client) } else { pr.Mode_pub = false }
+	// if mode == "log" { pr.StartLogger() } else { pr.Mode_log = false }
+	// if mode == "calc" { pr.Mode_calc = true } else { pr.Mode_calc = false }
+	// pr.feed.new_line = false //feed cannot be fetched yet
+	// pr.feed.new_data = false //feed cannot be parsed yet
+	is_ready := make(chan bool)
+	go pr.Start(is_ready)
+	<- is_ready
+	return &pr
+}
+
+func (pr *PriceRouter)Start(is_ready chan bool) {
+	pr.ServerInit()
+	pr.FeedConnect()
+	is_ready <- true
+	pr.GetFeed()
+}
+
 func (pr *PriceRouter)ServerInit() {
 	var err error
 
@@ -91,6 +115,18 @@ func (s *Server)GetFeed(broker_index int) {
 	}
 }
 
+func (pr *PriceRouter)StartLogger() {
+	if pr.logger == nil {
+		pr.logger = *_logger.NewLogger("../../data/log/", pr.feed.quote, "csv")
+		pr.Mode_log = true
+	}
+}
+
+func (pr *PriceRouter)AddClient(client int) {
+	// pr.Mode_pub = true
+	pr.clients = append(pr.clients, client)
+}
+
 func (pr *PriceRouter)Pub() {
 	// send feed.line to websocket of every subscriber
 }
@@ -129,40 +165,4 @@ func (f *Feed)Handle() {
 		// f.new_data = false
 		fmt.Println(f.tick.time, f.tick.bid, f.tick.ask)
 	// }
-}
-
-func (pr *PriceRouter)AddClient(client int) {
-	// pr.Mode_pub = true
-	pr.clients = append(pr.clients, client)
-}
-
-func (pr *PriceRouter)Start(is_ready chan bool) {
-	pr.ServerInit()
-	pr.FeedConnect()
-	is_ready <- true
-	pr.GetFeed()
-}
-
-func (pr *PriceRouter)StartLogger() {
-	if pr.logger == nil {
-		pr.logger = *_logger.NewLogger("../../data/log/", pr.feed.quote, "csv")
-		pr.Mode_log = true
-	}
-}
-
-func NewPriceRouter(port uint16/*,client int, mode string*/)(*PriceRouter) {
-	var pr PriceRouter
-	
-	pr.Port = port
-	pr.feed.quote = _c.PortToSymbol(port)
-	pr.logger = nil
-	// if mode == "sub" { pr.AddClient(client) } else { pr.Mode_pub = false }
-	// if mode == "log" { pr.StartLogger() } else { pr.Mode_log = false }
-	// if mode == "calc" { pr.Mode_calc = true } else { pr.Mode_calc = false }
-	// pr.feed.new_line = false //feed cannot be fetched yet
-	// pr.feed.new_data = false //feed cannot be parsed yet
-	is_ready := make(chan bool)
-	go pr.Start(is_ready)
-	<- is_ready
-	return &pr
 }

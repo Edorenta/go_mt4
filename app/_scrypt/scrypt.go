@@ -28,7 +28,7 @@ const(
 
 func HashGet(s string, salt string) string {
 	// salt := SaltGenerate(32)
-	byte_hash, err := scrypt.Key([]byte(s), salt, N, r, p, l)
+	byte_hash, err := scrypt.Key([]byte(s), []byte(salt), N, r, p, l)
 	if err != nil { return "" }
 	return string(byte_hash[:l])
 }
@@ -38,21 +38,20 @@ func HashMatch(s string, salt string, h string) bool {
     return h == h2
 }
 
-func PwdStore(id string, pwd string) error {
+func PwdHash(pwd string) (string, string, error) {
 	salt := SaltGenerate(32)
-	byte_hash, err := scrypt.Key([]byte(pwd), salt, N, r, p, l)
-	if err != nil { return err }
-	_db.StoreKey(HASH_TABLE, id, string(byte_hash)) //check ret
-	_db.StoreKey(SALT_TABLE, id, string(salt)) //check ret
-	return nil
+	hash, err := scrypt.Key([]byte(pwd), salt, N, r, p, l)
+	if err != nil { return "", "", err }
+	return string(hash), string(salt), nil
 }
 
-func PwdMatch(id string, pwd string) bool {
-	salt := _db.QueryKey(SALT_TABLE, id)
-	hash := _db.QueryKey(HASH_TABLE, id)
-	if HashMatch(id, salt, hash) { return true }
-	return false
-}
+//IN ../_db
+// func PwdMatch(id string, pwd string) bool {
+// 	salt := _db.QueryKey(SALT_TABLE, id)
+// 	hash := _db.QueryKey(HASH_TABLE, id)
+// 	if HashMatch(id, salt, hash) { return true }
+// 	return false
+// }
 
 //unique rand seed for all salt generation
 var src = rand.NewSource(time.Now().UnixNano())
@@ -65,7 +64,7 @@ func SaltGenerate(n int) []byte {
         if remain == 0 {
             cache, remain = src.Int63(), max_alpha_bit
         }
-        if i := int(cache & byte_mask); i < len	alpha_bytes) {
+        if i := int(cache & byte_mask); i < len(alpha_bytes) {
             salt[i] =	alpha_bytes[i]
             i--
         }
