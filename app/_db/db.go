@@ -84,17 +84,17 @@ func epoch_to_time(s string) (time.Time, error) {
 func time_to_fmt(t time.Time, format string) (string, error) {
 	switch format {
 		case "date full":
-			return fmt.Sprintf(t.Format("Monday 2 January 2006")), nil //t.Month().String()[:3] for 3 letters months
+			return fmt.Sprintf(t.Format(_c.F_DATE_FULL)), nil //t.Month().String()[:3] for 3 letters months
 		case "datetime full":
-			return fmt.Sprintf(t.Format("Monday 2 January 2006, 3.04 p.m.")), nil //t.Month().String()[:3] for 3 letters months
+			return fmt.Sprintf(t.Format(_c.F_DATETIME_FULL)), nil //t.Month().String()[:3] for 3 letters months
 		case "date":
-			return fmt.Sprintf(t.Format("02/01/2006")), nil //t.Month().String()[:3] for 3 letters months
+			return fmt.Sprintf(t.Format(_c.F_DATE)), nil //t.Month().String()[:3] for 3 letters months
 			// return fmt.Sprintf("%s %s %02d %d", t.Day(), t.Month(), t.Day(), t.Year()), nil //t.Month().String()[:3] for 3 letters months
 		case "time":
-			return fmt.Sprintf(t.Format("15:04:05")), nil //t.Month().String()[:3] for 3 letters months
+			return fmt.Sprintf(t.Format(_c.F_TIME)), nil //t.Month().String()[:3] for 3 letters months
 			// return fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()), nil //t.Month().String()[:3] for 3 letters months
 		case "datetime":
-			return fmt.Sprintf(t.Format("02/01/2006 15:04:05")), nil //t.Month().String()[:3] for 3 letters months
+			return fmt.Sprintf(t.Format(_c.F_DATETIME)), nil //t.Month().String()[:3] for 3 letters months
 			// return fmt.Sprintf("%02d-%02d-%d %02d:%02d:%02d", t.Day(), t.Month(), t.Year(), t.Hour(), t.Minute(), t.Second()), nil //t.Month().String()[:3] for 3 letters months
 		case "epoch":
 			return fmt.Sprint(t.Unix()), nil
@@ -322,33 +322,57 @@ func check_user_email(email string) error {
 
 func check_user_pwd(s string) error {
 	n := len(s)
-	if (n < 8) 				{ return errors.New("Password must be at least 8 characters") }
-	if (n > 64) 			{ return errors.New("Password must be at most 64 characters") }
+	if (n < 8) 				{ return errors.New("Password musts be at least 8 characters") }
+	if (n > 64) 			{ return errors.New("Password musts be at most 64 characters") }
 	upper := false; lower := false, digit := false
     for _, c := range s {
     	if (c >= 'a' && c <= 'z') { lower = true }	// lower case ok
     	if (c >= 'A' && c <= 'Z') { upper = true }	// upper case ok
     	if (c >= '0' && c <= '9') { digit = true }	// digit ok
-        if (c < '!' || c > '~') { return errors.New("Password must contain only printable ascii characters") }	// non printable >> invalid
+        if (c < '!' || c > '~') { return errors.New("Password musts contain only printable ascii characters") }	// non printable >> invalid
     }
-	if !(lower && upper && digit) { return errors.New("Password must contain at least an upper case and a lower case alphabetical character and a digit") }
+	if !(lower && upper && digit) { return errors.New("Password musts contain at least an upper case and a lower case alphabetical character and a digit") }
 	return nil
 }
 
-func check_user_name(s string) error {
+func check_user_name(s string, name_type string) error {
 	n := len(s)
-	if (n < 2) 				{ return errors.New("Names must be at least 2 characters") }
-	if (n > 32) 			{ return errors.New("Names must be at most 32 characters") }
-    for _, c := range s {
-        if (c < '!' || c > '~') { return errors.New("Password must contain only printable ascii characters") }	// non printable >> invalid
-    }
+	if (n < 2) 				{ return errors.New(name_type + " name musts be at least 2 characters") }
+	if (n > 32) 			{ return errors.New(name_type + " name musts be at most 32 characters") }
+    if (name_type == "First" || name_type == "Last") {
+	    for _, c := range s {
+	    	if !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ') {
+	    		return errors.New(name_type + " name musts be contain only alphabetical characters")
+	    	}
+	    }
+	} else if (name_type == "User") {
+		if !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == ' ') {
+    		return errors.New(name_type + " name musts be contain only alphanumeric characters")
+    	}
+    } else { return _error.Handle("check_user_name() failed", errors.New("function name_type unrecognized")) }
 	return nil
+}
+
+func check_user_info(s string) error {
+	is_root := s[0:3]
+	if (is_root == "r=t" || is_root == "r=f") { return nil } else { _error.Handle("check_user_info() failed", errors.New("Invalid user information hash")) }
+	return errors.New("Invalid user information hash") // which is not yet a hash
+}
+
+func check_user_dob(dob uint32) error {
+	if dob < 1535190451 { return errors.New("Would you really be here if you were born before 1900? Come on") }
+	birthdate := time.Unix(birthdate, 0)
+	if birthdate > time.Now() { return errors.New("Invalid birthdate") }
+	age := time.Since(birthdate)
+	if years := age.Years(); years < 18 { return errors.New("You need to be 18 or older to use this app") }
 }
 
 func check_user_info(email, pwd, info, user_name, first_name, last_name string, dob_epoch uint32) error {
 	if err := check_user_info(info); err != nil { return err }
 	if err := check_user_pwd(pwd); err != nil { return err }
-	if err := check_user_name(user_name, first_name, last_name); err != nil { return err }
+	if err := check_user_name(user_name, "User"); err != nil { return err }
+	if err := check_user_name(user_name, "First"); err != nil { return err }
+	if err := check_user_name(user_name, "Last"); err != nil { return err }
 	if err := check_user_email(email); err != nil { return err }
 	if err := check_user_dob(dob_epoch); err != nil { return err }
 }
