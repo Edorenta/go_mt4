@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	_c "./_const"
+	. "./_const"
 	// "./_db"
 	// "./_logger"
 	// "./_tracker"
@@ -16,7 +16,7 @@ import (
 type APP struct {
 	cs _cs.ClientServer		// client webserver
 	ir _ir.InfoRouter		// unique info router (for general broker / acc info)
-	pr []_pr.PriceRouter	// list of deployed price routers (max 1 per quote)
+	pr []_pr.PriceRouter	// list of deployed price routers (max 1 per quote to avoid redundancy)
 }
 
 func NewApp()(*APP) {

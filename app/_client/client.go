@@ -15,6 +15,8 @@ type Client struct {
 	UD *_db.UserData		//persistant account data
 	WS_CONN *websocket.Conn	//browsing-time instant data
 	WS_READER chan string
+	ID string
+	// IP string
 	// CONN_TIME time.Time		//only if needed
 }
 
@@ -59,6 +61,7 @@ func NewVisitor(id/*, ip*/ string) *Client {
 	var c Client
 	// var err error
 
+	c.ID = id
 	c.UD = nil
 	// if ip != c.UD.IP {// email has changed
 	// 	err = DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
@@ -78,12 +81,12 @@ func (c *Client)Elevate() {
 }
 
 func (c *Client)Listen() {
-	fmt.Println(c.UD.EMAIL, "connected")
+	fmt.Println(c.ID, "connected")
 	for {
 		reader := ""
 		// websocket.JSON.Receive(ws, &m) /websocket.JSON.Send(ws, m) also work
-		if err := c.WS_CONN.ReadJSON(&reader); err != nil { fmt.Println(c.UD.EMAIL, "disconnected"); return } /*_error.Handle("Error reading json.", err)*/
-		fmt.Println(reader)
+		if err := c.WS_CONN.ReadJSON(&reader); err != nil { fmt.Println(c.ID, "disconnected"); return } /*_error.Handle("Error reading json.", err)*/
+		fmt.Println(c.ID, "<<<", reader)
 		// c.WS_READER <- reader
 	}
 }

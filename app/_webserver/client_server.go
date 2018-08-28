@@ -4,7 +4,7 @@ package main
 import (
 	// _ws "../_websockets"
 	. "../_const"
-	"../_error"
+	// "../_error"
 	"../_scrypt"
 	"../_client"
 	"../_db"
@@ -69,16 +69,50 @@ func parse_html_files()(*template.Template) {
 	return tpl
 }
 
-//  https://     user:pass  @host.com:8000/  path   ?key=value     #fragment
+//  https://	 user:pass  @host.com:8000/  path   ?key=value	 #fragment
 //>>scheme, authentication info, host, port, path, query params, query fragment
-func GetParams(r *http.Request, key string) string {
-	// uri := req.URL.RequestURI()
-	// clean_uri, err := url.PathUnescape(uri)
+func GetReqParam(r *http.Request, key string) string {
+	// query := r.URL.Query()
+	raw_query := r.URL.RawQuery
+	fmt.Println("raw_query:", raw_query)
+	// fmt.Println("query:", query)
+	// uri := r.URL.RequestURI()
+	// clean_uri, _ := url.PathUnescape(uri) // _ = err
+	// fmt.Println("uri:", clean_uri)
 	// if err != nil { _error.Handle("PathUnescape() failed", err) }
-	query_val := r.URL.Query()
-	val, err := url.QueryUnescape(query_val.Get(key))
-	if err != nil { _error.Handle("QueryUnescape() failed", err) }
-    return val
+	clean_query, _ := url.QueryUnescape(raw_query) // _ = err
+	// if err != nil { _error.Handle("QueryUnescape() failed", err) }
+	fmt.Println("clean_query:", clean_query)
+	// fmt.Println("uri:", clean_uri)
+	// val := query.Get(key)
+	// fmt.Println("key:", key)
+	// val, ok := r.URL.Query()[key]
+	// fmt.Println("val:", val)
+	// if !ok || len(val[0]) < 1 {
+	// 	// log.Println("Url Param 'key' is missing")
+	// 	return ""
+	// }
+	// Query()[key] will return an array of items, from which we return the first
+	// fmt.Println("id:", val[0])
+	n := len(clean_query)
+	nk := len(key)
+	for i := 0; i < (n - nk - 1); i++ {
+		if clean_query[i:(i + nk)] == key {
+			start := i + nk + 1
+			// for end := i; end < n; end++ {
+			// 	if (clean_query[end] == "&" || clean_query[end] == "#") {
+			// 		return clean_query[start:end]
+			// 	}
+			// }
+			for end, c := range clean_query[start:n] {
+				if (c == '&' || c == '#' || c == ' ') {
+					return clean_query[start:end]
+				}
+			}
+			return clean_query[start:n]
+		}
+	}
+	return ""
 }
 
 func GetIP(r *http.Request) net.IP {
@@ -91,27 +125,30 @@ func GetIP(r *http.Request) net.IP {
 
 func (server *ClientServer)VerifySessionID(w http.ResponseWriter, r *http.Request) VisitorTemplate {
 	s, _ := server.s.store.Get(r, server.s.name)
-	auth, _ := s.Values["auth"].(bool)
+	var client *_client.Client 
+	// auth, _ := s.Values["auth"].(bool)
 	// if !ok { http.Error(w, "Forbidden", http.StatusForbidden) } //
-	visitor_id, _ := s.Values["email"].(string)
+	visitor_id, _ := s.Values["visitor_id"].(string)
 	// fod, _ := s.Values["fod"].(bool)
-	// if !ok { http.Error(w, "Forbidden", http.StatusForbidden) } // couldn't read cookie
+	// if !ok { http.Error(w, "Forbidden Session Access", http.StatusForbidden) } // couldn't read cookie
 	// temporarily set user as visitor if he just arrived to the site
-	if (!auth && visitor_id == "") {
+	if visitor_id == "" {// if (!auth && visitor_id == "") {
 		visitor_id = string(_scrypt.SaltGenerate(32))
-		s.Values["email"] = visitor_id
+		s.Values["visitor_id"] = visitor_id
 		s.Values["auth"] = false
 		// s.Values["fod"] = false
 		s.Save(r, w)
-		client := _client.NewVisitor(visitor_id/*, GetIP(r).String()*/)
+		client = _client.NewVisitor(visitor_id/*, GetIP(r).String()*/)
 		server.Clients[visitor_id] = client
+		fmt.Println("Created visitor_id:", visitor_id)
+		fmt.Println("Instanciated Client session:", client)
 	} else {
-		visitor_id, _ = s.Values["email"].(string)
-		// client := server.Clients[visitor_id]
+		visitor_id, _ = s.Values["visitor_id"].(string)
+		// if !ok { http.Error(w, "Forbidden Session Access", http.StatusForbidden) } // couldn't read cookie
+		client = server.Clients[visitor_id]
 	}
 	// fmt.Println("cookie from index:", s, "\nrequest data:", r)
 	// if err != nil { _error.Handle("GetClient() in HandleIndex() failed", err) }
-	fmt.Println("visitor_id:", visitor_id)
 	id := VisitorTemplate{
 		Visitor_id: visitor_id,
 		// Lst: []LstTpl{
@@ -190,7 +227,6 @@ func (server *ClientServer)HandleSignUpPost(w http.ResponseWriter, r *http.Reque
 }
 
 func (server *ClientServer)HandleIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	// var err error
 	id := server.VerifySessionID(w, r)
 	server.t.ExecuteTemplate(w, "index.html", id) //nil = template data
 }
@@ -212,8 +248,12 @@ func (server *ClientServer)HandleWebsocket(w http.ResponseWriter, r *http.Reques
 	// 	return
 	// }
 	// email := s.Values["email"].(string)
-	email := GetParams(r, "email")
-	client := server.Clients[email]
+	// fmt.Println("ws request header:", r)
+	// visitor_id := r.URL.Query().Get("id")
+	visitor_id := GetReqParam(r, "visitor_id")
+	client := server.Clients[visitor_id]
+	fmt.Println("visitor_id:", visitor_id)
+	fmt.Println("client:", client)
 	if client != nil { //set websocket only once per user
 		if client.WS_CONN == nil {
 			client.WS_CONN, err = websocket.Upgrade(w, r, w.Header(), 1024, 1024)
@@ -223,7 +263,7 @@ func (server *ClientServer)HandleWebsocket(w http.ResponseWriter, r *http.Reques
 			go client.Listen() // listen and server on /ws
 		}//else { fmt.Println("client", email, "is already bound") }
 	}//else { fmt.Println("client", email, "isn't on the server's stack") }
-	fmt.Fprint(w, "There is nothing for you here if you are not a WebSocket nor an API :(")
+	// fmt.Fprint(w, "There is nothing for you here if you are not a WebSocket nor an API :(")
 }
 
 func (server *ClientServer)SigKill() {
@@ -258,9 +298,9 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.s.name	= "go_mt4_session"
 	server.s.store	= sessions.NewCookieStore(server.s.key)
 	server.s.store.Options = &sessions.Options{
-	    Path:     "/",
-	    MaxAge:   900, //900 sec = 15min session survival
-	    HttpOnly: true,
+		Path:	 "/",
+		MaxAge:   900, //900 sec = 15min session survival
+		HttpOnly: true,
 	}
 	// listen and server
 	if HTTPS {

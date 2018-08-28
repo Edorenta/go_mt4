@@ -10,12 +10,13 @@
 var uri = "127.0.0.1";
 var port = "8080";
 var address = "ws://" + uri + ":" + port + "/ws";
-// var ws = init_socket();
+var ws_open = false;
 
 function init_socket() {
-    var email = document.getElementById("email").value
-    address = encodeURIComponent(address + "/" + email)
-    ws = new ReconnectingWebSocket(address);
+    var visitor_id = document.getElementById("visitor_id").textContent
+    console.log("visitor id: " + visitor_id)
+    address = address + "?" + encodeURIComponent("visitor_id=" + visitor_id)
+    var ws = new ReconnectingWebSocket(address);
 
     if (window.WebSocket === undefined)
         console.log("Error: WebSockets not supported");
@@ -24,9 +25,12 @@ function init_socket() {
     //     headers["set-cookie"] = "go_mt4_session";
     // });
     ws.onopen = function(event){
+        // ws_open = true;
+        // send_test(ws)
         console.log("Access to WebSocket " + address + " granted");
     };
     ws.onclose = function(){
+        // ws_open = false;
         console.log("WebSocket " + address + " closed");
     };
     ws.onerror = function(event){
@@ -51,7 +55,7 @@ function init_socket() {
             //...
         }
     };
-    return ws;
+    return;
 }
 
 // function listCookies() {
@@ -65,14 +69,17 @@ function init_socket() {
 
 function test_socket() {
     var x = document.cookie; 
-    alert(x);
-    init_socket();
+    console.log(x); //alert(x)
+    ws = init_socket();
+}
+
+function send_test(ws) {
     var msg = "301" //MSG_START_TERM_FEED not to be mistaken with http redirect
     let ret = ws.send(JSON.stringify(msg));
     //let ret = ws.send("ME");
-	// if (ret > 0)
-	// 	console.log("Successfully sent test_message to server");
-	// else
-	// 	console.log("Error sending test_message to server");
+    // if (ret > 0)
+    //  console.log("Successfully sent test_message to server");
+    // else
+    //  console.log("Error sending test_message to server");
     console.log('Sent: "' + msg + '"');
 }
