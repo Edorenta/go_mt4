@@ -6,7 +6,7 @@ import(
 	"fmt"
 	"bufio"
 	"strconv"
-	_c "../_const" // only for test main
+	. "../_const" // only for test main
 	"../_error"
 )
 
@@ -23,9 +23,9 @@ type InfoRouter struct {
 }
 
 func main() { // test main
-	ir := NewInfoRouter(_c.IR_PORT)
+	ir := NewInfoRouter(IR_PORT)
 	fmt.Println("Requesting on port", ir.Port)
-	// ir.server["Pepperstone Limited"]ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+	// ir.server["Pepperstone Limited"]ReqRes(MSG_ACCOUNT_BROKER_NAME + "\n")
 	fmt.Println(ir.server) //prints map
 }
 
@@ -56,16 +56,16 @@ func (ir *InfoRouter)ServerInit() {
 
 func (ir *InfoRouter)FeedConnect() { // method = ptr or not ptr?
 	ir.server = make(map[int]*Server)
-	for len(ir.server) < _c.N_BROKERS {
+	for len(ir.server) < N_BROKERS {
 		n := len(ir.server)
-		fmt.Println("Waiting for broker client", n + 1, "/", _c.N_BROKERS, "to connect...")
+		fmt.Println("Waiting for broker client", n + 1, "/", N_BROKERS, "to connect...")
 		conn, err := ir.ln.Accept()
 		// ir.server.conn, err = ir.ln.Accept()
 		if (err != nil) { _error.Handle("ln.Accept() failed", err) }
 		fmt.Println("Feeder", n,"connected")
 		scanner := *(bufio.NewScanner(conn))// ir.server.scanner = *(bufio.NewScanner(ir.server.conn))
 		s := Server{conn, scanner, ""}
-		s.BrokerName = s.ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+		s.BrokerName = s.ReqRes(MSG_ACCOUNT_BROKER_NAME + "\n")
 		fmt.Println("Scanner", n + 1, "set on:", s.BrokerName)
 		ir.server[n] = &s
 	}

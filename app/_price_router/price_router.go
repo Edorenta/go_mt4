@@ -8,7 +8,7 @@ import(
 	"strings"
 	//"encoding/csv"
 	"strconv"
-	_c "../_const"
+	. "../_const"
 	"../_error"
 	"../_logger"
 )
@@ -50,7 +50,7 @@ func NewPriceRouter(port uint16/*,client int, mode string*/)(*PriceRouter) {
 	var pr PriceRouter
 	
 	pr.Port = port
-	pr.feed.quote = _c.PortToSymbol(port)
+	pr.feed.quote = PortToSymbol(port)
 	pr.logger = nil
 	// if mode == "sub" { pr.AddClient(client) } else { pr.Mode_pub = false }
 	// if mode == "log" { pr.StartLogger() } else { pr.Mode_log = false }
@@ -80,16 +80,16 @@ func (pr *PriceRouter)ServerInit() {
 
 func (pr *PriceRouter)FeedConnect() { // method = ptr or not ptr?
 	pr.server = make(map[int]*Server)
-	for len(pr.server) < _c.N_BROKERS {
+	for len(pr.server) < N_BROKERS {
 		n := len(pr.server)
-		fmt.Println("Waiting for broker client", n + 1, "/", _c.N_BROKERS, "to connect...")
+		fmt.Println("Waiting for broker client", n + 1, "/", N_BROKERS, "to connect...")
 		conn, err := pr.ln.Accept()
 		// pr.server.conn, err = pr.ln.Accept()
 		if (err != nil) { _error.Handle("ln.Accept() failed", err) }
 		fmt.Println("Feeder", n,"connected")
 		scanner := *(bufio.NewScanner(conn))// pr.server.scanner = *(bufio.NewScanner(pr.server.conn))
 		s := Server{conn, scanner, ""}
-		s.BrokerName = s.ReqRes(_c.MSG_ACCOUNT_BROKER_NAME + "\n")
+		s.BrokerName = s.ReqRes(MSG_ACCOUNT_BROKER_NAME + "\n")
 		fmt.Println("Scanner", n + 1, "set on:", s.BrokerName)
 		pr.server[n] = &s
 	}

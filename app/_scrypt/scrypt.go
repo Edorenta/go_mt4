@@ -2,7 +2,7 @@
 package _scrypt
 
 import(
-	"fmt" //only for main test
+	// "fmt" //only for main test
 	"time"
 	"math/rand"
 	"encoding/hex"
@@ -36,7 +36,7 @@ func HashGet(s string, salt string) string {
 
 func HashMatch(s string, salt string, h string) bool {
 	h2 := HashGet(s, salt)
-	fmt.Println("h1:", h, "h2:", h2)
+	// fmt.Println("h1:", h, "h2:", h2)
     return h == h2
 }
 

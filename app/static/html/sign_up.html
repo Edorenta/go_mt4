@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		{{template "generic_head.html"}}
+		{{template "sign_up_head.html"}}
+	</head>
+    <body>
+    	{{template "generic_header.html"}}
+    	{{template "generic_navbar.html"}}
+		<h1 id="visitor_id">Welcome, {{.Visitor_id}}!<h1>
+    	{{template "sign_up_body.html"}}
+    	{{template "generic_footer.html"}}
+    </body>
+</html>
