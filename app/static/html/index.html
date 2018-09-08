@@ -7,8 +7,10 @@
     <body>
     	{{template "generic_header.html"}}
     	{{template "generic_navbar.html"}}
-        <h1 id="visitor_id">{{.Visitor_id}}<h1>
-    	{{template "index_body.html"}}
+        <div id="visitor">
+            <h1 class="hidden" id="visitor_id">{{.Visitor_id}}</h1>
+    	</div>
+        {{template "index_body.html"}}
     	{{template "generic_footer.html"}}
     </body>
 </html>

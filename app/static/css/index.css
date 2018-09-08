@@ -1,0 +1,93 @@
+html,
+body {
+    position: fixed; 
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+}
+canvas {
+   position:absolute;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   z-index: -1;
+}
+
+grid-container {
+    position: absolute;
+    top: 40vh;
+    height: 20vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 90vw;
+    grid-gap: 0vw;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+grid-item {
+  display: flex;
+}
+
+span, img {
+  margin: auto;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fadeInUp {
+  -webkit-animation-name: fadeInUp;
+  animation-name: fadeInUp;
+}
+/*
+#typewriter_container {
+    position: absolute;
+    top: 40vh;
+    height: 20vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: 90vw;
+    grid-gap: 0vw;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    background-color: transparent;
+}*/
+
+#core {
+    font-family: 'Courier New';
+    font-size: 3vw;
+    font-style: normal;
+    line-height: 90%;
+    /*font-weight: 400;*/
+    color: rgb(0,255,0);
+}
+
+#cookie_policy {
+    font-family: 'Courier New';
+    font-size: 1vw;
+    font-style: normal;
+    /*font-weight: 400;*/
+    color: rgb(0,255,0);
+}
