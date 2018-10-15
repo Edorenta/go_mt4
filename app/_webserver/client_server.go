@@ -55,14 +55,17 @@ func parse_html_files()(*template.Template) {
 		"../static/html/generic_navbar.html",
 		"../static/html/generic_footer.html",
 		// page specific heads
+		"../static/html/captcha_head.html",
 		"../static/html/index_head.html",
 		"../static/html/log_in_head.html",
 		"../static/html/sign_up_head.html",
 		// page specific bodies
+		"../static/html/captcha_body.html",
 		"../static/html/index_body.html",
 		"../static/html/log_in_body.html",
 		"../static/html/sign_up_body.html",
 		// page rendering templates
+		"../static/html/captcha.html",
 		"../static/html/index.html",
 		"../static/html/log_in.html",
 		"../static/html/sign_up.html")) //could use a wildcard as well, but better readability
@@ -223,7 +226,16 @@ func (server *ClientServer)HandleSignUpPost(w http.ResponseWriter, r *http.Reque
 	// 	// fmt.Fprintf(w, "Welcome %s", client.UD.EMAIL)
 	// }
 	// // if err != nil { _error.Handle("GetClient() in HandleLoginPost() failed", err) }
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusSeeOther) //301 >> redirection
+	http.Redirect(w, r, DOMAIN, http.StatusSeeOther) //301 >> redirection
+}
+
+func (server *ClientServer)HandleRoot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	http.Redirect(w, r, DOMAIN + "/captcha", http.StatusSeeOther) //301 >> redirection
+}
+
+func (server *ClientServer)HandleCaptcha(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "captcha.html", id) //nil = template data
 }
 
 func (server *ClientServer)HandleIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -286,7 +298,9 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.Clients 	= make(map[string]*_client.Client)
 	// httprouter settings
 	server.router = httprouter.New()
-	server.router.GET("/", server.HandleIndex)
+	server.router.GET("/", server.HandleRoot)
+	server.router.GET("/captcha", server.HandleCaptcha)
+	server.router.GET("/index", server.HandleIndex)
 	server.router.GET("/ws", server.HandleWebsocket)
 	server.router.GET("/log_in", server.HandleLogIn)
 	server.router.GET("/sign_up", server.HandleSignUp)

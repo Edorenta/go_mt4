@@ -1,0 +1,9 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" style="isolation:isolate">
+  <linearGradient id="a" x1=".25" x2=".31" y1="-.57" y2="1.02" gradientTransform="matrix(77.19 0 0 89.3 12 11)" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+    <stop offset="79.95%"/>
+  </linearGradient>
+  <path fill="url(#a)" d="M72.8 97.9L12 11h14.5l62.2 86.9c1 1.3.4 2.4-1.2 2.4H77.4c-1.6 0-3.7-1-4.6-2.4z"/>
+  <path d="M25.7 97.1l-.4-36.04h24.8q10 0 0 0c17.3 0 35.7-4.7 35.1-30.23C85.3 9.21 68.8.3 50.3 0H14.9A2.8 2.8 0 0 0 12 2.8v8.01h39.1c5.7.2 11.5 1.5 16 5.61a19 19 0 0 1 5.8 14.31c0 5.51-1.7 10.91-5.8 14.41-4.7 4.01-11 5.01-16.8 5.01H14.8a2.8 2.8 0 0 0-2.8 2.8V97.1a3 3 0 0 0 3 2.9h7.8c1.6 0 2.9-1.3 2.9-3v.1z"/>
+</svg>

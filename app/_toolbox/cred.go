@@ -127,8 +127,8 @@ func CheckUserInfo(s string) error {
 
 func CheckUserPwd(s string) error {
 	n := len(s)
-	if (n < 8) 				{ return errors.New("Password musts be at least 8 characters") }
-	if (n > 64) 			{ return errors.New("Password musts be at most 64 characters") }
+	if (n < 8) 	{ return errors.New("Password musts be at least 8 characters") }
+	if (n > 64) { return errors.New("Password musts be at most 64 characters") }
 	upper := false; lower := false; digit := false
 	for _, c := range s {
 		if (c >= 'a' && c <= 'z') {
