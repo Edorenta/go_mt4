@@ -1,6 +1,5 @@
 html,
 body {
-    position: fixed; 
     overflow-y: hidden;
     height: 100%;
     width: 100%;
@@ -10,72 +9,59 @@ body {
 }
 
 @media (max-aspect-ratio: 1/1) {
-    html,
-    body {
-        background: linear-gradient(0.42turn, #000, #0F0, #0F0, #003800, #000, #000, #000);
+    html {
+        background: linear-gradient(0.42turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);
     }
-    #logo_container
-    {
+    #logo_container {
         width: 100%; height: 50%; top: 0%; left: 0%;
     }
-
-    #captcha_container
-    {
+    #captcha_container {
         width: 100%; height: 50%; top: 50%; left: 0%;
     }
 }
 @media (min-aspect-ratio: 1/1) {
-    html,
-    body {
-        background: linear-gradient(0.33turn, #000, #000, #0F0, #0F0, #003800, #000, #000, #000, #000, #000);
+    html {
+        background: linear-gradient(0.33turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);
     }
-    #logo_container
-    {
+    #logo_container {
         width: 50%; height: 100%; top: 0%; left: 0%;
     }
-
-    #captcha_container
-    {
+    #captcha_container {
         width: 50%; height: 100%; top: 0%; left: 50%;
     }
 }
 
-.core_container
-{
+.core_container {
 	position : absolute;
 	margin: auto;
 }
 
-#tw_wrapper
-{
+#tw_wrapper {
 	width: 100%;
 	height: 100%;
 	text-align: center;
 	float: left;
 	/*padding: 5%;*/
     margin: 0;
-    font-family: "play-regular";
+    font-family: "play-regular", "Play";
     /*font-style: normal;*/
     /*line-height: 95%;*/
     /*font-weight: 400;*/
-    color: rgb(0,255,0);
+    color: #66fcf1;
 }
 
-#cookie_div
-{
+#cookie_div {
     position: absolute;
 }
 
-#svg_bar, #svg_P
-{
+#svg_bar, #svg_P {
     position: absolute;
     left: 50%;
     top: 50%;
     /*transform: translate(-50%,-50%); KILLS THE SVGJS SCALING >> NEEDS TO BE DONE FROM JS*/
 }
 
-#svg_cookie
-{
+#svg_cookie {
 	position: absolute;
 	/*fill: #00FF00;*/
 }
@@ -84,6 +70,7 @@ body {
     position: relative;
     left: 50%;
     top: 50%;
+    width: 90%;
 	transform: translate(-50%, -50%);
   	font-size: 2rem;
 }

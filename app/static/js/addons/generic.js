@@ -53,28 +53,38 @@ function sleep(ms) {
 }
 
 //relies on SVGJS
-async function svg_spin(s){
-  var i = 0;
-  while (true) {
-    s.rotate(i, 0, 0);
-    i == 359 ? i = 0 : i++;
-    await sleep(20);
-  }
+async function svg_spin(s, speed){
+  s.animate(speed || 5000,'-',0).rotate(360,0,0).loop(); //heavier than home made..
+  // var i = 0;
+  // while (true) {
+  //   s.rotate(i, 0, 0);
+  //   i == 359 ? i = 0 : i++;
+  //   await sleep(20);
+  // }
 }
 
-//relies on SVGJS
-async function svg_pulse(s, base_scale){
-  var i = 0;
-  while (true) {
-    while (i < 0.2) {
-      s.scale(base_scale + i, 0, 0); i += 0.005;
-      await sleep(18);
-    }
-    while (i > 0) {
-      s.scale(base_scale + i, 0, 0); i -= 0.005;
-      await sleep(18);
-    }
-  }
+async function svg_pulse(s, base_scale, speed){
+  var grow = function() { s.animate(speed || 2000,'<>',0).scale(base_scale + 0.2,0,0).after(reduce); }
+  var reduce = function() { s.animate(speed || 2000,'<>',0).scale(base_scale,0,0).after(grow); }
+  grow();
+  // var i = 0;
+  // while (true) {
+  //   while (i < 0.2) {
+  //     s.scale(base_scale + i, 0, 0); i += 0.005;
+  //     await sleep(18);
+  //   }
+  //   while (i > 0) {
+  //     s.scale(base_scale + i, 0, 0); i -= 0.005;
+  //     await sleep(18);
+  //   }
+  // }
+}
+
+async function svg_blink(s, color, speed){
+  var base_color = s.attr("fill"); console.log(base_color, color);
+  var color_in = function() { s.animate(speed || 2000, '<>', 0).fill(color).after(color_out); }
+  var color_out = function() { s.animate(speed || 2000, '<>', 0).fill(base_color).after(color_in); }
+  color_in();
 }
 
 function RemToPixels(rem) {    

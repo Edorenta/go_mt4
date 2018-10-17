@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html class="has-navbar-fixed-top">
 	<head lang="en">
 		{{template "generic_head.html"}}
-		{{template "index_head.html"}}
+        {{template "index_head.html"}}
 	</head>
     <body>
     	{{template "generic_header.html"}}
     	{{template "generic_navbar.html"}}
-        <div id="visitor">
-            <h1 class="hidden" id="visitor_id">{{.Visitor_id}}</h1>
-    	</div>
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.Visitor_id}}</span>
+        </div>
         {{template "index_body.html"}}
     	{{template "generic_footer.html"}}
     </body>

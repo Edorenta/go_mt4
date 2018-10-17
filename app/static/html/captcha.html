@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head lang="en">
-		{{template "generic_head.html"}}
 		{{template "captcha_head.html"}}
 	</head>
     <body>
     	{{template "generic_header.html"}}
-        <div id="visitor">
-            <h1 class="hidden" id="visitor_id">{{.Visitor_id}}</h1>
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.Visitor_id}}</span>
     	</div>
         {{template "captcha_body.html"}}
     	{{template "generic_footer.html"}}
