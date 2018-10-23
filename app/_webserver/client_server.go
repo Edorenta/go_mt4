@@ -48,27 +48,29 @@ type ClientServer struct {
 
 func parse_html_files()(*template.Template) {
 	//can also use template.ParseGlob("*.html")
-	tpl := template.Must(template.ParseFiles(
-		// generics
-		"../static/html/generic_head.html",
-		"../static/html/generic_header.html",
-		"../static/html/generic_navbar.html",
-		"../static/html/generic_footer.html",
-		// page specific heads
-		"../static/html/captcha_head.html",
-		"../static/html/index_head.html",
-		"../static/html/log_in_head.html",
-		"../static/html/sign_up_head.html",
-		// page specific bodies
-		"../static/html/captcha_body.html",
-		"../static/html/index_body.html",
-		"../static/html/log_in_body.html",
-		"../static/html/sign_up_body.html",
-		// page rendering templates
-		"../static/html/captcha.html",
-		"../static/html/index.html",
-		"../static/html/log_in.html",
-		"../static/html/sign_up.html")) //could use a wildcard as well, but better readability
+	tpl := template.Must(template.ParseGlob(
+		"../static/html/*.html"))
+		// // generics
+		// "../static/html/generic_head.html",
+		// "../static/html/generic_header.html",
+		// "../static/html/generic_navbar.html",
+		// "../static/html/generic_footer.html",
+		// // page specific heads
+		// "../static/html/captcha_head.html",
+		// "../static/html/index_head.html",
+		// "../static/html/log_in_head.html",
+		// "../static/html/sign_up_head.html",
+		// // page specific bodies
+		// "../static/html/captcha_body.html",
+		// "../static/html/log_in_body.html",
+		// "../static/html/sign_up_body.html",
+		// "../static/html/index_body.html",
+		// // page rendering templates
+		// "../static/html/captcha.html",
+		// "../static/html/index.html",
+		// "../static/html/log_in.html",
+		// "../static/html/sign_up.html")) //could use a wildcard as well, but better readability
+	fmt.Println("tpl:", tpl)
 	return tpl
 }
 
@@ -238,10 +240,37 @@ func (server *ClientServer)HandleCaptcha(w http.ResponseWriter, r *http.Request,
 	server.t.ExecuteTemplate(w, "captcha.html", id) //nil = template data
 }
 
-func (server *ClientServer)HandleIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (server *ClientServer)HandleHome(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	id := server.VerifySessionID(w, r)
-	server.t.ExecuteTemplate(w, "index.html", id) //nil = template data
+	server.t.ExecuteTemplate(w, "home.html", id) //nil = template data
 }
+
+func (server *ClientServer)HandleShowcase(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
+}
+
+// the 4 following are just filtered versions of the main showcase page
+
+// func (server *ClientServer)HandleMisc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// 	id := server.VerifySessionID(w, r)
+// 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
+// }
+
+// func (server *ClientServer)HandleFinance(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// 	id := server.VerifySessionID(w, r)
+// 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
+// }
+
+// func (server *ClientServer)HandleGaming(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// 	id := server.VerifySessionID(w, r)
+// 	server.t.ExecuteTemplate(w, "showcase_.html", id) //nil = template data
+// }
+
+// func (server *ClientServer)HandleDataViz(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+// 	id := server.VerifySessionID(w, r)
+// 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
+// }
 
 func (server *ClientServer)HandleWebsocket(w http.ResponseWriter, r *http.Request,  _ httprouter.Params) {
 	var err error
@@ -288,24 +317,52 @@ func (server *ClientServer)SigKill() {
 func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_dir = ../static
 	var server ClientServer
 
-	// host settings	
-	server.host		= ":" + strconv.Itoa(int(port))
-	// template settings
-	server.t		= parse_html_files()
-	// database settings
-	server.db		= _client.DB
-	// client map settings
-	server.Clients 	= make(map[string]*_client.Client)
-	// httprouter settings
-	server.router = httprouter.New()
+	server.host	= ":" + strconv.Itoa(int(port))			// host:port settings
+	server.t = parse_html_files()						// HTML files template settings
+	server.db = _client.DB 								// database settings
+	server.Clients = make(map[string]*_client.Client)	// client map settings
+	server.router = httprouter.New()					// httprouter settings
+	// root handlers
 	server.router.GET("/", server.HandleRoot)
-	server.router.GET("/captcha", server.HandleCaptcha)
-	server.router.GET("/index", server.HandleIndex)
 	server.router.GET("/ws", server.HandleWebsocket)
+	server.router.GET("/captcha", server.HandleCaptcha)
+	server.router.GET("/home", server.HandleHome)
+	server.router.GET("/showcase", server.HandleShowcase)
+	// showcase MISCELLANEOUS handlers
+	server.router.GET("/showcase/misc", server.HandleMisc)
+	server.router.GET("/showcase/misc/_1_bit", server.HandleMisc)
+	server.router.GET("/showcase/misc/_typewriter", server.HandleTypeWriter)
+	server.router.GET("/showcase/misc/_typefader", server.HandleTypeFader)
+	server.router.GET("/showcase/misc/_proc_gen", server.HandleProcGen)
+	server.router.GET("/showcase/misc/_fractal_trees", server.HandleFracTrees)
+	// showcase FINANCE handlers
+	server.router.GET("/showcase/finance", server.HandleFinance)
+	server.router.GET("/showcase/finance/_stock_generator", server.HandleStockGen)
+	// server.router.GET("/showcase/finance/_stock_screener", server.HandleStockScreener)
+	server.router.GET("/showcase/finance/_stock_chartist", server.HandleStockChartist)
+	server.router.GET("/showcase/finance/_stock_heatmap", server.HandleStockHeatmap)
+	server.router.GET("/showcase/finance/_stock_analyzer", server.HandleStockAnalyzer)
+	server.router.GET("/showcase/finance/_crypto_market_cap", server.HandleCryptoMarketCap)
+	server.router.GET("/showcase/finance/_crypto_heatmap", server.HandleCryptoHeatmap)
+	// showcase GAMING handlers
+	server.router.GET("/showcase/gaming", server.HandleGaming)
+	server.router.GET("/showcase/gaming/_pong", server.HandlePong)
+	server.router.GET("/showcase/gaming/_tron", server.HandleTron)
+	server.router.GET("/showcase/gaming/_snake", server.HandleSnake)
+	server.router.GET("/showcase/gaming/_tetris", server.HandleTetris)
+	server.router.GET("/showcase/gaming/_asteroids", server.HandleAsteroids)
+	server.router.GET("/showcase/gaming/_mine_sweeper", server.HandleMineSweeper)
+	server.router.GET("/showcase/gaming/_space_invaders", server.HandleSpaceInvaders)
+	// showcase DATA VUSUALIZATION handlers
+	// server.router.GET("/showcase/data_viz", server.HandleDataViz)
+	// server.router.GET("/showcase/data_viz/_ladder_sort", server.HandleLadderSort)
+
+	// log-in and sign-in routes
 	server.router.GET("/log_in", server.HandleLogIn)
 	server.router.GET("/sign_up", server.HandleSignUp)
 	server.router.POST("/log_in_post", server.HandleLogInPost) // user login request
 	server.router.POST("/sign_up_post", server.HandleSignUpPost) // user login request
+	// local files exposed from static/:
 	server.router.ServeFiles("/static/*filepath", http.Dir(static_dir)) // static dir fileserver
 	// gorilla session settings (cookies & co)
 	server.s.key	= []byte("404a484c93d182ec2ae17d0296c0fe33") //MD5 of go_mt4

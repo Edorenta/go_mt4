@@ -1,0 +1,71 @@
+html {
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+body {
+}
+
+@media (max-aspect-ratio: 1/1) {
+    html {
+        /*background: linear-gradient(0.42turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);*/
+    }
+    #caption_container {
+        width: 100%; height: 50%; top: 0%; left: 0%;
+    }
+    #picture_container {
+        width: 100%; height: 65%; top: 35%; left: 0%;
+    }
+}
+@media (min-aspect-ratio: 1/1) {
+    html {
+        /*background: linear-gradient(0.33turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);*/
+    }
+    #caption_container {
+        width: 50%; height: 100%; top: 0%; left: 0%;
+    }
+    #picture_container {
+        width: 60%; height: 100%; top: 0%; left: 40%;
+    }
+}
+
+.core_container {
+    position : absolute;
+    margin: auto;
+}
+
+#tw_wrapper {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    float: left;
+    /*padding: 5%;*/
+    margin: 0;
+    font-family: "play-regular", "Play";
+    /*font-style: normal;*/
+    /*line-height: 95%;*/
+    /*font-weight: 400;*/
+    color: #66fcf1;
+}
+
+#daddy {
+    position: absolute;
+    height:90%;
+    width:100%;
+
+}
+
+#caption_tw {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 90%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+}
+
+.navbar-menu {
+    background-color: transparent
+}

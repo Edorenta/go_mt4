@@ -46,6 +46,7 @@ Element.prototype.appendAfter = function (element) {
     document.addEventListener("DOMContentLoaded", f);
   }
 };
+
 // JS utilities
 //var browser = (navigator.userAgent.toLowerCase().match(/(chrome|safari|firefox)/) || [null])[0];
 function sleep(ms) {
@@ -87,6 +88,27 @@ async function svg_blink(s, color, speed){
   color_in();
 }
 
+//graphical
 function RemToPixels(rem) {    
     return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+//p5.js specific
+function SetPixRGBA(ctx, x, y, rgba) {
+  var d = ctx.pixelDensity();
+  for (let i = 0; i < d; i++) {
+    for (let j = 0; j < d; j++) {
+      let idx = 4 * ((y * d + j) * ctx.width * d + (x * d + i));
+      ctx.pixels[idx] = rgba[0];
+      ctx.pixels[idx+1] = rgba[1];
+      ctx.pixels[idx+2] = rgba[2];
+      ctx.pixels[idx+3] = rgba[3];
+    }
+  }
+}
+
+function GetPixRGBA(ctx, x, y) {
+  // console.log(ctx.pixels);
+  let d = ctx.pixelDensity();
+  let idx = Math.floor(4 * ((y * d) * ctx.width * d + (x * d)));
+  return ([ctx.pixels[idx],ctx.pixels[idx+1],ctx.pixels[idx+2],ctx.pixels[idx+3]]);
 }

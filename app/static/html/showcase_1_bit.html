@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+    <head lang="en">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+
+		<script src="static/js/addons/generic.js"></script>
+		<script src="static/js/addons/p5.min.js"></script>
+		<script src="static/js/addons/p5.dom.min.js"></script>
+		<script src="static/js/addons/p5.sound.min.js"></script>
+		<script src="static/js/showcase_1_bit.js"></script>
+    </head>
+    <body>
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.Visitor_id}}</span>
+        </div>
+		<!-- Floyd-Steinberg Dithering >> see coding train -->
+		<div id = "p5_1_bit"></div>
+    </body>
+    <style type="text/css">
+		html,
+		body {
+		    overflow-y: hidden;
+		    height: 100%;
+		    width: 100%;
+		    margin: 0;
+		    padding: 0;
+		    border: 0;
+		}
+    </style>
+</html>
+

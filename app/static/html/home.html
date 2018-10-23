@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+    <head lang="en">
+        {{template "generic_head.html"}}
+        {{template "home_head.html"}}
+    </head>
+    <body>
+        {{template "generic_header.html"}}
+        {{template "generic_navbar.html"}}
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.Visitor_id}}</span>
+        </div>
+        {{template "home_body.html"}}
+        {{template "generic_footer.html"}}
+        <!-- add chatbot???? better than a contact form -->
+    </body>
+</html>

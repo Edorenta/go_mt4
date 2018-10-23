@@ -46,9 +46,9 @@ var CSS_Insert = function(name, s){ //use to insert class/id/keyframes to Dynami
 class TypeWriter {
     constructor(id, delay, bar) {
         if (tw_css_up == false) { this.AddCSSClass(); tw_css_up = true; }
-        this.bar = bar;
+        this.bar = bar || "▌";
+        this.delay = delay || 60; //ms per char
         this.id = id;
-        this.delay = delay; //ms per char
         this.el = document.getElementById(id);
         this.AddBar();
         tw_n++;
@@ -79,7 +79,7 @@ class TypeWriter {
     }
     async Type(str) {//async?
         let n = str.length;
-        let s = "";
+        let s = this.el.innerHTML;
         for (let i = 0; i < n; i++) {
             s += str[i];
             this.el.innerHTML = s; //+ this.Bar();

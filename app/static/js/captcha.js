@@ -47,7 +47,7 @@ async function init_captcha() {
   // svg_cookie.cx = 50;
   // svg_cookie.cy = 50;
   svg_cookie.click(function() {
-  	window.location.replace(DOMAIN + "/index"); //redirect on click to homepage
+  	window.location.replace(DOMAIN + "/home"); //redirect on click to homepage
   })
   svg_cookie.mouseover(function() {
     this.fill("#fcad0f"); //redirect on click to homepage
@@ -130,9 +130,7 @@ async function init_core_tw() {
   var tw1 = new TypeWriter("core", 20, "▌");
   // var tw1 = new TypeFader("core", 1500);
   await tw1.MultiType(["                                        Welcome."
-  										,"I'm Paul de Renty, developer."
-  										,"Before we go any further..."
-  										,"Please click on the cookie to prove you're not a robot.*"]
+  										,"Please click on the cookie to proceed.*"]
   										, false);
   init_captcha();
   init_cookie_policy_tw();
@@ -143,7 +141,10 @@ async function init_core_tw() {
 
 async function init_cookie_policy_tw() {
   var tw2 = new TypeFader("cookie_policy", 2000);
-  await tw2.MultiType(["*By proceeding you agree to the site's cookie policy.", "*The few data collected about visitors is anonymous."], true);
+  await tw2.MultiType(["* By proceeding you agree to the site's cookie policy."
+                      ,"* The data collected about visitors is anonymous."
+                      ,"* This data helps me to know more about the site's audience."]
+                      , true);
   // await sleep(2500);
   // await tw2.Flush();
   // document.getElementById("cookie_policy").classList.add("hidden");
