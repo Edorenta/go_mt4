@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+		<title>TypeDecoder</title>
+		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
+		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
+		<script src="../../static/js/addons/generic.js"></script>
+		<script src="../../static/js/addons/TypeDecoder.js"></script>
+	</head>
+	<body>
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.Visitor_id}}</span>
+        </div>
+		<div class="_container">
+			<div id="_wrapper">
+				<div id="_center">
+					<span id="_content"></span>
+				</div>
+			</div>
+		</div>
+	</body>
+<style type="text/css">
+html,
+body {
+    position: fixed; 
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+._container
+{
+	position: absolute;
+	margin: auto;
+	width: 100%; height: 100%; top: 0%; left: 0%;
+}
+
+#_wrapper
+{
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	float: left;
+	/*padding: 5%;*/
+    margin: 0;
+    font-family: 'Courier New';
+    font-style: normal;
+    /*line-height: 95%;*/
+    /*font-weight: 400;*/
+    color: rgb(255,255,255);
+}
+
+#_center {
+    position: relative;
+    left: 50%;
+    top: 50%;
+	transform: translate(-50%, -50%);
+  	font-size: 2rem;
+}
+</style>
+<script type="text/javascript">
+"use strict";
+
+!function() { DocReady(init);}();
+function init(){
+  var td = new TypeDecoder("_content");
+  //td.Decode("Hello Codepen!");
+  td.MultiDecode(["Hello World!","I'm a tiny TypeDecoder...", "I make content of a div appear as if it were being cracked...", "I have no dependencies.","And my code fits in a tiny class!"], true);
+}
+</script>
+</html>

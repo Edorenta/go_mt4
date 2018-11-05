@@ -1,13 +1,10 @@
 "use strict";
 
-var scan;
-var img = new Image();
-var el_id = "p5_1_bit";
-var win = [];
-
 class Scan {
-	constructor(p) {
+	constructor(p, win, img) {
 		this.p = p;
+		this.win = win;
+		this.img = img;
 		this.x = 0;
 		this.y = 0;
 		this.shift = 1*p.pixelDensity();
@@ -15,16 +12,24 @@ class Scan {
 		this.p.noStroke();
 		this.state = 0; //contour state
 		this.step = 4*p.pixelDensity();
-	}  
+	}
+	Reinit() {
+		this.x = 0;
+		this.y = 0;
+		this.shift = 1*this.p.pixelDensity();
+		this.p.noStroke();
+		this.state = 0; //contour state
+		this.step = 4*this.p.pixelDensity();
+	}
   	Update() {
 		//HORIZONTAL REFRESH
-		if ((this.x + this.shift) > win.w) {
+		if ((this.x + this.shift) > this.win.w) {
 			this.state == 0 ? (this.y += this.shift) : (this.y += this.shift*(this.step));
 			this.x = 0;
 		} else {
 			this.x += this.shift;
 		}
-		if (this.y >= img.buffer.height) {
+		if (this.y >= this.img.buffer.height) {
 			this.state++;
 			if (!(this.state == (this.step + 1))) {
 				this.y = 0 + this.shift*this.state;
@@ -52,7 +57,7 @@ class Scan {
 		while (iter < n && !(this.state == (this.step + 1))) {
 			let px = Math.floor(this.x);
 			let py = Math.floor(this.y);
-			[r,g,b,a] = GetPixRGBA(img.buffer, px, py);
+			[r,g,b,a] = GetPixRGBA(this.img.buffer, px, py);
 			if (this.state == 0) { [r,g,b] = [0,0,0]; }
 			// console.log([r,g,b,a]);
 			if (a == 255) {
@@ -66,7 +71,12 @@ class Scan {
 }
 
 var s = function(p) {
-	img.src = "static/assets/images/1_bit_portrait.png";
+	var win = [];
+	var img = new Image();
+	var scan = null;
+	var el_id = "p5_1_bit";
+	img.src = "../../static/assets/images/1_bit_portrait.png";
+	// img.src = "https://image.ibb.co/m4a1RL/image-ditherlicious.png";
 	//console.log(img.width, img_b64.width);
 	img.aspect_ratio = img.width/img.height || 1;
 	img.loaded = false;
@@ -104,15 +114,26 @@ var s = function(p) {
 			img.buffer.image(img.p5, 0, win.h/2 - (win.h*ratio)/2, win.w, win.h*ratio);
 		}
 		img.buffer.loadPixels();
-		scan = new Scan(p);
+		scan = new Scan(p, win, img);
 		img.loaded = true;
 		p.loop();//CHANGE
 	}
 	p.windowResized = function() {
 		win.w = document.getElementById(el_id).parentElement.clientWidth;
 		win.h = document.getElementById(el_id).parentElement.clientHeight;
+		// win = {
+		// 	w : Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
+		// 	h : Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+		// };
 		p.resizeCanvas(win.w, win.h);
-		p.redraw();
+		p.clear();
+		win_aspect_ratio = win.w/win.h;
+		img.buffer = null;
+		img.buffer = p.createGraphics(win.w, win.h);
+		p.UpdateImage();
+		img.buffer.clear();
+		scan.Reinit();
+		p.draw();
 	}
 	p.draw = function() {
 		if (img.loaded && scan != undefined) {
@@ -121,8 +142,8 @@ var s = function(p) {
 	};
 };
 
-!function(){ DocReady(init) }();
+// !function(){ DocReady(init_showcase_1_bit) }();
 
-function init_showcase_1_bit() {
-	var p5_1 = new p5(s, document.getElementById(el_id));	
-}
+// function init_showcase_1_bit() {
+// 	var p5_1 = new p5(s, document.getElementById(el_id));	
+// }

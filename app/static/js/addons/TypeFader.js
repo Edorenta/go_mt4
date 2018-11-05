@@ -7,7 +7,7 @@
 
 "use strict";
 
-var tf_css_up = false;
+var TypeFader_css_up = false;
 var fader_delay = null;
 
 // // CSS insertion
@@ -39,10 +39,10 @@ var fader_delay = null;
 
 class TypeFader {
     constructor(id, delay) {
-        if (fader_delay == null) { fader_delay = delay; }
+        if (fader_delay == null) { fader_delay = delay || 2000; }
         this.delay = fader_delay; //ms per char
 
-      if (tf_css_up == false) { this.AddCSSClass(); tf_css_up = true; }
+      if (TypeFader_css_up == false) { this.AddCSSClass(); TypeFader_css_up = true; }
         this.id = id;
         this.el = document.getElementById(id);
     }

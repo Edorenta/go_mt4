@@ -8,64 +8,125 @@ html {
 body {
 }
 
+.main {
+    position: absolute;
+    height: calc(100% - 3.25rem);
+    width:100%;
+    font-family: "play-regular", "Play";
+    /*color: #66fcf1;*/
+    color: white;
+}
+
 @media (max-aspect-ratio: 1/1) {
     html {
         /*background: linear-gradient(0.42turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);*/
     }
-    #caption_container {
-        width: 100%; height: 50%; top: 0%; left: 0%;
+    .tw_container {
+        width: 100%; height: 25%; top: 0%; left: 0%;
     }
-    #picture_container {
-        width: 100%; height: 65%; top: 35%; left: 0%;
+    .skills_container {
+        width: 100%; height: 20%; top: 25%; left: 0%;
+    }
+    .picture_container {
+        width: 100%; height: 55%; top: 45%; left: 0%;
+    }
+    #iframe_1_bit {
+        height:40vh;
+        width:40vh;
+        max-width:90vw;
+        max-height:90vw;
+        transform: translate(-50%, -65%);
     }
 }
 @media (min-aspect-ratio: 1/1) {
     html {
         /*background: linear-gradient(0.33turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);*/
     }
-    #caption_container {
-        width: 50%; height: 100%; top: 0%; left: 0%;
+    .tw_container {
+        width: 45%; height: 50%; top: 0%; left: 0%;
     }
-    #picture_container {
-        width: 60%; height: 100%; top: 0%; left: 40%;
+    .skills_container {
+        width: 45%; height: 25%; top: 50%; left: 0%;
     }
+    .picture_container {
+        width: 55%; height: 100%; top: 0%; left: 45%;
+    }
+    #iframe_1_bit {
+        height:50vw;
+        width:50vw;
+        max-width:75vh;
+        max-height:75vh;
+        transform: translate(-50%, -52%);
+    }
+}
+
+#iframe_1_bit {
+    position: relative;
+    border-radius: 0.5rem;
+    left: 50%;
+    top: 50%;
+}
+
+/*.caption_tw {
+    position: relative;
+    text-align: center;
+    width: 98%;
+    font-size: 1rem;
+}
+*/
+.caption_tw {
+    position: absolute;
+    text-align: center;
+    top: calc(100% - 1vw - 3rem);
+    width: 98%;
+    font-size: 1rem;
 }
 
 .core_container {
-    position : absolute;
+    position: absolute;
     margin: auto;
 }
 
-#tw_wrapper {
+.skills_container {
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100% 100% 100%;
+    grid-column-gap: 5%;
+    grid-row-gap: 5%;
+}
+
+.skill {
+}
+
+.tw_wrapper {
+    position: absolute;
+    top: 50%;
     width: 100%;
-    height: 100%;
+    height: 50%;
     text-align: center;
-    float: left;
     /*padding: 5%;*/
     margin: 0;
-    font-family: "play-regular", "Play";
+    font-size: 1.5rem;
     /*font-style: normal;*/
-    /*line-height: 95%;*/
     /*font-weight: 400;*/
-    color: #66fcf1;
 }
 
-#daddy {
-    position: absolute;
-    height:90%;
-    width:100%;
-
-}
-
-#caption_tw {
+.center {
     position: absolute;
     left: 50%;
     top: 50%;
     width: 90%;
     transform: translate(-50%, -50%);
-    font-size: 1.5rem;
 }
 
 .navbar-menu {
     background-color: transparent
+}
+
+#js_logo,
+#go_logo,
+#cpp_logo {
+    position: absolute;
 }

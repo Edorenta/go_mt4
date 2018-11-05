@@ -1,32 +1,39 @@
 <!DOCTYPE html>
-<html class="has-navbar-fixed-top">
-    <head lang="en">
+<html>
+	<head lang="en">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
-
-		<script src="static/js/addons/generic.js"></script>
-		<script src="static/js/addons/p5.min.js"></script>
-		<script src="static/js/addons/p5.dom.min.js"></script>
-		<script src="static/js/addons/p5.sound.min.js"></script>
-		<script src="static/js/showcase_1_bit.js"></script>
-    </head>
+		<title>1-Bit</title>
+		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
+		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
+		<script src="../../static/js/addons/generic.js"></script>
+		<script src="../../static/js/addons/p5.min.js"></script>
+		<script src="../../static/js/showcase_1_bit.js"></script>
+	</head>
     <body>
         <div id="visitor" class="hidden">
             <span id="visitor_id">{{.Visitor_id}}</span>
         </div>
-		<!-- Floyd-Steinberg Dithering >> see coding train -->
+		<!-- Floyd-Steinberg Dithering -->
 		<div id = "p5_1_bit"></div>
     </body>
-    <style type="text/css">
-		html,
-		body {
-		    overflow-y: hidden;
-		    height: 100%;
-		    width: 100%;
-		    margin: 0;
-		    padding: 0;
-		    border: 0;
-		}
-    </style>
+<style type="text/css">
+html,
+body {
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(255,255,255,0.05);
+}
+</style>
+<script type="text/javascript">
+"use strict";
+!function(){ DocReady(init_showcase_1_bit) }();
+function init_showcase_1_bit() {
+	var p5_1 = new p5(s, document.getElementById(el_id));	
+}
+</script>
 </html>
-

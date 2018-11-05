@@ -1,1 +1,139 @@
-showcase_snake.html
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+		<title>1-Bit</title>
+		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
+		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
+		<script src="../../static/js/addons/generic.js"></script>
+		<script src="../../static/js/addons/p5.min.js"></script>
+		<script src="../../static/js/addons/TypeWriter.js"></script>
+		<script src="../../static/js/addons/MsgBox.js"></script>
+		<script src="../../static/js/showcase_snake.js"></script>
+	</head>
+    <body>
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.Visitor_id}}</span>
+        </div>
+		<div id="p5_snake"></div>
+		<div id="_score"></div>
+        <div class="_mb_container">
+        	<div id="_wrapper">
+        		<div id="_center">
+        			<div id="_mb"></div>
+        			<div id="_game_over"></div>
+        		</div>
+        	</div>
+        </div>
+    </body>
+<style type="text/css">
+html,
+body {
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(0,0,0,1);
+    text-align: center;
+	font-family: 'play-regular';
+    font-style: normal;
+}
+
+._mb_container
+{
+	position : absolute;
+	margin: auto;
+    width: 100%; height: 100%; top: 0%; left: 0%;
+}
+
+#_wrapper
+{
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	float: left;
+    margin: 0;
+}
+
+#_center {
+    position: relative;
+    left: 50%;
+    top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#_score {
+	position: absolute;
+	left:5%;
+	top:5%;
+    font-size: 5rem;
+    color: #fcad0f;
+}
+
+#_game_over {
+    font-size: 5rem;
+    color: #fcad0f;
+}
+
+</style>
+<script type="text/javascript">
+"use strict";
+!function(){ DocReady(init_showcase_snake) }();
+function init_showcase_snake() {
+	var p5_1 = new p5(s, document.getElementById(_env.el_id));
+	init_mb();	
+}
+async function init_mb(){
+	var player_id = document.getElementById("visitor_id").innerHTML;
+	var mb = new MsgBox({
+		parent_id : "_mb",
+		speed : 800,
+		pulse : true,
+		// inner_clr : "rgba(0,0,0,0.5)",
+		txt_clr : "rgba(255,255,255,1)"
+	});
+	await mb.Spawn();
+    await mb.Open();
+    var tw = new TypeWriter(mb.span.id, 15);
+	await tw.TypeClr([ [, "Welcome "],
+                      ["#fcad0f", player_id],
+                      [, "! Use "],
+                      ["#fcad0f", "←↑↓→"],
+                      [, " or your fingers to control the snake and eat "],
+                      ["red", "apples"],
+                      [, ". Run into a wall or on your tail and I'll call you a "],
+                      ["#fcad0f", "loser"],
+                      [, "!"]
+                    ], false);
+	await tw.Sleep(3000);
+    await tw.Flush();
+    tw.DeleteBar();
+    await mb.Close();
+    _env.p.loop();
+};
+
+async function play_again(){
+	var mba = new MsgBox({
+		parent_id : "_mb",
+		speed : 800,
+		pulse : true,
+		btn : true,
+		// inner_clr : "rgba(0,0,0,0.5)",
+		txt_clr : "rgba(255,255,255,1)"
+	});
+	await mb.Spawn();
+	mb.el.addEventListener("onclick",cleanup);
+    await mb.Open();
+    var tw = new TypeWriter(mb.span.id, 15);
+	await tw.Type("Play again?");
+};
+function cleanup() {
+	mba.Close();
+	mba.el.classList.remove("MsgBox");
+	_env.game_over_el.innerHTML = "";
+}
+</script>
+</html>

@@ -250,28 +250,123 @@ func (server *ClientServer)HandleShowcase(w http.ResponseWriter, r *http.Request
 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
 }
 
-// the 4 following are just filtered versions of the main showcase page
+// server.HandleMisc
+func (server *ClientServer)HandleMisc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_misc.html", id) //nil = template data
+}
 
-// func (server *ClientServer)HandleMisc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-// 	id := server.VerifySessionID(w, r)
-// 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
-// }
+func (server *ClientServer)HandleTypeWriter(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_typewriter.html", id) //nil = template data
+}
 
-// func (server *ClientServer)HandleFinance(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-// 	id := server.VerifySessionID(w, r)
-// 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
-// }
+func (server *ClientServer)HandleTypeFader(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_typefader.html", id) //nil = template data
+}
 
-// func (server *ClientServer)HandleGaming(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-// 	id := server.VerifySessionID(w, r)
-// 	server.t.ExecuteTemplate(w, "showcase_.html", id) //nil = template data
-// }
+func (server *ClientServer)HandleTypeDecoder(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_typedecoder.html", id) //nil = template data
+}
 
-// func (server *ClientServer)HandleDataViz(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-// 	id := server.VerifySessionID(w, r)
-// 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
-// }
+func (server *ClientServer)HandleMsgBox(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_msgbox.html", id) //nil = template data
+}
 
+func (server *ClientServer)Handle1Bit(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_1_bit.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleProcGen(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_proc_gen.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleFracTrees(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_frac_trees.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleFinance(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_finance.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleStockGen(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_stock_gen.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleStockChartist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_stock_chartist.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleStockHeatmap(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_stock_heatmap.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleStockAnalyzer(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_stock_analyzer.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleCryptoMarketCap(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_crypto_market_cap.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleCryptoHeatmap(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_crypto_heatmap.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleGaming(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_gaming.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandlePong(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_pong.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleTron(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_tron.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleSnake(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_snake.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleTetris(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_tetris.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleAsteroids(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_asteroids.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleMineSweeper(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_minesweeper.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleSpaceInvaders(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_space_invaders.html", id) //nil = template data
+}
+
+// websockets
 func (server *ClientServer)HandleWebsocket(w http.ResponseWriter, r *http.Request,  _ httprouter.Params) {
 	var err error
 
@@ -330,9 +425,11 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/showcase", server.HandleShowcase)
 	// showcase MISCELLANEOUS handlers
 	server.router.GET("/showcase/misc", server.HandleMisc)
-	server.router.GET("/showcase/misc/_1_bit", server.HandleMisc)
+	server.router.GET("/showcase/misc/_1_bit", server.Handle1Bit)
 	server.router.GET("/showcase/misc/_typewriter", server.HandleTypeWriter)
 	server.router.GET("/showcase/misc/_typefader", server.HandleTypeFader)
+	server.router.GET("/showcase/misc/_typedecoder", server.HandleTypeDecoder)
+	server.router.GET("/showcase/misc/_msgbox", server.HandleMsgBox)
 	server.router.GET("/showcase/misc/_proc_gen", server.HandleProcGen)
 	server.router.GET("/showcase/misc/_fractal_trees", server.HandleFracTrees)
 	// showcase FINANCE handlers

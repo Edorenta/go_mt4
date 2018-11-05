@@ -64,8 +64,9 @@ async function svg_spin(s, speed){
   // }
 }
 
-async function svg_pulse(s, base_scale, speed){
-  var grow = function() { s.animate(speed || 2000,'<>',0).scale(base_scale + 0.2,0,0).after(reduce); }
+async function svg_pulse(s, base_scale, scale_factor, speed){
+  var scale_f = (scale_factor && scale_factor > 1 && scale_factor < 5) ? scale_factor : 1.5;
+  var grow = function() { s.animate(speed || 2000,'<>',0).scale(base_scale*scale_f,0,0).after(reduce); }
   var reduce = function() { s.animate(speed || 2000,'<>',0).scale(base_scale,0,0).after(grow); }
   grow();
   // var i = 0;
