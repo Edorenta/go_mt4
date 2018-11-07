@@ -3,7 +3,7 @@
 	<head lang="en">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
-		<title>1-Bit</title>
+		<title>Snake</title>
 		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
 		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
 		<script src="../../static/js/addons/generic.js"></script>
@@ -17,19 +17,22 @@
             <span id="visitor_id">{{.Visitor_id}}</span>
         </div>
 		<div id="p5_snake"></div>
-		<div id="_score"></div>
+		<div class="overlay" id="_overlay">
         <div class="_mb_container">
         	<div id="_wrapper">
         		<div id="_center">
-        			<div id="_mb"></div>
         			<div id="_game_over"></div>
         		</div>
         	</div>
-        </div>
+        </div>			
+		</div>
+		<div id="_score"></div>
+		<div id="_fps"></div>
     </body>
 <style type="text/css">
 html,
 body {
+    position: fixed;
     overflow-y: hidden;
     height: 100%;
     width: 100%;
@@ -37,9 +40,15 @@ body {
     padding: 0;
     border: 0;
     background: rgba(0,0,0,1);
-    text-align: center;
-	font-family: 'play-regular';
+	font-family: 'joystix';
     font-style: normal;
+}
+
+#p5_snake {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 ._mb_container
@@ -73,6 +82,14 @@ body {
     color: #fcad0f;
 }
 
+#_fps {
+	position: absolute;
+	right:5%;
+	top:5%;
+    font-size: 2rem;
+    color: #fcad0f;
+}
+
 #_game_over {
     font-size: 5rem;
     color: #fcad0f;
@@ -86,54 +103,65 @@ function init_showcase_snake() {
 	var p5_1 = new p5(s, document.getElementById(_env.el_id));
 	init_mb();	
 }
+
 async function init_mb(){
 	var player_id = document.getElementById("visitor_id").innerHTML;
-	var mb = new MsgBox({
-		parent_id : "_mb",
+	Overlay.On();
+	_env.mb = new MsgBox({
+		parent_id : "_center",
+		max_width : _env.win.ratio > 1 ? "60%" : "90%",
 		speed : 800,
 		pulse : true,
+		button : true,
 		// inner_clr : "rgba(0,0,0,0.5)",
-		txt_clr : "rgba(255,255,255,1)"
+		txt_clr : "rgba(255,255,255,1)",
+		font_size : 1
 	});
-	await mb.Spawn();
-    await mb.Open();
-    var tw = new TypeWriter(mb.span.id, 15);
-	await tw.TypeClr([ [, "Welcome "],
-                      ["#fcad0f", player_id],
-                      [, "! Use "],
-                      ["#fcad0f", "←↑↓→"],
-                      [, " or your fingers to control the snake and eat "],
-                      ["red", "apples"],
-                      [, ". Run into a wall or on your tail and I'll call you a "],
-                      ["#fcad0f", "loser"],
-                      [, "!"]
-                    ], false);
-	await tw.Sleep(3000);
-    await tw.Flush();
-    tw.DeleteBar();
-    await mb.Close();
-    _env.p.loop();
+    await _env.mb.Open();
+    _env.tw = new TypeWriter(_env.mb.span.id, 15);
+	await _env.tw.TypeClr([ [, "Welcome "],["#00ffff", player_id],[, "!"] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ [," Use "],["#ff0000", "←↑↓→"],[, " to control the snake and grow by eating "],["#00ff00", "apples"],
+                      [, ". Run into a wall or on your tail and I'll call you a "],["#ff0000", "loser"],[, "!"] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ ["#00ffff","CLICK"],[," on this message to "],["#00ffff"," START"] ], false);
+	// await _env.tw.Sleep(3000);
+	_env.tmp = _env.mb.span.innerHTML;
+	console.log(_env.tmp);
+	_env.mb.el.addEventListener('click', function(){
+		Overlay.Off();
+	    // _env.tw.DeleteBar();
+	    _env.mb.span.innerHTML = "";
+	    _env.mb.Close();
+	    // _env.mb.el.classList.remove("MsgBox");
+	    _env.p.loop();
+	});
+	// _env.mb.el.addEventListener('mouseover', function(){
+	// });
+	// _env.mb.el.addEventListener('mouseleave', function(){
+	//     _env.mb.span.innerHTML = _env.tmp;
+	// });	
 };
 
-async function play_again(){
-	var mba = new MsgBox({
-		parent_id : "_mb",
-		speed : 800,
-		pulse : true,
-		btn : true,
-		// inner_clr : "rgba(0,0,0,0.5)",
-		txt_clr : "rgba(255,255,255,1)"
+async function PlayAgain(){
+	Overlay.On();
+	_env.mb.el.addEventListener('click', function(){
+		Overlay.Off();
+	    // _env.tw.DeleteBar();
+	    _env.mb.span.innerHTML = "";
+	    _env.mb.Close();
+	    // _env.mb.el.classList.remove("MsgBox");
+	    _env.p.NewGame();
+	    _env.p.loop();
 	});
-	await mb.Spawn();
-	mb.el.addEventListener("onclick",cleanup);
-    await mb.Open();
-    var tw = new TypeWriter(mb.span.id, 15);
-	await tw.Type("Play again?");
+	_env.score_el.innerHTML = "";
+	_env.mb.span.innerHTML = "";
+	await _env.mb.Open();
+	await _env.tw.TypeClr([ ["#ff0000","GAME OVER"],[," :("] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ [,"SCORE: "],["#00ff00",_env.score.toString()] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ ["#00ffff","CLICK TO RETRY"] ], false);
 };
-function cleanup() {
-	mba.Close();
-	mba.el.classList.remove("MsgBox");
-	_env.game_over_el.innerHTML = "";
-}
 </script>
 </html>

@@ -1,19 +1,25 @@
 "use strict";
 
 var _env = {
-	id : "showcase_snake",
-	el_id : "p5_snake",
-	score_el_id : "_score",
-	game_over_el_id : "_game_over",
-	win : {},
-	tile : {},
-	board : {},
-	boom : [],
-	snake : {},
-	apple : {},
-	score : 0,
-	score_el : null,
-	game_over_el : null
+	p : null,							// p5js instance
+	id : "showcase_snake",				// game name
+	el_id : "p5_snake",					// DOM game canvas container id
+	overlay_id : "_overlay",			// DOM overlay id
+	score_el_id : "_score",				// DOM score container id
+	fps_el_id : "_fps",					// DOM fps container id
+	game_over_el_id : "_game_over",		// DOM game_over container id
+	canvas_el : null,					// DOM canvas pointer
+	score_el : null,					// DOM score container pointer
+	fps_el : null,						// DOM fps container pointer
+	game_over_el : null,				// DOM game_over container pointer
+	win : {},							// client window obj
+	tile : {},							// game board tile obj
+	board : {},							// game board obj
+	boom : [],							// game explosions
+	snake : {},							// game snake obj
+	apple : {},							// game apple obj
+	score : 0,							// game score
+	fps : 30,							// game fps
 };
 
 class Explosion {
@@ -56,7 +62,7 @@ class Snake {
 	constructor(head_x, head_y, tail_len, speed, direction) {
 		let factor = 40 / 40; // _env.p.frameRate(); //in case fps isn't as high as expected
 		this.frame = 0;
-		this.speed = speed || (2/factor); // frames to move
+		this.speed = speed || (2.5/factor); // frames to move
 		this.head = {
 			x : head_x || Math.round(_env.board.w/2),
 			y : head_y || Math.round(_env.board.h/2)
@@ -66,6 +72,10 @@ class Snake {
 		this.dir = direction || Math.round(Math.random()*3);
 		for (let i = 0; i < (tail_len || 2); i++) {
 			this.Grow();
+		}
+		this.skin = { head : [], body : _env.p.loadImage("../../static/assets/images/games/snake_body.png") };
+		for (let dir = 0; dir < 4; dir++) {
+			this.skin.head[dir] = _env.p.loadImage("../../static/assets/images/games/snake_head[" + dir + "].png");
 		}
 	}
 	Move() {
@@ -92,17 +102,20 @@ class Snake {
 			}
 			this.frame = 0;
 		}
-		for (let i = 0; i < this.len; i++) {
-			_env.p.fill('rgba(255, 200, 0, 1)');
-			_env.p.rect(this.tail[i].x*_env.tile.full, this.tail[i].y*_env.tile.full, _env.tile.inner, _env.tile.inner);
+		for (var i = 0; i < this.len; i++) {
+			// _env.p.fill('rgba(255, 200, 0, 1)');
+			// _env.p.rect(this.tail[i].x*_env.tile.full, this.tail[i].y*_env.tile.full, _env.tile.inner, _env.tile.inner);
+			_env.p.image(this.skin.body, (this.tail[i].x - 0.1)*_env.tile.full, (this.tail[i].y - 0.1)*_env.tile.full, 1.2*_env.tile.inner, 1.4*_env.tile.inner);
 		}
-		_env.p.fill('rgba(255, 150, 0, 1)');
-		_env.p.rect(this.head.x*_env.tile.full, this.head.y*_env.tile.full, _env.tile.inner, _env.tile.inner);
+		// _env.p.fill('rgba(255, 150, 0, 1)');
+		// _env.p.rect(this.head.x*_env.tile.full, this.head.y*_env.tile.full, _env.tile.inner, _env.tile.inner);
+		_env.p.image(this.skin.head[this.dir], (this.head.x - 0.33)*_env.tile.full, (this.head.y - 0.33)*_env.tile.full, 1.66*_env.tile.full, 1.66*_env.tile.full);
+		// _env.p.image(this.skin.tail, this.tail[i].x*_env.tile.full, this.tail[i].y*_env.tile.full, _env.tile.inner, _env.tile.inner);
 		if (this.head.x == _env.apple.x && this.head.y == _env.apple.y) {
 			_env.score++;
 			_env.score_el.innerHTML=/*"Score: " + */_env.score;
 			this.Grow();
-			_env.boom.push(new Explosion(30, this.head.x*_env.tile.full, this.head.y*_env.tile.full));
+			_env.boom.push(new Explosion(40, (this.head.x + 0.5)*_env.tile.full, (this.head.y + 0.5)*_env.tile.full));
 			_env.apple.Spawn();
 		}
 	}
@@ -133,15 +146,51 @@ class Apple {
 	constructor() {
 		this.x = null;
 		this.y = null;
-		this.Spawn();
+		this.skin = [
+			_env.p.loadImage("../../static/assets/images/games/red_apple.png"),
+			_env.p.loadImage("../../static/assets/images/games/green_apple.png")
+		]
 	}
 	Spawn() {
+		this.skin[2] = this.skin[Math.floor(Math.random()*2)];
 		this.x = Math.floor(Math.random()*(_env.p.width/_env.tile.full));
 		this.y = Math.floor(Math.random()*(_env.p.height/_env.tile.full));
 	}
 	Draw() {
-		_env.p.fill(255, 0, 0);
-		_env.p.ellipse(this.x*_env.tile.full + (_env.tile.full/2), this.y*_env.tile.full + (_env.tile.full/2), _env.tile.inner, _env.tile.inner);
+		(!this.x || !this.y) ? this.Spawn() : 0;
+		// _env.p.fill(255, 0, 0);
+		// _env.p.ellipse(this.x*_env.tile.full + (_env.tile.full/2), this.y*_env.tile.full + (_env.tile.full/2), _env.tile.inner, _env.tile.inner);
+		_env.p.image(this.skin[2], (this.x - 0.33)*_env.tile.full, (this.y - 0.33)*_env.tile.full, 1.66*_env.tile.inner, 1.66*_env.tile.inner);
+	}
+}
+
+class Board {
+	constructor(_w,_h) {
+		this.img = null;
+		this.w = _w || (_env.win.ratio >= 1 ? 40 : 30);
+		this.h = _h || (_env.win.ratio >= 1 ? 30 : 40);
+		this.ratio = this.w / this.h;
+		this.frame = 0;
+	}
+	Generate() {
+		this.img = _env.p.createGraphics(_env.p.width, _env.p.height);
+		this.img.noStroke();
+		this.img.background('rgba(0, 0, 0, 0.30)')
+		this.img.fill('rgba(50, 50, 50, 0.30)')
+		for (let i = 0; i < _env.board.w; i++) {
+			for (let j = 0; j < _env.board.h; j++) {
+				this.img.rect(i*_env.tile.full, j*_env.tile.full, _env.tile.inner, _env.tile.inner);
+			}
+		}	
+	}
+	async Draw() {
+		_env.p.image(this.img, 0,0);
+		this.frame++;
+		if (this.frame > _env.fps*2) {
+			_env.fps = Math.round(_env.p.frameRate());
+			_env.fps_el.innerHTML="FPS: " + Math.round(_env.fps);
+			this.frame = 0;
+		}
 	}
 }
 
@@ -155,43 +204,58 @@ var s = function(p) {
 		w : document.getElementById(_env.el_id).parentElement.clientWidth,
 		h : document.getElementById(_env.el_id).parentElement.clientHeight
 	}
-	_env.board = {
-		w : 40,
-		h : 40
-	};
 	_env.win.ratio = _env.win.w / _env.win.h;
-	_env.board.ratio = _env.board.w / _env.board.h;
+	_env.board = new Board();
 
 	p.setup = function() {
+		_env.fps_el = document.getElementById(_env.fps_el_id);
 		_env.score_el = document.getElementById(_env.score_el_id);
 		_env.game_over_el = document.getElementById(_env.game_over_el_id);
 //	console.log(board.ratio, win.ratio);
 		if (_env.board.ratio > _env.win.ratio) {
-			p.createCanvas(_env.win.w, _env.win.h*(_env.win.ratio/_env.board.ratio));
+			_env.canvas_el = p.createCanvas(_env.win.w, _env.win.h*(_env.win.ratio/_env.board.ratio));
 			_env.tile = {
 				inner : p.width*0.9/_env.board.w,
 				padding : p.width*0.1/_env.board.w
 			};
 		} else {
-			p.createCanvas(_env.win.w*(_env.board.ratio/_env.win.ratio), _env.win.h);
+			_env.canvas_el = p.createCanvas(_env.win.w*(_env.board.ratio/_env.win.ratio), _env.win.h);
 			_env.tile = {
 				inner : p.height*0.9/_env.board.h,
 				padding : p.height*0.1/_env.board.h
 			};
 		}
+		let ctx = _env.canvas_el.canvas.getContext('2d');
+		ctx.mozImageSmoothingEnabled = false;
+		ctx.webkitImageSmoothingEnabled = false;
+		ctx.msImageSmoothingEnabled = false;
+		ctx.imageSmoothingEnabled = false;
 		_env.tile.full = _env.tile.inner + _env.tile.padding;
+		p.pixelDensity(1);
+		p.frameRate(30);
+		p.noLoop();
+		p.NewGame();
+//		textAlign(CENTER, CENTER);
+	}
+	p.NewGame = function() {
+		if (!(_env.board.img)) { _env.board.Generate(); }
 		_env.snake = new Snake();
 		_env.apple = new Apple();
-		p.pixelDensity(1);
-		p.frameRate(40);
-		p.noLoop();
-//		textAlign(CENTER, CENTER);
+		_env.score = 0;
+		_env.score_el.innerHTML = _env.score;
+		_env.fps_el.innerHTML = "FPS: " + _env.fps;
 	}
 	p.keyPressed = function() {
 		if (p.keyCode == 38 && (_env.snake.dir != 2)) { _env.snake.dir = 0; }
 		if (p.keyCode == 39 && (_env.snake.dir != 3)) { _env.snake.dir = 1; }
 		if (p.keyCode == 40 && (_env.snake.dir != 0)) { _env.snake.dir = 2; }
 		if (p.keyCode == 37 && (_env.snake.dir != 1)) { _env.snake.dir = 3; }
+	}
+	Gesture.Swipe = function(_dir) { // create callback for touchscreen swipe event >> see generic.js
+		if (_dir == "up" && (_env.snake.dir != 2)) { _env.snake.dir = 0; }
+		if (_dir == "right" && (_env.snake.dir != 3)) { _env.snake.dir = 1; }
+		if (_dir == "down" && (_env.snake.dir != 0)) { _env.snake.dir = 2; }
+		if (_dir == "left" && (_env.snake.dir != 1)) { _env.snake.dir = 3; }
 	}
 	p.windowResized = function() {
 		_env.win = {
@@ -210,30 +274,18 @@ var s = function(p) {
 			};
 		}
 	}
-	p.draw_board = function() {
-		p.noStroke();
-		p.background('rgba(0, 0, 0, 0.15)')
-		p.fill('rgba(50, 50, 50, 0.15)')
-		for (let i = 0; i < _env.board.w; i++) {
-			for (let j = 0; j < _env.board.h; j++) {
-				p.rect(i*_env.tile.full, j*_env.tile.full, _env.tile.inner, _env.tile.inner);
-			}
-		}	
-	}
 	p.draw = function () {
-		p.draw_board();
+		// p.draw_board();
+		_env.board.Draw();
 		_env.apple.Draw();
 		_env.snake.Move();
+
 		for (let i = 0; i < _env.boom.length; i++) {
 			_env.boom[i].Update(); //update all axplosions occuring
 		}
 	}
-
 	p.GameOver = function() {
-		_env.score_el.innerHTML = "";
-		_env.game_over_el.innerHTML = ":(<br>GAME OVER<br>Score: " + _env.score;
-		p.fill(0, 200);
-		p.rect(0, 0, p.width, p.height);
 		p.noLoop();
+		PlayAgain();
 	}
 }

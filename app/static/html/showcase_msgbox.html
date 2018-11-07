@@ -25,7 +25,7 @@
 <style type="text/css">
 html,
 body {
-    position: fixed; 
+    position: fixed;
     overflow-y: hidden;
     height: 100%;
     width: 100%;
@@ -67,7 +67,7 @@ body {
 <script type="text/javascript">
 !function() { DocReady(init);}();
 async function init(){
-  var mb = new MsgBox("_center", 1300, true);
+  var mb = new MsgBox({ parent_id: "_center", speed: 1300, pulse: true });
   await mb.Spawn();
   while (true) {
     await mb.Open();

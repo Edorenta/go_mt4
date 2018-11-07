@@ -2,18 +2,19 @@
 
 var MsgBox_n = 0;
 var MsgBox_base_css_up = false;
-// var MsgBox_btn_css_up = false;
+// var MsgBox_button_css_up = false;
 // var MsgBox_pulse_css_up = false;
 
 class MsgBox {
     constructor(input) {
-        //input = { parent_id, speed, pulse, btn, font_size, padding, inner_clr, txt_clr, border_clr, hover_inner_clr, hover_txt_clr, hover_border_clr, pulse_in_clr, pulse_out_clr)}
+        //input = { parent_id, speed, pulse, button, font_size, padding, inner_clr, txt_clr, border_clr, hover_inner_clr, hover_txt_clr, hover_border_clr, pulse_in_clr, pulse_out_clr)}
         this.speed = input.speed || 1500;
         this.pulse = input.pulse !== undefined ? input.pulse : true;
-        this.btn = input.btn !== undefined ? input.btn : false;
+        this.button = input.button !== undefined ? input.button : false;
         this.font_size = input.font_size ? input.font_size + "rem" : "1.2rem";
         this.padding = input.padding ? input.padding + "rem" : "0.7rem";
         this.min_height = input.padding ? (input.padding/2 + (input.font_size ? input.font_size : 1.2)) + "rem" : "1.55rem";//1.55 = font_size + padding/2
+        this.max_width = input.max_width || "90%";
         this.inner_clr = input.inner_clr || "rgba(255,255,255,0.2)";
         this.txt_clr = input.txt_clr || "rgba(255,255,255,1)";
         this.border_clr = input.border_clr || "rgba(255,255,255,1)";
@@ -24,12 +25,12 @@ class MsgBox {
         this.hover_border_clr = input.hover_border_clr || "rgba(0,0,0,1)";
         if (!MsgBox_base_css_up) { this.AddBaseCSS(); MsgBox_base_css_up = true; }
         // if (this.pulse && !MsgBox_pulse_css_up) { this.AddPulseCSS(); MsgBox_pulse_css_up = true; }
-        // if (this.btn && !MsgBox_btn_css_up) { this.AddBtnCSS(); MsgBox_btn_css_up = true; }
+        // if (this.button && !MsgBox_button_css_up) { this.AddBtnCSS(); MsgBox_button_css_up = true; }
         this.el = document.getElementById(input.parent_id);
         this.el.classList.add("MsgBox");
         MsgBox_n++;
         console.log(this);
-        return this.Spawn();
+        this.Spawn(); //return?
     }
     Sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -42,7 +43,7 @@ class MsgBox {
             {
                 min-height: ` + this.min_height + `;
                 transform: translate(-50%, -50%);
-                width: 80%;
+                width: ` + this.max_width + `;
                 padding: ` + this.padding + `;
                 animation: Pulse 2s infinite;
             }`);
@@ -52,13 +53,13 @@ class MsgBox {
                 70% { box-shadow: 0 0 0 ` + this.padding + ` ` + this.pulse_out_clr + `; }
             }`);
         // }
-        // if (this.btn) {
+        // if (this.button) {
             CSS_Insert(".MsgBoxHover",`
             {
                 -webkit-transition-property: color;
                 transition-property: color;
-                -webkit-transition-duration: 0.6s;
-                transition-duration: 0.6s;
+                -webkit-transition-duration: 0.4s;
+                transition-duration: 0.4s;
             }`);
             CSS_Insert(".MsgBoxHover:before",`
             {
@@ -72,12 +73,14 @@ class MsgBox {
                 border-radius: 0.33rem;
                 background-color: ` + this.hover_inner_clr + `;
                 color: ` + this.txt_clr + `;
+                -webkit-transform-origin: 0 50%;
+                transform-origin: 0 50%;
                 -webkit-transform: scaleX(0);
                 transform: scaleX(0);
                 -webkit-transition-property: transform;
                 transition-property: transform;
-                -webkit-transition-duration: 0.6s;
-                transition-duration: 0.6s;
+                -webkit-transition-duration: 0.4s;
+                transition-duration: 0.4s;
                 -webkit-transition-timing-function: ease-out;
                 transition-timing-function: ease-out;
             }`);
@@ -106,7 +109,7 @@ class MsgBox {
             border-radius: 0.33rem;
             border:1px solid ` + this.border_clr + `;
             transform: translate(-50%, -50%);`
-            + (this.btn ? `cursor: pointer;` : '') + `
+            + (this.button ? `cursor: pointer;` : '') + `
         }`);
         CSS_AddKeyFrames("ScaleXY",`
         {
@@ -122,7 +125,7 @@ class MsgBox {
             }
             100% {
                 min-height: ` + this.min_height + `;
-                width: 80%;
+                width: ` + this.max_width + `;
                 padding: ` + this.padding + `;
             }
         }`);
@@ -142,7 +145,7 @@ class MsgBox {
             }
             0% {
                 min-height: ` + this.min_height + `;
-                width: 80%;
+                width: ` + this.max_width + `;
                 padding: ` + this.padding + `;
             }
         }`);
@@ -163,13 +166,13 @@ class MsgBox {
           this.el.classList.add("MsgBoxPulse");
           this.el.classList.remove("MsgBoxOpen");
         }
-        if (this.btn) { this.el.classList.add("MsgBoxHover"); }
+        if (this.button) { this.el.classList.add("MsgBoxHover"); }
     }
     async Close() {
         this.el.classList.remove(this.pulse ? "MsgBoxPulse" : "MsgBoxOpen");
         this.el.classList.add("MsgBoxClose");
         await this.Sleep(this.speed);
-        if (this.btn) { this.el.classList.remove("MsgBoxHover"); }
+        if (this.button) { this.el.classList.remove("MsgBoxHover"); }
         this.el.classList.remove("MsgBoxClose");
     }
 }

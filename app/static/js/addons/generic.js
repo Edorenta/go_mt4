@@ -1,5 +1,43 @@
 "use strict";
 
+// edge svg transform fix: ????
+void(new MutationObserver(function(muts) {
+  for(var i = muts.length; i--;) {
+    var mut = muts[i], objs = mut.target.querySelectorAll('foreignObject');
+    for(var j = objs.length; j--;) {
+        var obj = objs[j];
+        var val = obj.style.display;
+        obj.style.display = 'none';
+        obj.getBBox();
+        obj.style.display = val;
+    }
+  }
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['transform'], subtree: true }));
+
+// browser detection (consistent / non usual)
+var BrowserName = function() {
+  if (!!window.chrome && !!window.chrome.webstore) {
+    return "chrome";
+  } // Chrome 1+
+  if (/constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification))) {
+    return "safari";
+  } // Safari 3.0+ "[object HTMLElementConstructor]"
+  if (typeof InstallTrigger !== 'undefined') {
+    return "firefox";
+  } // Firefox 1.0+ 
+  if ((!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0) {
+    return "opera";
+  } // Opera 8.0+
+  if (!isIE && !!window.StyleMedia) {
+    return "edge";
+  } // Edge 20+
+  if (/*@cc_on!@*/false || !!document.documentMode) {
+    return "ie";
+  } // Internet Explorer 6-11
+  return undefined;
+  ///if ((isChrome || isOpera) && !!window.CSS; // Blink engine detection
+}
+
 // CSS insertion
 var DynamicStyleSheet = document.createElement('style');
 var addKeyFrames = null;
@@ -39,7 +77,7 @@ Element.prototype.appendAfter = function (element) {
 },false;
 
 // document.ready
-  function DocReady(f) { //calling document.ready()
+function DocReady(f) { //calling document.ready()
   if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
     f();
   } else {
@@ -52,6 +90,58 @@ Element.prototype.appendAfter = function (element) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+var Overlay = {}; // Overlay
+var Gesture = {
+  // touch start / end
+  start_x : 0,
+  start_y : 0,
+  end_x : 0,
+  end_y : 0,
+  Rec : ""
+}; // Gesture
+!function() {
+  DocReady(function() {
+    Overlay.el = document.querySelector(".overlay");
+    Overlay.On = function() { Overlay.el.style.display = "block"; }
+    Overlay.Off = function() { Overlay.el.style.display = "none"; }
+    Overlay.Toggle = function() {
+      if (Overlay.el.style.display() == "block") { Overlay.Off() } else { Overlay.On(); }
+    }
+    Gesture.el = Overlay.el; // link swipe detector to overlay zone (100vw x 100vh)
+    Gesture.Handle = function(_x1, _x2, _y1, _y2) {
+      const { _w, _h } = Gesture.el.getBoundingClientRect();
+      let is_callback = (typeof Gesture.Swipe === 'function');
+      let x_ratio = (Math.abs(_x2 - _x1) / _w);
+      let y_ratio = (Math.abs(_y2 - _y1) / _h);
+      if (x_ratio > y_ratio && x_ratio > 0.25) {
+        // Gesture.Rec = "swipe-right";
+          if (is_callback) Gesture.Swipe("right");
+      }
+      if (y_ratio > x_ratio && y_ratio > 0.25) {
+        // Gesture.Rec = "swipe-down";
+          if (is_callback) Gesture.Swipe("down");
+      }
+      if (x_ratio < y_ratio && x_ratio < -0.25) {
+        // Gesture.Rec = "swipe-left";
+          if (is_callback) Gesture.Swipe("left");
+      }
+      if (y_ratio < x_ratio && y_ratio < -0.25) {
+        // Gesture.Rec = "swipe-up";
+          if (is_callback) Gesture.Swipe("up");
+      }
+    }
+    Gesture.el.addEventListener('touchstart', function(e) {
+        Gesture.start_x = e.changedTouches[0].screenX;
+        Gesture.start_y = e.changedTouches[0].screenY;
+    }, false);
+    Gesture.el.addEventListener('touchend', function(e) {
+        Gesture.end_x = e.changedTouches[0].screenX;
+        Gesture.end_y = e.changedTouches[0].screenY;
+        Gesture.Handle(Gesture.start_x, Gesture.start_y, Gesture.end_x, Gesture.end_y);
+    }, false); 
+  });
+}();
 
 //relies on SVGJS
 async function svg_spin(s, speed){
@@ -66,9 +156,9 @@ async function svg_spin(s, speed){
 
 async function svg_pulse(s, base_scale, scale_factor, speed){
   var scale_f = (scale_factor && scale_factor > 1 && scale_factor < 5) ? scale_factor : 1.5;
-  var grow = function() { s.animate(speed || 2000,'<>',0).scale(base_scale*scale_f,0,0).after(reduce); }
-  var reduce = function() { s.animate(speed || 2000,'<>',0).scale(base_scale,0,0).after(grow); }
-  grow();
+  var _grow = function() { s.animate(speed || 2000,'<>',0).scale(base_scale*scale_f,0,0).after(_reduce); }
+  var _reduce = function() { s.animate(speed || 2000,'<>',0).scale(base_scale,0,0).after(_grow); }
+  _grow();
   // var i = 0;
   // while (true) {
   //   while (i < 0.2) {
@@ -84,8 +174,8 @@ async function svg_pulse(s, base_scale, scale_factor, speed){
 
 async function svg_blink(s, color, speed){
   var base_color = s.attr("fill"); console.log(base_color, color);
-  var color_in = function() { s.animate(speed || 2000, '<>', 0).fill(color).after(color_out); }
-  var color_out = function() { s.animate(speed || 2000, '<>', 0).fill(base_color).after(color_in); }
+  var _color_in = function() { s.animate(speed || 2000, '<>', 0).fill(color).after(_color_out); }
+  var _color_out = function() { s.animate(speed || 2000, '<>', 0).fill(base_color).after(_color_in); }
   color_in();
 }
 

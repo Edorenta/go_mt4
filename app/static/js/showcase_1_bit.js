@@ -1,35 +1,39 @@
 "use strict";
 
+var _env = {
+	win : [],
+	img : new Image(),
+	scan : null,
+	el_id : "p5_1_bit"
+}
+
 class Scan {
-	constructor(p, win, img) {
-		this.p = p;
-		this.win = win;
-		this.img = img;
+	constructor() {
 		this.x = 0;
 		this.y = 0;
-		this.shift = 1*p.pixelDensity();
+		this.shift = 1*_env.p.pixelDensity();
 		// this.r = this.shift;
-		this.p.noStroke();
+		_env.p.noStroke();
 		this.state = 0; //contour state
-		this.step = 4*p.pixelDensity();
+		this.step = 4*_env.p.pixelDensity();
 	}
 	Reinit() {
 		this.x = 0;
 		this.y = 0;
-		this.shift = 1*this.p.pixelDensity();
-		this.p.noStroke();
+		this.shift = 1*_env.p.pixelDensity();
+		_env.p.noStroke();
 		this.state = 0; //contour state
-		this.step = 4*this.p.pixelDensity();
+		this.step = 4*_env.p.pixelDensity();
 	}
   	Update() {
 		//HORIZONTAL REFRESH
-		if ((this.x + this.shift) > this.win.w) {
+		if ((this.x + this.shift) > _env.win.w) {
 			this.state == 0 ? (this.y += this.shift) : (this.y += this.shift*(this.step));
 			this.x = 0;
 		} else {
 			this.x += this.shift;
 		}
-		if (this.y >= this.img.buffer.height) {
+		if (this.y >= _env.img.buffer.height) {
 			this.state++;
 			if (!(this.state == (this.step + 1))) {
 				this.y = 0 + this.shift*this.state;
@@ -46,23 +50,23 @@ class Scan {
 		// if (this.x >= img.buffer.width) {
 		// 	this.done = true;
 		// }
-		// this.x = this.p.constrain(this.x, 0, this.p.windowWidth);
-		// this.y = this.p.constrain(this.y, 0, this.p.windowHeight);
+		// this.x = _env.p.constrain(this.x, 0, _env.p.windowWidth);
+		// this.y = _env.p.constrain(this.y, 0, _env.p.windowHeight);
 	}
 	Unveil(n) {
-		// this.p.noStroke();
+		// _env.p.noStroke();
 		let iter = 0;
 		let col = null;
 		let r,g,b,a;
 		while (iter < n && !(this.state == (this.step + 1))) {
 			let px = Math.floor(this.x);
 			let py = Math.floor(this.y);
-			[r,g,b,a] = GetPixRGBA(this.img.buffer, px, py);
+			[r,g,b,a] = GetPixRGBA(_env.img.buffer, px, py);
 			if (this.state == 0) { [r,g,b] = [0,0,0]; }
 			// console.log([r,g,b,a]);
 			if (a == 255) {
-				this.p.stroke(r, g, b, a);
-				this.p.point(this.x, this.y);// this.p.ellipse(this.x, this.y, this.r, this.r);
+				_env.p.stroke(r, g, b, a);
+				_env.p.point(this.x, this.y);// _env.p.ellipse(this.x, this.y, this.r, this.r);
 				iter++;
 			}
 			this.Update();
@@ -71,28 +75,27 @@ class Scan {
 }
 
 var s = function(p) {
-	var win = [];
-	var img = new Image();
-	var scan = null;
-	var el_id = "p5_1_bit";
-	img.src = "../../static/assets/images/1_bit_portrait.png";
+	_env.p = p;
+	_env.el_id = "p5_1_bit";
+	_env.img.src = "../../static/assets/images/1_bit_portrait.png";
 	// img.src = "https://image.ibb.co/m4a1RL/image-ditherlicious.png";
-	//console.log(img.width, img_b64.width);
-	img.aspect_ratio = img.width/img.height || 1;
-	img.loaded = false;
-	win.w = document.getElementById(el_id).parentElement.clientWidth;
-	win.h = document.getElementById(el_id).parentElement.clientHeight;
-	var win_aspect_ratio = win.w/win.h;
-	var ratio;
-	img.buffer = p.createGraphics(win.w, win.h);
-	img.buffer.clear();
+	//console.log(_env.img.width, img_b64.width);
+	_env.img.aspect_ratio = _env.img.width/_env.img.height || 1;
+	_env.img.loaded = false;
+	_env.win = {
+		w : document.getElementById(_env.el_id).parentElement.clientWidth,
+		h : document.getElementById(_env.el_id).parentElement.clientHeight
+	}
+	_env.win.aspect_ratio = _env.win.w/_env.win.h;
+	_env.img.buffer = p.createGraphics(_env.win.w, _env.win.h);
+	_env.img.buffer.clear();
 
 	p.setup = function() {
-		p.createCanvas(win.w, win.h);
+		p.createCanvas(_env.win.w, _env.win.h);
 		// p.createCanvas(p.windowWidth, p.windowHeight);
 		p.frameRate(30);
 		p.clear();
-		img.p5 = p.loadImage(img.src,
+		_env.img.p5 = p.loadImage(_env.img.src,
 		function(i) {
 			// console.log('ok');
 			p.UpdateImage();
@@ -105,39 +108,41 @@ var s = function(p) {
 	};
 	p.UpdateImage = function() {
 		p.clear();
-		ratio = win_aspect_ratio/img.aspect_ratio;
+		let ratio = _env.win.aspect_ratio/_env.img.aspect_ratio;
 		if (ratio > 1) {
 			//p.translate(p.windowWidth/2 - (p.windowWidth/ratio)/2, 0);
-			img.buffer.image(img.p5, win.w/2 - (win.w/ratio)/2, 0, win.w/ratio, win.h);  
+			_env.img.buffer.image(_env.img.p5, _env.win.w/2 - (_env.win.w/ratio)/2, 0, _env.win.w/ratio, _env.win.h);  
 		} else {
 			//p.translate(0, p.windowHeight/2 - (p.windowHeight/ratio)/2);
-			img.buffer.image(img.p5, 0, win.h/2 - (win.h*ratio)/2, win.w, win.h*ratio);
+			_env.img.buffer.image(_env.img.p5, 0, _env.win.h/2 - (_env.win.h*ratio)/2, _env.win.w, _env.win.h*ratio);
 		}
-		img.buffer.loadPixels();
-		scan = new Scan(p, win, img);
-		img.loaded = true;
+		_env.img.buffer.loadPixels();
+		_env.scan = new Scan();
+		_env.img.loaded = true;
 		p.loop();//CHANGE
 	}
 	p.windowResized = function() {
-		win.w = document.getElementById(el_id).parentElement.clientWidth;
-		win.h = document.getElementById(el_id).parentElement.clientHeight;
+		_env.win = {
+			w : document.getElementById(_env.el_id).parentElement.clientWidth,
+			h : document.getElementById(_env.el_id).parentElement.clientHeight
+		}
 		// win = {
 		// 	w : Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
 		// 	h : Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 		// };
-		p.resizeCanvas(win.w, win.h);
+		p.resizeCanvas(_env.win.w, _env.win.h);
 		p.clear();
-		win_aspect_ratio = win.w/win.h;
-		img.buffer = null;
-		img.buffer = p.createGraphics(win.w, win.h);
+		_env.win.aspect_ratio = _env.win.w/_env.win.h;
+		_env.img.buffer = null;
+		_env.img.buffer = p.createGraphics(_env.win.w, _env.win.h);
 		p.UpdateImage();
-		img.buffer.clear();
-		scan.Reinit();
+		_env.img.buffer.clear();
+		_env.scan.Reinit();
 		p.draw();
 	}
 	p.draw = function() {
-		if (img.loaded && scan != undefined) {
-			scan.Unveil(win.w);
+		if (_env.img.loaded && _env.scan != undefined) {
+			_env.scan.Unveil(_env.win.w);
 		}
 	};
 };
@@ -145,5 +150,5 @@ var s = function(p) {
 // !function(){ DocReady(init_showcase_1_bit) }();
 
 // function init_showcase_1_bit() {
-// 	var p5_1 = new p5(s, document.getElementById(el_id));	
+// 	var p5_1 = new p5(s, document.getElementById(_env.el_id));	
 // }

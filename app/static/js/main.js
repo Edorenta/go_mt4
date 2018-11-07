@@ -7,8 +7,8 @@
 //     // test_socket();
 // }
 
-var uri = "127.0.0.1";
-var port = "8080";
+var uri = "paul-r.com";
+var port = "49152";
 var address = "ws://" + uri + ":" + port + "/ws";
 var ws_open = false;
 

@@ -43,8 +43,9 @@ table {
 }*/
 
 /*FONTS */
+
 @font-face {
-    font-family: 'play-regular';
+    font-family: 'play-regular'; /*can add bold, lays is assets folder*/
     src:url('../../assets/fonts/play-regular.woff2') format('woff2'), /* Super Modern Browsers */
         url('../../assets/fonts/play-regular.woff') format('woff'), /* Pretty Modern Browsers */
         url('../../assets/fonts/play-regular.ttf') format('truetype'); /* Safari, Android, iOS *
@@ -54,14 +55,12 @@ table {
     font-weight: normal;
     font-style: normal;
 }
+
 @font-face {
-    font-family: 'play-bold';
-    src:url('../../assets/fonts/play-bold.woff2') format('woff2'), /* Super Modern Browsers */
-        url('../../assets/fonts/play-bold.woff') format('woff'), /* Pretty Modern Browsers */
-        url('../../assets/fonts/play-bold.ttf') format('truetype'); /* Safari, Android, iOS *
-    	/*url('static/assets/fonts/play-regular.eot'), /* IE9 Compat Modes */
-        /*url('static/assets/fonts/play-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-        /*url('static/assets/fonts/play-regular.svg#svgFontName') format('svg'); /* Legacy iOS */
+    font-family: 'joystix';
+    src:url('../../assets/fonts/joystix.woff2') format('woff2'), /* Super Modern Browsers */
+        url('../../assets/fonts/joystix.woff') format('woff'), /* Pretty Modern Browsers */
+        url('../../assets/fonts/joystix.ttf') format('truetype'); /* Safari, Android, iOS */
     font-weight: normal;
     font-style: normal;
 }
@@ -70,4 +69,17 @@ table {
     position: absolute;
     visibility: hidden;
     display: none;
+}
+
+.overlay {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
 }

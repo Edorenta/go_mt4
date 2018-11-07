@@ -195,7 +195,7 @@ func (server *ClientServer)HandleLogInPost(w http.ResponseWriter, r *http.Reques
 		// fmt.Fprintf(w, "Welcome %s", client.UD.EMAIL)
 	}
 	// if err != nil { _error.Handle("GetClient() in HandleLoginPost() failed", err) }
-	http.Redirect(w, r, "http://localhost:8080/", http.StatusSeeOther) //301 >> redirection
+	http.Redirect(w, r, DOMAIN + ":" + strconv.Itoa(APP_PORT), http.StatusSeeOther) //301 >> redirection
 }
 
 func (server *ClientServer)HandleSignUp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -366,6 +366,16 @@ func (server *ClientServer)HandleSpaceInvaders(w http.ResponseWriter, r *http.Re
 	server.t.ExecuteTemplate(w, "showcase_space_invaders.html", id) //nil = template data
 }
 
+func (server *ClientServer)HandleErrBrokser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "error_brokser.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleErr404(w http.ResponseWriter, r *http.Request/*, _ httprouter.Params*/) {
+	//id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "error_404.html", nil) //nil = template data
+}
+
 // websockets
 func (server *ClientServer)HandleWebsocket(w http.ResponseWriter, r *http.Request,  _ httprouter.Params) {
 	var err error
@@ -418,6 +428,8 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.Clients = make(map[string]*_client.Client)	// client map settings
 	server.router = httprouter.New()					// httprouter settings
 	// root handlers
+	server.router.NotFound = http.HandlerFunc(server.HandleErr404)
+	server.router.GET("/brokser", server.HandleErrBrokser)
 	server.router.GET("/", server.HandleRoot)
 	server.router.GET("/ws", server.HandleWebsocket)
 	server.router.GET("/captcha", server.HandleCaptcha)
