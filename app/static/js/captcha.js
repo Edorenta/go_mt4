@@ -8,7 +8,7 @@ var win;
 // var svg_cookie;
 // var logo_scale_factor;
 
-var URI = "http://paul-r.com"; // + ":49152"??
+// var URI = window.location.hostname; //http://paul-r.com"; // + ":49152"??
 
 !function(){ DocReady(init) }();
 
@@ -31,7 +31,7 @@ async function init_captcha() {
   // svg_cookie.cx = 50;
   // svg_cookie.cy = 50;
   svg_cookie.click(function() {
-  	window.location.replace(URI + "/home"); //redirect on click to homepage
+  	window.location.replace(/*URI + */"/home"); //redirect on click to homepage
   })
   svg_cookie.mouseover(function() {
     this.fill("#fcad0f"); //color to orange

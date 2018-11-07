@@ -103,43 +103,45 @@ var Gesture = {
 !function() {
   DocReady(function() {
     Overlay.el = document.querySelector(".overlay");
-    Overlay.On = function() { Overlay.el.style.display = "block"; }
-    Overlay.Off = function() { Overlay.el.style.display = "none"; }
-    Overlay.Toggle = function() {
-      if (Overlay.el.style.display() == "block") { Overlay.Off() } else { Overlay.On(); }
+    if (Overlay.el) {
+      Overlay.On = function() { Overlay.el.style.display = "block"; }
+      Overlay.Off = function() { Overlay.el.style.display = "none"; }
+      Overlay.Toggle = function() {
+        if (Overlay.el.style.display() == "block") { Overlay.Off() } else { Overlay.On(); }
+      }
+      Gesture.el = Overlay.el; // link swipe detector to overlay zone (100vw x 100vh)
+      Gesture.Handle = function(_x1, _x2, _y1, _y2) {
+        const { _w, _h } = Gesture.el.getBoundingClientRect();
+        let is_callback = (typeof Gesture.Swipe === 'function');
+        let x_ratio = (Math.abs(_x2 - _x1) / _w);
+        let y_ratio = (Math.abs(_y2 - _y1) / _h);
+        if (x_ratio > y_ratio && x_ratio > 0.25) {
+          // Gesture.Rec = "swipe-right";
+            if (is_callback) Gesture.Swipe("right");
+        }
+        if (y_ratio > x_ratio && y_ratio > 0.25) {
+          // Gesture.Rec = "swipe-down";
+            if (is_callback) Gesture.Swipe("down");
+        }
+        if (x_ratio < y_ratio && x_ratio < -0.25) {
+          // Gesture.Rec = "swipe-left";
+            if (is_callback) Gesture.Swipe("left");
+        }
+        if (y_ratio < x_ratio && y_ratio < -0.25) {
+          // Gesture.Rec = "swipe-up";
+            if (is_callback) Gesture.Swipe("up");
+        }
+      }
+      Gesture.el.addEventListener('touchstart', function(e) {
+          Gesture.start_x = e.changedTouches[0].screenX;
+          Gesture.start_y = e.changedTouches[0].screenY;
+      }, false);
+      Gesture.el.addEventListener('touchend', function(e) {
+          Gesture.end_x = e.changedTouches[0].screenX;
+          Gesture.end_y = e.changedTouches[0].screenY;
+          Gesture.Handle(Gesture.start_x, Gesture.start_y, Gesture.end_x, Gesture.end_y);
+      }, false); 
     }
-    Gesture.el = Overlay.el; // link swipe detector to overlay zone (100vw x 100vh)
-    Gesture.Handle = function(_x1, _x2, _y1, _y2) {
-      const { _w, _h } = Gesture.el.getBoundingClientRect();
-      let is_callback = (typeof Gesture.Swipe === 'function');
-      let x_ratio = (Math.abs(_x2 - _x1) / _w);
-      let y_ratio = (Math.abs(_y2 - _y1) / _h);
-      if (x_ratio > y_ratio && x_ratio > 0.25) {
-        // Gesture.Rec = "swipe-right";
-          if (is_callback) Gesture.Swipe("right");
-      }
-      if (y_ratio > x_ratio && y_ratio > 0.25) {
-        // Gesture.Rec = "swipe-down";
-          if (is_callback) Gesture.Swipe("down");
-      }
-      if (x_ratio < y_ratio && x_ratio < -0.25) {
-        // Gesture.Rec = "swipe-left";
-          if (is_callback) Gesture.Swipe("left");
-      }
-      if (y_ratio < x_ratio && y_ratio < -0.25) {
-        // Gesture.Rec = "swipe-up";
-          if (is_callback) Gesture.Swipe("up");
-      }
-    }
-    Gesture.el.addEventListener('touchstart', function(e) {
-        Gesture.start_x = e.changedTouches[0].screenX;
-        Gesture.start_y = e.changedTouches[0].screenY;
-    }, false);
-    Gesture.el.addEventListener('touchend', function(e) {
-        Gesture.end_x = e.changedTouches[0].screenX;
-        Gesture.end_y = e.changedTouches[0].screenY;
-        Gesture.Handle(Gesture.start_x, Gesture.start_y, Gesture.end_x, Gesture.end_y);
-    }, false); 
   });
 }();
 

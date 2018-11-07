@@ -195,7 +195,7 @@ func (server *ClientServer)HandleLogInPost(w http.ResponseWriter, r *http.Reques
 		// fmt.Fprintf(w, "Welcome %s", client.UD.EMAIL)
 	}
 	// if err != nil { _error.Handle("GetClient() in HandleLoginPost() failed", err) }
-	http.Redirect(w, r, DOMAIN + ":" + strconv.Itoa(int(APP_PORT)), http.StatusSeeOther) //301 >> redirection
+	http.Redirect(w, r, DOMAIN, http.StatusSeeOther) //301 >> redirection= host + ":" + strconv.Itoa(int(APP_PORT))
 }
 
 func (server *ClientServer)HandleSignUp(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
