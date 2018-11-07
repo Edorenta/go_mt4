@@ -77,7 +77,7 @@ func NewDatabase(db_port uint16, db_host, db_user, db_name, db_ssl_mode string) 
 	if err = db.Driver.Ping(); err != nil { _error.Handle("Unable to connect to database", err) }
 	db.Fields = make(map[string]string); db.SQLtypes = make(map[string]string); db.Reqfmt = make(map[string]string)
 	db.GetFields()
-	fmt.Println("Database connection established")
+	fmt.Println("Database connection established on port:", DB_PORT)
 	fmt.Println("fields:", db.Fields["clients"])
 	fmt.Println("sqltypes:", db.SQLtypes["clients"])
 	fmt.Println("Reqfmt:", db.Reqfmt["clients"])

@@ -495,5 +495,6 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 func main() {
 	// D:/Users/pde-rent/Desktop/work/go/go_mt4/app/_static
 	server := NewClientServer("../static", APP_PORT)
+	fmt.Println("Server running at", DOMAIN, "ingress on port", APP_PORT)
 	fmt.Println(server.s)
 }
