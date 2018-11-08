@@ -232,7 +232,7 @@ func (server *ClientServer)HandleSignUpPost(w http.ResponseWriter, r *http.Reque
 }
 
 func (server *ClientServer)HandleRoot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	http.Redirect(w, r, DOMAIN + "/captcha", http.StatusSeeOther) //301 >> redirection
+	http.Redirect(w, r, /*DOMAIN + */"/captcha", http.StatusSeeOther) //301 >> redirection
 }
 
 func (server *ClientServer)HandleCaptcha(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
