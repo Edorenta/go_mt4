@@ -20,7 +20,7 @@ function mousePressed() {
 
 class Explosion {
 	constructor(i,x,y) {
-		this.magic = floor(random(1000000));
+		// this.magic = floor(random(1000000));
 		this.pc = [];
 		(i && i > 10) ? 0 : i = 100;
 		while(i--) {

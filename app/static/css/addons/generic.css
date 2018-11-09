@@ -1,3 +1,62 @@
+/*//derived from basics
+$primary: #1f2833 !default;
+$info: #c5c6c7 !default;
+$success: #66fcf1 !default;
+$warning: #fcad0f !default;
+$danger: #d82222 !default;
+
+$light: #45a29E !default;
+$dark: #0b0c10 !default;
+*/
+/* Sweep To Right */
+.has-text-white{
+  color: #ffffff;
+}
+.has-text-primary{
+  color: #1f2833;
+}
+.has-text-light{
+  color: #45a29E;
+}
+.has-text-light2{
+  color: #31d6cf;
+}
+.has-text-dark{
+  color: #0b0c10;
+}
+.has-text-warning{
+  color: #fcad0f;
+}
+.has-text-danger{
+  color: #d82222;
+}
+.has-text-success{
+  color: #66fcf1;
+}
+.has-text-info{
+  color: #c5c6c7;
+}
+.has-background-success{
+  background-color:#66fcf1!important;
+}
+.has-background-light{
+  background-color:#45a29E!important;
+}
+.has-background-primary{
+  background-color:#1f2833!important;
+}
+.has-background-dark{
+  background-color:#0b0c10!important;
+}
+.has-background-grad0{
+  background: linear-gradient(to bottom right, #66fcf1, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.has-background-grad1{
+  background: linear-gradient(to bottom right, #45A29E, #3b777a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.has-background-grad2{
+  background: linear-gradient(to bottom right, #1F2833, #0B0C10); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
 /* Sweep To Right */
 .hvr-sweep-to-right {
   display: inline-block;
@@ -19,8 +78,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #fcad0f;
-  color: white;
+  background: #fcad0f;
   -webkit-transform: scaleX(0);
   transform: scaleX(0);
   -webkit-transform-origin: 0 50%;
@@ -33,9 +91,238 @@
   transition-timing-function: ease-out;
 }
 .hvr-sweep-to-right:hover, .hvr-sweep-to-right:focus, .hvr-sweep-to-right:active {
-  color: #1f2833;
+  color: white;
 }
 .hvr-sweep-to-right:hover:before, .hvr-sweep-to-right:focus:before, .hvr-sweep-to-right:active:before {
   -webkit-transform: scaleX(1);
   transform: scaleX(1);
+}
+
+*,::after,::before{
+  box-sizing:inherit;
+}
+img{
+  height:auto;
+  max-width:100%;
+}
+a{
+  color:#c5c6c7;
+  text-decoration:none;
+}
+span{
+  font-style:inherit;
+  font-weight:inherit;
+}
+iframe {
+  border: 0;
+  border-radius: 0.3rem;
+  /*border-width: 0.06rem;*/
+  /*border-color: #c5c6c7;*/
+}
+
+/*! CSS Used from: http://localhost:8080/static/css/addons/bulma.min.css */
+ a:hover{
+  color:#fcad0f;
+}
+
+.navbar-link:not(.is-arrowless)::after{
+  border:3px solid transparent;
+  border-radius:2px;
+  border-right:0;
+  border-top:0;
+  content:" ";
+  display:block;
+  height:.625em;
+  margin-top:-.4375em;
+  pointer-events:none;
+  position:absolute;
+  top:50%;
+  transform:rotate(-45deg);
+  transform-origin:center;
+  width:.625em;
+}
+.checkbox_wrapper {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  /*padding-left: 35px;*/
+  /*margin-bottom: 12px;*/
+  cursor: pointer;
+  /*font-size: 22px;*/
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox_wrapper input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkbox {
+  position: absolute;
+  float: left;
+/*  top: 0;
+  left: 0;
+*/  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 0.3rem;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox_wrapper:hover input ~ .checkbox {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox_wrapper input:checked ~ .checkbox {
+  background-color: #fcad0f;
+}
+
+/* Create the checkbox/indicator (hidden when not checked) */
+.checkbox:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkbox when checked */
+.checkbox_wrapper input:checked ~ .checkbox:after {
+  display: block;
+}
+
+/* Style the checkbox/indicator */
+.checkbox_wrapper .checkbox:after {
+  left: 0.5rem;
+  top: 0rem;
+  width: 0.5rem;
+  height: 1rem;
+  border: solid white;
+  border-width: 0 0.3rem 0.3rem 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.input {
+  text-align: center;
+  /*display: block;*/
+  background: transparent;
+  min-height: 2rem;
+  min-width: 7.5rem;
+  max-width: 30rem;
+  font-size: 1.1rem;
+  font-family: inherit;
+  margin-bottom: 1.5rem;
+  /*margin-left: 1.5rem;*/
+  /*margin-right: 1.5rem;*/
+  padding: 0.25rem 0;
+  border: none;
+  border-bottom: 0.13rem solid #45a29E;
+  transition: all 0.5s;
+/*  border-radius: 0.3rem;
+  border-width: 0.06rem;
+  border-color: #45a29E;*/
+}
+.input input:invalid {
+  border-color: #d82222;
+}
+.input:focus{
+  border-color: #fcad0f;
+}
+.input:active{
+  border-color: #fcad0f;
+}
+.button:active,.button:focus{
+  outline:0;
+}
+.button,a{
+  cursor:pointer;
+}
+*,::after,::before{
+  box-sizing:inherit;
+}
+img{
+  height:auto;
+  max-width:100%;
+}
+a{
+  color:#fcad0f;
+  text-decoration:none;
+}
+span{
+  font-style:inherit;
+  font-weight:inherit;
+}
+.has-text-bold{
+  font-weight:700!important;
+}
+.button {
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+  align-items:center;
+  box-shadow:none;
+  display:inline-flex;
+  font-size:1.1rem;
+  font-family:inherit;
+  /*justify-content:flex-start;*/
+  position:relative;
+  vertical-align:middle;
+  justify-content:center;
+  padding-bottom:calc(.375em - 1px);
+  padding-top:calc(.375em - 1px);
+  text-align:center;
+  white-space:nowrap;
+  border-radius: 0.3rem;
+  border-width: 0.06rem;
+  border-style: solid;
+  border-color: #c5c6c7;
+  /*background-color:#1f2833;*/
+  line-height:2rem;
+  min-height: 2rem;
+  min-width: 7.5rem;
+  max-width: 30rem;
+  color:#fff;
+}
+
+.button:hover{
+  border-color:#b5b5b5;
+  color:#363636;
+}
+.button:focus{
+  border-color:#3273dc;
+  color:#363636;
+}
+.button:active{
+  border-color:#4a4a4a;
+  color:#363636;
+}
+.buttons{
+  align-items:center;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+}
+.buttons .button{
+  margin-bottom:.5rem;
+}
+.buttons .button:not(:last-child):not(.is-fullwidth){
+  margin-right:.5rem;
+}
+.buttons:last-child{
+  margin-bottom:-.5rem;
 }

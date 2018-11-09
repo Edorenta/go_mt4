@@ -1,0 +1,69 @@
+html,body {
+    background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.main {
+	position: relative;
+	font-family: "play-regular";
+	display: flex;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+.main .login-card{
+	display: block;
+	justify-content: center;
+	align-items: center;
+	background: transparent;
+	width: 100%;
+	box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.11);
+}
+.main .card-title {
+	font-size: 2rem;
+	padding: 2rem;
+}
+.main .card-title h1 {
+	color: #fff;
+	text-align: center;
+	font-size: 1.2rem;
+}
+.main .content {
+	padding: 3rem 2.5rem 5rem;
+}
+
+/*.main .checkbox {
+	color: #b5b5b5;
+	font-size: 0.8rem;
+}
+.main .checkbox span {
+	margin-left: 0.5rem;
+}*/
+.main a {
+	font-size: 0.8rem;
+}
+.main .options {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	justify-content: center;
+	text-align: center;
+	align-items: center;
+	max-width: 30rem;
+	min-height: 3rem;
+}
+.main label {
+	cursor: pointer;
+}
+.main form {
+}
+.main #email, .main #password, .main button {
+	width: 100%;
+}
+/*input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+	outline: none;
+}
+*/

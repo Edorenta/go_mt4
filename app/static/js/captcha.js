@@ -8,8 +8,6 @@ var win;
 // var svg_cookie;
 // var logo_scale_factor;
 
-// var URI = window.location.hostname; //http://paul-r.com"; // + ":49152"??
-
 !function(){ DocReady(init) }();
 
 function init() {

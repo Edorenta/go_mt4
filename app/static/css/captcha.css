@@ -1,13 +1,3 @@
-html,
-body {
-    overflow-y: hidden;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
 @media (max-aspect-ratio: 1/1) {
     html {
         background: linear-gradient(0.42turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);

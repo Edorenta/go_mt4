@@ -1,17 +1,28 @@
 <!DOCTYPE html>
-<html class="has-navbar-fixed-top">
-    <head lang="en">
-        {{template "generic_head.html"}}
-        {{template "showcase_head.html"}}
+<html>
+    <head>
+        <link rel="shortcut icon" type="image/x-icon" href='static/assets/images/PR.ico'/>
+        <title>Showcase</title>
+        <style type="text/css">
+            body, html
+            {
+                margin: 0; padding: 0; height: 100%; overflow: hidden;
+            }
+
+            #content
+            {
+                position:absolute; left: 0; right: 0; bottom: 0; top: 0px; 
+            }
+        </style>
     </head>
     <body>
-        {{template "generic_header.html"}}
-        {{template "generic_navbar.html"}}
-        <div id="visitor" class="hidden">
-            <span id="visitor_id">{{.Visitor_id}}</span>
+        <div id="content">
+            <iframe id="iframe_construction" width="100%" height="100%" frameborder="0" src="" /></iframe>
         </div>
-        {{template "showcase_body.html"}}
-        {{template "generic_footer.html"}}
-        <!-- add chatbot???? better than a contact form -->
     </body>
 </html>
+<script type="text/javascript">
+    !function() {
+        document.querySelector("#iframe_construction").setAttribute("src", /*DomainName + */"/construction_site");
+    }();
+</script>

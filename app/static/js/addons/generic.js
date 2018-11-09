@@ -1,5 +1,14 @@
 "use strict";
 
+// document.ready
+function DocReady(f) { //calling document.ready()
+  if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
+    f();
+  } else {
+    document.addEventListener("DOMContentLoaded", f);
+  }
+};
+
 // edge svg transform fix: ????
 void(new MutationObserver(function(muts) {
   for(var i = muts.length; i--;) {
@@ -15,6 +24,7 @@ void(new MutationObserver(function(muts) {
 }).observe(document.documentElement, { attributes: true, attributeFilter: ['transform'], subtree: true }));
 
 // browser detection (consistent / non usual)
+var DomainName = window.location.hostname;
 var BrowserName = function() {
   if (!!window.chrome && !!window.chrome.webstore) {
     return "chrome";
@@ -75,15 +85,6 @@ Element.prototype.appendBefore = function (element) {
 Element.prototype.appendAfter = function (element) {
   element.parentNode.insertBefore(this, element.nextSibling);
 },false;
-
-// document.ready
-function DocReady(f) { //calling document.ready()
-  if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
-    f();
-  } else {
-    document.addEventListener("DOMContentLoaded", f);
-  }
-};
 
 // JS utilities
 //var browser = (navigator.userAgent.toLowerCase().match(/(chrome|safari|firefox)/) || [null])[0];

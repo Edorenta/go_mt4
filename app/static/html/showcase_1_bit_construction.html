@@ -9,14 +9,14 @@
 		<script src="../../static/js/addons/generic.js"></script>
 		<script src="../../static/js/addons/p5.min.js"></script>
 		<script src="../../static/js/addons/p5.dom.min.js"></script>
-		<script src="../../static/js/showcase_1_bit.js"></script>
+		<script src="../../static/js/showcase_1_bit_construction.js"></script>
 	</head>
     <body>
         <div id="visitor" class="hidden">
             <span id="visitor_id">{{.Visitor_id}}</span>
         </div>
 		<!-- Floyd-Steinberg Dithering -->
-		<div id = "p5_1_bit"></div>
+		<div id = "p5_1_bit_construction"></div>
     </body>
 <style type="text/css">
 html,
@@ -32,8 +32,8 @@ body {
 </style>
 <script type="text/javascript">
 "use strict";
-!function(){ DocReady(init_showcase_1_bit) }();
-function init_showcase_1_bit() {
+!function(){ DocReady(init_showcase_1_bit_construction) }();
+function init_showcase_1_bit_construction() {
 	var p5_1 = new p5(s, document.getElementById(_env.el_id));	
 }
 </script>

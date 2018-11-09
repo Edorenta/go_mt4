@@ -4,7 +4,7 @@ var _env = {
 	win : [],
 	img : new Image(),
 	scan : null,
-	el_id : "p5_1_bit"
+	el_id : "p5_1_bit_construction"
 }
 
 class Scan {
@@ -40,18 +40,6 @@ class Scan {
 				this.x = 0;
 			}
 		}
-		//VERTICAL REFRESH
-		// if ((this.y + this.shift) > height) {
-		// 	this.x += this.shift;
-		// 	this.y = 0;
-		// } else {
-		// 	this.y += this.shift;
-		// }
-		// if (this.x >= img.buffer.width) {
-		// 	this.done = true;
-		// }
-		// this.x = _env.p.constrain(this.x, 0, _env.p.windowWidth);
-		// this.y = _env.p.constrain(this.y, 0, _env.p.windowHeight);
 	}
 	Unveil(n) {
 		// _env.p.noStroke();
@@ -76,9 +64,8 @@ class Scan {
 
 var s = function(p) {
 	_env.p = p;
-	_env.el_id = "p5_1_bit";
-	_env.img.src = "../../static/assets/images/1_bit_portrait.png";
-	// img.src = "https://image.ibb.co/m4a1RL/image-ditherlicious.png";
+	_env.el_id = "p5_1_bit_construction";
+	_env.img.src = "../../static/assets/images/1_bit_construction.png";
 	//console.log(_env.img.width, img_b64.width);
 	_env.img.aspect_ratio = _env.img.width/_env.img.height || 1;
 	_env.img.loaded = false;

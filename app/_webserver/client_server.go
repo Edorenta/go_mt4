@@ -245,6 +245,16 @@ func (server *ClientServer)HandleHome(w http.ResponseWriter, r *http.Request, _ 
 	server.t.ExecuteTemplate(w, "home.html", id) //nil = template data
 }
 
+func (server *ClientServer)HandleSkills(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "skills.html", id) //nil = template data
+}
+
+func (server *ClientServer)HandleContact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "contact.html", id) //nil = template data
+}
+
 func (server *ClientServer)HandleShowcase(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	id := server.VerifySessionID(w, r)
 	server.t.ExecuteTemplate(w, "showcase.html", id) //nil = template data
@@ -279,6 +289,11 @@ func (server *ClientServer)HandleMsgBox(w http.ResponseWriter, r *http.Request, 
 func (server *ClientServer)Handle1Bit(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	id := server.VerifySessionID(w, r)
 	server.t.ExecuteTemplate(w, "showcase_1_bit.html", id) //nil = template data
+}
+
+func (server *ClientServer)Handle1BitConstruction(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "showcase_1_bit_construction.html", id) //nil = template data
 }
 
 func (server *ClientServer)HandleProcGen(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -376,6 +391,11 @@ func (server *ClientServer)HandleErr404(w http.ResponseWriter, r *http.Request/*
 	server.t.ExecuteTemplate(w, "error_404.html", nil) //nil = template data
 }
 
+func (server *ClientServer)HandleErrConstruction(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "error_construction.html", id) //nil = template data
+}
+
 // websockets
 func (server *ClientServer)HandleWebsocket(w http.ResponseWriter, r *http.Request,  _ httprouter.Params) {
 	var err error
@@ -430,14 +450,18 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	// root handlers
 	server.router.NotFound = http.HandlerFunc(server.HandleErr404)
 	server.router.GET("/brokser", server.HandleErrBrokser)
+	server.router.GET("/construction_site", server.HandleErrConstruction)
 	server.router.GET("/", server.HandleRoot)
 	server.router.GET("/ws", server.HandleWebsocket)
 	server.router.GET("/captcha", server.HandleCaptcha)
 	server.router.GET("/home", server.HandleHome)
+	server.router.GET("/skills", server.HandleSkills)
+	server.router.GET("/contact", server.HandleContact)
 	server.router.GET("/showcase", server.HandleShowcase)
 	// showcase MISCELLANEOUS handlers
 	server.router.GET("/showcase/misc", server.HandleMisc)
 	server.router.GET("/showcase/misc/_1_bit", server.Handle1Bit)
+	server.router.GET("/showcase/misc/_1_bit_construction", server.Handle1BitConstruction)
 	server.router.GET("/showcase/misc/_typewriter", server.HandleTypeWriter)
 	server.router.GET("/showcase/misc/_typefader", server.HandleTypeFader)
 	server.router.GET("/showcase/misc/_typedecoder", server.HandleTypeDecoder)
@@ -469,8 +493,8 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	// log-in and sign-in routes
 	server.router.GET("/log_in", server.HandleLogIn)
 	server.router.GET("/sign_up", server.HandleSignUp)
-	server.router.POST("/log_in_post", server.HandleLogInPost) // user login request
-	server.router.POST("/sign_up_post", server.HandleSignUpPost) // user login request
+	server.router.POST("/post_log_in", server.HandleLogInPost) // user login request
+	server.router.POST("/post_sign_up", server.HandleSignUpPost) // user login request
 	// local files exposed from static/:
 	server.router.ServeFiles("/static/*filepath", http.Dir(static_dir)) // static dir fileserver
 	// gorilla session settings (cookies & co)

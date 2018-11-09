@@ -7,27 +7,25 @@
 <!--       <a id="navbar_title" class="navbar-item" href="#" style="color: rgba(0,0,0,0);">
         PR
       </a> -->
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="nav_list">
+      <a role="button" class="navbar-burger burger hvr-sweep-to-right" aria-label="menu" aria-expanded="false" data-target="nav_list">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
     </div>
 
-    <div id="nav_list" class="navbar-menu has-text-weight-bold">
+    <div id="nav_list" class="navbar-menu has-text-bold">
       <div class="navbar-start">
-        <a class="navbar-item redir">Home</a>
-        <a class="navbar-item redir">Skills</a>
+        <a class="navbar-item redir hvr-sweep-to-right">Home</a>
+        <a class="navbar-item redir hvr-sweep-to-right">Skills</a>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link redir">Showcase</a>
+          <a class="navbar-link redir hvr-sweep-to-right">Showcase</a>
           <div class="navbar-dropdown">
-            <a class="navbar-item s_redir">⤷ Finance</a>
+            <a class="navbar-item s_redir hvr-sweep-to-right">⤷ Finance</a>
             <!-- <hr class="navbar-divider"> -->
-            <a class="navbar-item s_redir">⤷ Data Viz</a>
+            <a class="navbar-item s_redir hvr-sweep-to-right">⤷ Gaming</a>
             <!-- <hr class="navbar-divider"> -->
-            <a class="navbar-item s_redir">⤷ Gaming</a>
-            <!-- <hr class="navbar-divider"> -->
-            <a class="navbar-item s_redir">⤷ Misc</a>
+            <a class="navbar-item s_redir hvr-sweep-to-right">⤷ Misc</a>
           </div>
         </div>
         <!-- <a class="navbar-item">Contact</a> -->
@@ -37,34 +35,243 @@
         <div class="navbar-item">
           <div class="buttons">
             <!-- <a class="button has-background-grey-lighter"><strong>Sign up</strong></a> -->
-            <a class="button has-background-primary hvr-sweep-to-right">Let's Chat</a>
-            <a class="button has-background-light hvr-sweep-to-right">Log In</a>
+            <a class="button has-background-grad1 hvr-sweep-to-right chat">Let's Chat</a>
+            <a class="button has-background-grad2 hvr-sweep-to-right log_in">Log In</a>
           </div>
         </div>
       </div>
     <!-- </div> -->
   </div>
-  <script>
-  !function(){ DocReady(set_navbar); }();
-  function set_navbar() {
-    // function set_burger() {
-    var DOMAIN = "http://localhost:8080";
-    var burger = document.querySelector('.burger');
-    var redirs = document.getElementsByClassName('redir');
-    var s_redirs = document.getElementsByClassName('s_redir');
-    var nav = document.querySelector('#'+burger.dataset.target);
-    for (let i = 0; i < redirs.length; i++) {
-      redirs[i].addEventListener('click', function(){
-        window.location.replace(DOMAIN + "/" + redirs[i].innerHTML).toLowerCase().replace(' ', '_'); });
-    }
-    for (let i = 0; i < s_redirs.length; i++) {
-      s_redirs[i].addEventListener('click', function(){
-        window.location.replace(DOMAIN + "/showcase/" + (s_redirs[i].innerHTML).substring(2).toLowerCase().replace(' ', '_'));
-      });
-    }
-    burger.addEventListener('click', function(){
-      burger.classList.toggle('is-active');
-      nav.classList.toggle('is-active'); });
+  <script type="text/javascript">
+!function(){ DocReady(set_navbar); }();
+function redir_log_in() {}
+function set_navbar() {
+  // function set_burger() {
+  var DOMAIN = ""; //let's use relative paths
+  var burger = document.querySelector('.burger');
+  var redirs = document.getElementsByClassName('redir');
+  var s_redirs = document.getElementsByClassName('s_redir');
+  var chat = document.querySelector('.chat');     //soon will toggle widget
+  var log_in = document.querySelector('.log_in'); //soon will toggle widget
+  log_in.addEventListener('click', function(){
+      window.location.replace(DOMAIN + "/log_in"); });
+  chat.addEventListener('click', function(){
+      window.location.replace(DOMAIN + "/contact"); });
+  var nav = document.querySelector('#'+burger.dataset.target);
+  for (let i = 0; i < redirs.length; i++) {
+    redirs[i].addEventListener('click', function(){
+      window.location.replace(DOMAIN + "/" + redirs[i].innerHTML).toLowerCase().replace(' ', '_'); });
   }
+  for (let i = 0; i < s_redirs.length; i++) {
+    s_redirs[i].addEventListener('click', function(){
+      window.location.replace(DOMAIN + "/showcase/" + (s_redirs[i].innerHTML).substring(2).toLowerCase().replace(' ', '_'));
+    });
+  }
+  burger.addEventListener('click', function(){
+    burger.classList.toggle('is-active');
+    nav.classList.toggle('is-active'); });
+}
   </script>
+  <style type="text/css">
+.navbar-burger,.navbar-link,a.navbar-item{
+  cursor:pointer;
+}
+.navbar{
+  font-family: "play-regular";
+  background-color: transparent;/*rgba(255,255,255,.1);*/
+  min-height:3.5rem;
+  position:relative;
+  z-index:30;
+}
+.navbar.is-fixed-top{
+  left:0;
+  position:fixed;
+  right:0;
+  z-index:30;
+}
+.navbar.is-fixed-top{
+  top:0;
+}
+.navbar-brand{
+  align-items:stretch;
+  display:flex;
+  flex-shrink:0;
+  min-height:3.5rem;
+}
+.navbar-brand a.navbar-item:hover{
+  background-color:transparent;
+}
+.navbar-burger{
+  color:#fff;
+  display:block;
+  height:3.5rem;
+  position:relative;
+  width:3.5rem;
+  margin-left:auto;
+}
+.navbar-burger span{
+  background-color:currentColor;
+  display:block;
+  height:1px;
+  left:calc(50% - 8px);
+  position:absolute;
+  transform-origin:center;
+  transition-duration:86ms;
+  transition-property:background-color,opacity,transform;
+  transition-timing-function:ease-out;
+  width:16px;
+}
+.navbar-burger span:nth-child(1){
+  top:calc(50% - 6px);
+}
+.navbar-burger span:nth-child(2){
+  top:calc(50% - 1px);
+}
+.navbar-burger span:nth-child(3){
+  top:calc(50% + 4px);
+}
+/* .navbar-burger:hover{
+  background-color:rgba(0,0,0,.05);
+}*/
+.navbar-burger.is-active span:nth-child(1){
+  transform:translateY(5px) rotate(45deg);
+}
+.navbar-burger.is-active span:nth-child(2){
+  opacity:0;
+}
+.navbar-burger.is-active span:nth-child(3){
+  transform:translateY(-5px) rotate(-45deg);
+}
+.navbar-menu{
+  display:none;
+}
+.navbar-item,.navbar-link{
+  color:#fff;
+  display:block;
+  line-height:1.5;
+  padding:.5rem .75rem;
+  position:relative;
+}
+.navbar-link:hover,a.navbar-item:hover{
+  /*background-color:#fcad0f;*/
+  color:#1f2833;
+}
+.navbar-item{
+  display:block;
+  flex-grow:0;
+  flex-shrink:0;
+}
+.navbar-item img{
+  max-height:3rem;
+}
+.navbar-item.has-dropdown{
+  padding:0;
+}
+.navbar-link:not(.is-arrowless){
+  padding-right:2.5em;
+}
+.navbar-link:not(.is-arrowless)::after{
+  border-color:#66fcf1;
+  margin-top:-.375em;
+  right:1.125em;
+}
+.navbar-dropdown{
+  font-size:.875rem;
+  padding-bottom:.5rem;
+  padding-top:.5rem;
+}
+.navbar-dropdown .navbar-item{
+  padding-left:1.5rem;
+  padding-right:1.5rem;
+}
+@media screen and (max-width:40rem){
+  .navbar-brand .navbar-item{
+    align-items:center;
+    display:flex;
+  }
+.navbar-link::after{
+    display:none;
+  }
+  .navbar-brand{
+    background-color: rgba(11, 12, 16,0.75);
+   }
+.navbar-menu{
+    /*text-align: center;*/
+    background-color: rgba(11, 12, 16,0.75);
+    box-shadow:0 8px 16px rgba(10,10,10,.1);
+    padding:.5rem 0;
+  }
+.navbar-menu.is-active{
+    display:block;
+  }
+.navbar.is-fixed-top .navbar-menu{
+    -webkit-overflow-scrolling:touch;
+    max-height:calc(100vh - 3.5rem);
+    overflow:auto;
+  }
+}
+@media screen and (min-width: 40rem){
+  .navbar,.navbar-end,.navbar-menu,.navbar-start{
+    align-items:stretch;
+    display:flex;
+  }
+.navbar{
+    min-height:3.5rem;
+  }
+.navbar-burger{
+    display:none;
+  }
+.navbar-item,.navbar-link{
+    align-items:center;
+    display:flex;    
+  }
+.navbar-item.has-dropdown{
+    align-items:stretch;
+  }
+.navbar-item.is-hoverable:hover .navbar-dropdown{
+    display:block;
+  }
+.navbar-menu{
+    flex-grow:1;
+    flex-shrink:0;
+  }
+.navbar-start{
+    justify-content:flex-start;
+    margin-right:auto;
+  }
+.navbar-end{
+    justify-content:flex-end;
+    margin-left:auto;
+  }
+.navbar-dropdown{
+    background-color:#0b0c10;
+    text-align: center;
+    border-bottom-left-radius:6px;
+    border-bottom-right-radius:6px;
+    border-top:2px solid #dbdbdb;
+    box-shadow:0 8px 8px rgba(10,10,10,.1);
+    display:none;
+    font-size:.875rem;
+    left:0;
+    min-width:100%;
+    position:absolute;
+    top:100%;
+    z-index:20;
+  }
+.navbar-dropdown .navbar-item{
+    padding:.5rem 1rem;
+    white-space:nowrap;
+  }
+.navbar-dropdown a.navbar-item{
+    padding-right:3rem;
+  }
+.navbar-dropdown a.navbar-item:hover{
+    /*background-color:#fcad0f;*/
+    color:#1f2833;
+  }
+.navbar-item.has-dropdown:hover .navbar-link{
+    /*background-color:#fcad0f;*/
+  }
+}
+  </style>
 </nav>
