@@ -101,10 +101,10 @@ class MsgBox {
             position: relative;
             left: 50%;
             top: 50%;
-            color: ` + this.txt_clr + `;
-            font-size: ` + this.font_size + `;
+            color: ` + this.txt_clr +/* `;
+            font-size: ` + this.font_size +*/ `;
             text-align: justify;
-            text-justify: inter-character;
+            text-justify: auto;
             background-color: ` + this.inner_clr + `;
             border-radius: 0.33rem;
             border:1px solid ` + this.border_clr + `;

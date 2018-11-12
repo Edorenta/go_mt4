@@ -21,6 +21,8 @@
     }
 }
 
+.logo_container {
+}
 .core_container {
 	position : absolute;
 	margin: auto;
@@ -44,16 +46,16 @@
     position: absolute;
 }
 
-#svg_bar, #svg_P {
+#svg_R, #svg_P, #svg_cookie {
     position: absolute;
     left: 50%;
     top: 50%;
-    /*transform: translate(-50%,-50%); KILLS THE SVGJS SCALING >> NEEDS TO BE DONE FROM JS*/
+    transform: translate(-50%,-50%); /*KILLS THE SVGJS SCALING >> NEEDS TO BE DONE FROM JS*/
 }
-
-#svg_cookie {
-	position: absolute;
-	/*fill: #00FF00;*/
+#logo_div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 .core_tw {
@@ -62,7 +64,6 @@
     top: 50%;
     width: 90%;
 	transform: translate(-50%, -50%);
-  	font-size: 2rem;
 }
 
 .cookie_policy_tw {
@@ -71,5 +72,4 @@
     bottom: 0%;
 	transform: translate(-50%, -50%);
     width: 98%;
-	font-size: 1rem;
 }

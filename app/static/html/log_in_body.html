@@ -1,31 +1,27 @@
 <div class="main">
 	<div class="login-card">
-		<div class="has-background-grad1 has-text-white card-title">
+		<div class="has-background-grad1 has-text-white card-title text-h2">
 			Please Log-in
 		</div>
-
-		<div class="content">
 <!-- The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post"). -->
-			<form method="POST" action="/post_log_in">
-				<input id="email" class="input" type="email" name="email" title="email" placeholder="Email" required autofocus>
-				<input id="password" class="input" type="password" name="password" title="password" placeholder="Password" required
-				style="margin-bottom:0.3rem;">
+		<form method="POST" action="/post_log_in" class="_form">
+			<input id="email" class="input" type="email" name="email" title="email" placeholder="Email" required autofocus>
+			<input id="password" class="input tiny-margin-bot" type="password" name="password" title="password" placeholder="Password" required>
 
-				<div class="options">
-					<div style="margin-bottom:1.5rem;">
-						<a class="has-text-info" href="#">Forgot Password?</a>						
-					</div>
-					<div style="margin-bottom:1.5rem;">
-						<label class="checkbox_wrapper has-text-white">
-						  <input type="checkbox"><!-- checked="check" -->
-						  <span style="margin-right:2rem;" class="checkbox"></span>
-							<span style="margin-left:2rem; font-size:1rem;">Remember me</span>
-						</label>
-					</div>
+			<div class="options text-a">
+				<div class="margin-bot">
+					<a class="has-text-info" href="#">Forgot Password?</a>
 				</div>
-				<!-- <button type="submit" class="btn btn-primary">Login</button> -->
-				<button class="button has-text-bold hvr-sweep-to-right has-background-grad2" onclick="void()">Proceed</button>
-			</form>
-		</div>
+				<div class="margin-bot">
+					<label class="checkbox_wrapper has-text-white">
+					<input type="checkbox"><!-- checked="check" -->
+					<span class="checkbox"></span>
+					<span class="checkbox_caption">Remember me</span>
+					</label>
+				</div>
+			</div>
+			<!-- <button type="submit" class="btn btn-primary">Login</button> -->
+			<button class="button has-text-bold hvr-sweep-to-right has-background-grad2" onclick="void()">Proceed</button>
+		</form>
 	</div>
 </div>

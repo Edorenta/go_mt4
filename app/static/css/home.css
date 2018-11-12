@@ -61,19 +61,11 @@ html,body {
     top: 50%;
 }
 
-/*.caption_tw {
-    position: relative;
-    text-align: center;
-    width: 98%;
-    font-size: 1rem;
-}
-*/
 .main .caption_tw {
     position: absolute;
     text-align: center;
     top: calc(100% - 1vw - 3rem);
     width: 98%;
-    font-size: 1rem;
 }
 
 .main .core_container {
@@ -102,7 +94,6 @@ html,body {
     text-align: center;
     /*padding: 5%;*/
     margin: 0;
-    font-size: 1.5rem;
     /*font-style: normal;*/
     /*font-weight: 400;*/
 }
@@ -118,5 +109,6 @@ html,body {
 #js_logo,
 #go_logo,
 #cpp_logo {
+    transform: translate(-50%, -50%);
     position: absolute;
 }

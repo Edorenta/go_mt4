@@ -15,7 +15,7 @@ class Scan {
 		// this.r = this.shift;
 		_env.p.noStroke();
 		this.state = 0; //contour state
-		this.step = 4*_env.p.pixelDensity();
+		this.step = 3*_env.p.pixelDensity();
 	}
 	Reinit() {
 		this.x = 0;
@@ -23,7 +23,7 @@ class Scan {
 		this.shift = 1*_env.p.pixelDensity();
 		_env.p.noStroke();
 		this.state = 0; //contour state
-		this.step = 4*_env.p.pixelDensity();
+		this.step = 3*_env.p.pixelDensity();
 	}
   	Update() {
 		//HORIZONTAL REFRESH
@@ -70,6 +70,9 @@ class Scan {
 				iter++;
 			}
 			this.Update();
+		}
+		if (this.state == (this.step + 1)) {
+			_env.p.noLoop();
 		}
 	}
 }
@@ -142,7 +145,7 @@ var s = function(p) {
 	}
 	p.draw = function() {
 		if (_env.img.loaded && _env.scan != undefined) {
-			_env.scan.Unveil(_env.win.w);
+			_env.scan.Unveil(_env.win.w*4);
 		}
 	};
 };

@@ -6,7 +6,8 @@
 		<title>Snake</title>
 		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
 		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
-		<script src="../../static/js/addons/generic.js"></script>
+		<link rel="stylesheet" type="text/css" href="../../static/css/addons/generic.css">
+		<script src="../../static/js/addons/TinyDom.js"></script>
 		<script src="../../static/js/addons/p5.min.js"></script>
 		<script src="../../static/js/addons/TypeWriter.js"></script>
 		<script src="../../static/js/addons/MsgBox.js"></script>
@@ -19,15 +20,15 @@
 		<div id="p5_snake"></div>
 		<div class="overlay" id="_overlay">
         <div class="_mb_container">
-        	<div id="_wrapper">
+        	<div id="_wrapper" class="text-h4">
         		<div id="_center">
         			<div id="_game_over"></div>
         		</div>
         	</div>
         </div>			
 		</div>
-		<div id="_score"></div>
-		<div id="_fps"></div>
+		<div id="_score" class="text-h1"></div>
+		<div id="_fps" class="text-h3"></div>
     </body>
 <style type="text/css">
 html,
@@ -78,7 +79,6 @@ body {
 	position: absolute;
 	left:5%;
 	top:5%;
-    font-size: 5rem;
     color: #fcad0f;
 }
 
@@ -86,12 +86,10 @@ body {
 	position: absolute;
 	right:5%;
 	top:5%;
-    font-size: 2rem;
     color: #fcad0f;
 }
 
 #_game_over {
-    font-size: 5rem;
     color: #fcad0f;
 }
 

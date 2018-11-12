@@ -110,99 +110,43 @@ var Gesture = {
       Overlay.Toggle = function() {
         if (Overlay.el.style.display() == "block") { Overlay.Off() } else { Overlay.On(); }
       }
-      Gesture.el = Overlay.el; // link swipe detector to overlay zone (100vw x 100vh)
-      Gesture.Handle = function(_x1, _x2, _y1, _y2) {
-        const { _w, _h } = Gesture.el.getBoundingClientRect();
+      Gesture.Listen = function(el_id) {
+        Gesture.el = document.querySelector(el_id);
+        Gesture.el.addEventListener('touchstart', function(e) {
+            Gesture.start_x = e.changedTouches[0].screenX;
+            Gesture.start_y = e.changedTouches[0].screenY;
+        }, false);
+        Gesture.el.addEventListener('touchend', function(e) {
+            Gesture.end_x = e.changedTouches[0].screenX;
+            Gesture.end_y = e.changedTouches[0].screenY;
+            Gesture.Handle(Gesture.start_x, Gesture.start_y, Gesture.end_x, Gesture.end_y);
+        }, false); 
+      }
+      Gesture.Listen(".overlay");
+      // let _dim = Gesture.el.getBoundingClientRect();
+      // console.log("dim:",_dim);
+      Gesture.Handle = async function(_x1, _y1, _x2, _y2) {
         let is_callback = (typeof Gesture.Swipe === 'function');
-        let x_ratio = (Math.abs(_x2 - _x1) / _w);
-        let y_ratio = (Math.abs(_y2 - _y1) / _h);
-        if (x_ratio > y_ratio && x_ratio > 0.25) {
+        let x_ratio = ((_x2 - _x1) / Gesture.el.offsetWidth);
+        let y_ratio = -((_y2 - _y1) / Gesture.el.offsetHeight);
+        // console.log(Gesture.w, Gesture.h, "xr:",x_ratio,"yr",y_ratio);
+        if (Math.abs(x_ratio) > Math.abs(y_ratio) && x_ratio > 0.05) {
           // Gesture.Rec = "swipe-right";
             if (is_callback) Gesture.Swipe("right");
         }
-        if (y_ratio > x_ratio && y_ratio > 0.25) {
+        if (Math.abs(x_ratio) < Math.abs(y_ratio) && y_ratio > 0.05) {
           // Gesture.Rec = "swipe-down";
-            if (is_callback) Gesture.Swipe("down");
+            if (is_callback) Gesture.Swipe("up");
         }
-        if (x_ratio < y_ratio && x_ratio < -0.25) {
+        if (Math.abs(x_ratio) > Math.abs(y_ratio) && x_ratio < -0.05) {
           // Gesture.Rec = "swipe-left";
             if (is_callback) Gesture.Swipe("left");
         }
-        if (y_ratio < x_ratio && y_ratio < -0.25) {
+        if (Math.abs(x_ratio) < Math.abs(y_ratio) && y_ratio < -0.05) {
           // Gesture.Rec = "swipe-up";
-            if (is_callback) Gesture.Swipe("up");
+            if (is_callback) Gesture.Swipe("down");
         }
       }
-      Gesture.el.addEventListener('touchstart', function(e) {
-          Gesture.start_x = e.changedTouches[0].screenX;
-          Gesture.start_y = e.changedTouches[0].screenY;
-      }, false);
-      Gesture.el.addEventListener('touchend', function(e) {
-          Gesture.end_x = e.changedTouches[0].screenX;
-          Gesture.end_y = e.changedTouches[0].screenY;
-          Gesture.Handle(Gesture.start_x, Gesture.start_y, Gesture.end_x, Gesture.end_y);
-      }, false); 
     }
   });
 }();
-
-//relies on SVGJS
-async function svg_spin(s, speed){
-  s.animate(speed || 5000,'-',0).rotate(360,0,0).loop(); //heavier than home made..
-  // var i = 0;
-  // while (true) {
-  //   s.rotate(i, 0, 0);
-  //   i == 359 ? i = 0 : i++;
-  //   await sleep(20);
-  // }
-}
-
-async function svg_pulse(s, base_scale, scale_factor, speed){
-  var scale_f = (scale_factor && scale_factor > 1 && scale_factor < 5) ? scale_factor : 1.5;
-  var _grow = function() { s.animate(speed || 2000,'<>',0).scale(base_scale*scale_f,0,0).after(_reduce); }
-  var _reduce = function() { s.animate(speed || 2000,'<>',0).scale(base_scale,0,0).after(_grow); }
-  _grow();
-  // var i = 0;
-  // while (true) {
-  //   while (i < 0.2) {
-  //     s.scale(base_scale + i, 0, 0); i += 0.005;
-  //     await sleep(18);
-  //   }
-  //   while (i > 0) {
-  //     s.scale(base_scale + i, 0, 0); i -= 0.005;
-  //     await sleep(18);
-  //   }
-  // }
-}
-
-async function svg_blink(s, color, speed){
-  var base_color = s.attr("fill"); console.log(base_color, color);
-  var _color_in = function() { s.animate(speed || 2000, '<>', 0).fill(color).after(_color_out); }
-  var _color_out = function() { s.animate(speed || 2000, '<>', 0).fill(base_color).after(_color_in); }
-  color_in();
-}
-
-//graphical
-function RemToPixels(rem) {    
-    return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-}
-//p5.js specific
-function SetPixRGBA(ctx, x, y, rgba) {
-  var d = ctx.pixelDensity();
-  for (let i = 0; i < d; i++) {
-    for (let j = 0; j < d; j++) {
-      let idx = 4 * ((y * d + j) * ctx.width * d + (x * d + i));
-      ctx.pixels[idx] = rgba[0];
-      ctx.pixels[idx+1] = rgba[1];
-      ctx.pixels[idx+2] = rgba[2];
-      ctx.pixels[idx+3] = rgba[3];
-    }
-  }
-}
-
-function GetPixRGBA(ctx, x, y) {
-  // console.log(ctx.pixels);
-  let d = ctx.pixelDensity();
-  let idx = Math.floor(4 * ((y * d) * ctx.width * d + (x * d)));
-  return ([ctx.pixels[idx],ctx.pixels[idx+1],ctx.pixels[idx+2],ctx.pixels[idx+3]]);
-}

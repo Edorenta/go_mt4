@@ -19,51 +19,81 @@ html,body {
 	width: 100%;
 	box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.11);
 }
-.main .card-title {
-	font-size: 2rem;
-	padding: 2rem;
+@media (min-aspect-ratio: 1/1) {
+	.main .card-title {
+		padding: 5vh;
+		margin-bottom: 5vh;
+	}
+	.main .forgot_pwd {
+		margin-bottom:4vh;
+	}
+	/*.main .checkbox {
+		color: #b5b5b5;
+		font-size: 0.8rem;
+	}
+	.main .checkbox span {
+		margin-left: 0.5rem;
+	}*/
+	.main .options {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		justify-content: center;
+		text-align: center;
+		align-items: center;
+		max-width: 70vh;
+		min-height: 7.5vh;
+	}
+	.main label {
+		cursor: pointer;
+	}
+	.main #email, .main #password, .main button {
+		width: 100%;
+	}
 }
-.main .card-title h1 {
-	color: #fff;
-	text-align: center;
-	font-size: 1.2rem;
+@media (max-aspect-ratio: 1/1) {
+	.main .card-title {
+		padding: 10vw;
+		margin-bottom: 10vw;
+	}
+	.main ._form {
+	    position: relative;
+	    left: 50%;
+	    top: 50%;
+	    width: 90%;
+	    transform: translateX(-50%);
+	}
+	.main .forgot_pwd {
+		margin-bottom:4vw;
+	}
+	/*.main .checkbox {
+		color: #b5b5b5;
+		font-size: 0.8rem;
+	}
+	.main .checkbox span {
+		margin-left: 0.5rem;
+	}*/
+	.main .options {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		justify-content: center;
+		text-align: center;
+		align-items: center;
+		max-width: 70vw;
+		min-height: 7.4vw;
+	}
+	.main label {
+		cursor: pointer;
+	}
+	.main #email, .main #password, .main button {
+		width: 100%;
+	}
 }
-.main .content {
-	padding: 3rem 2.5rem 5rem;
-}
-
-/*.main .checkbox {
-	color: #b5b5b5;
-	font-size: 0.8rem;
-}
-.main .checkbox span {
-	margin-left: 0.5rem;
-}*/
-.main a {
-	font-size: 0.8rem;
-}
-.main .options {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	justify-content: center;
-	text-align: center;
-	align-items: center;
-	max-width: 30rem;
-	min-height: 3rem;
-}
-.main label {
-	cursor: pointer;
-}
-.main form {
-}
-.main #email, .main #password, .main button {
-	width: 100%;
-}
-/*input:focus,
-select:focus,
-textarea:focus,
-button:focus {
-	outline: none;
-}
-*/
+	/*input:focus,
+	select:focus,
+	textarea:focus,
+	button:focus {
+		outline: none;
+	}
+	*/

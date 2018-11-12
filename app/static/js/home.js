@@ -27,24 +27,26 @@ async function init_tw() {
   await tw1.TypeClr([ [, "I enjoy programming, particularly in "],
                       ["#fcad0f", "JavaScript"]
                     ], false);
-  await init_logo("skill_js","js_logo",140,100,
+  await init_logo("#skill_js","js_logo",140,100,
     `<path d="M0 81.7l16.6-10c3.3 5.8 5.8 10 12.4 10 6.6 0 10.8-2.5 10.8-12.5V0h19.9v70c0 20.8-11.7 30-29.9 30A31.3 31.3 0 0 1 0 81.7zm70.4-2.5L87 70c4.1 6.7 10 12.5 19.9 12.5 8.3 0 13.2-4.2 13.2-10 0-6.7-5.8-9.2-14.9-13.3l-5-2.5c-14-5.9-23.2-13.4-23.2-30C77 11.7 87.8 0 106 0c12.5 0 21.6 4.2 28.2 15.8l-15.7 10c-3.3-5.8-6.7-8.3-12.5-8.3s-10 4.2-10 8.3c0 6.7 4.2 9.2 12.5 12.5l5 2.5C130.9 47.5 140 55 140 71.7c0 18.3-14 28.3-33.1 28.3a38.9 38.9 0 0 1-36.5-20.8z"/>`
   );
   await tw1.Sleep(1000);
   await tw1.TypeClr([ [, ", "],
                       ["#fcad0f", "Golang"]
                     ], false);
-  await init_logo("skill_go","go_logo",268,100,
+  await init_logo("#skill_go","go_logo",268,100,
     `<path d="M20.2 30.3c-.5 0-.6-.3-.4-.7l2.8-3.5c.2-.4.9-.7 1.4-.7h46.6c.5 0 .6.4.4.8l-2.2 3.4c-.3.4-1 .8-1.3.8l-47.3-.1zM.5 42.3c-.5 0-.6-.3-.4-.7L3 38.1c.2-.4.9-.7 1.4-.7h59.5c.5 0 .8.4.7.8l-1 3.1c-.2.6-.7.8-1.3.8l-61.7.1zm31.6 12c-.5 0-.7-.4-.4-.8l1.8-3.3c.3-.4.8-.8 1.3-.8H61c.6 0 .8.4.8 1l-.3 3c0 .6-.5 1-.9 1l-28.4-.1zM167.6 28c-8.3 2-13.9 3.6-22 5.6-2 .6-2 .7-3.8-1.3-2-2.2-3.4-3.6-6-5-8.3-4-16.3-2.8-23.7 2a27.7 27.7 0 0 0-13.3 24.8c.1 10.5 7.3 19 17.6 20.5 8.9 1.2 16.3-2 22.2-8.6 1.2-1.4 2.2-3 3.5-4.8h-25.2c-2.7 0-3.4-1.7-2.5-4 1.7-4 4.9-10.8 6.7-14.2.4-.8 1.3-2 3.3-2h47.4c-.2 3.5-.2 7-.7 10.5-1.5 9.4-5 18-10.7 25.6a54.4 54.4 0 0 1-37.2 22.2A46.2 46.2 0 0 1 88 90.7a41 41 0 0 1-16.6-29 51.3 51.3 0 0 1 11.1-38.2A57.9 57.9 0 0 1 119.1.9c12.3-2.2 24-.8 34.6 6.4 7 4.6 11.9 10.8 15.1 18.4.8 1.2.3 1.8-1.2 2.2z"/>
      <path d="M210.7 100A48.8 48.8 0 0 1 179 88.6a41 41 0 0 1-14.1-25.2A49.9 49.9 0 0 1 175.4 24c9.5-12.5 21-19 36.5-21.8 13.3-2.3 25.8-1 37.2 6.7a40.6 40.6 0 0 1 18.4 29c2.2 17.7-2.9 32-15 44.3a59.6 59.6 0 0 1-31.3 16.7c-3.6.7-7 .8-10.5 1.1zm31.1-52.7l-.4-4.3a21.5 21.5 0 0 0-26.6-17.3 28.5 28.5 0 0 0-22.9 22.7A21.5 21.5 0 0 0 204 73a24 24 0 0 0 21.3-.7 28.6 28.6 0 0 0 16.6-25z"/>`
   );
   await tw1.Sleep(1000);
   await tw1.TypeClr([ [, ", and "],
                       ["#fcad0f", "C/C++"]
-                    ], false);  await init_logo("skill_cpp","cpp_logo",120,100,
+                    ], false);
+  await init_logo("#skill_cpp","cpp_logo",120,100,
     `<path d="M120 53h-6v6h-6v-6h-5v-6h5v-6h6v6h6v6zm-21 0h-5v6h-6v-6h-6v-6h6v-6h6v6h5v6z"/>
      <path d="M72 62a25 25 0 1 1-1-25l22-13a50 50 0 1 0 1 50L72 62z"/>`
   );
+  pulse_logos();
 }
 
 async function init_caption() {
@@ -54,19 +56,36 @@ async function init_caption() {
                       , true);
 }
 
+let logo = [];
 async function init_logo(_div_id,_svg_id,_width,_height,_markup) {
-  var logo_scale_factor = 0.05 * (win.landscape ? win.h : win.w) / 100;
-  var logo_getter = SVG(_div_id).size(_width,_height);
-  var logo = logo_getter.svg(_markup).id(_svg_id);
-  logo.attr({ fill: "#FFF", transform: "translate(-" + _width/2 + ",-" + _height/2 + ")" })
-  logo.scale(logo_scale_factor*4, 0, 0)
-  logo.animate(750, '>', 0).scale(logo_scale_factor, 0, 0)
-  logo.mouseover(function() {
-    this.fill("#fcad0f"); //color to orange
+  let _logo = new TinySVG({
+    parent_id: _div_id,
+    id: _svg_id,
+    w: _width,
+    h: _height,
+    scale: (0.075 * (win.landscape ? win.h : win.w) / 100)*3,
+    core: _markup,
+    fill: "#ffffff"
   });
-  logo.mouseout(function() {
-    this.fill("#ffffff"); //color back to blue
+  _logo.OnMouseOver(function() {
+    _logo.Fill("#fcad0f"); //color to orange
   });
-  svg_pulse(logo, logo_scale_factor);
+  _logo.OnMouseOut(function() {
+    _logo.Fill("#ffffff"); //color back to blue
+  });
+  _logo.Spawn();
+  _logo.Scale(0.33, 300);
   await sleep(500);
+  logo[logo.length] = _logo;
+}
+async function pulse_logos() {
+  while (true) {
+    for (let i = 0; i < logo.length; i++) {
+      // logo[i].Fill("#66fcf1");
+      await logo[i].Scale(2,750);
+      await sleep(750)
+      logo[i].Scale(0.5,750);
+      // logo[i].Fill("#ffffff");
+    }
+  }
 }

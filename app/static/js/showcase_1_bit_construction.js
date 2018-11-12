@@ -59,6 +59,9 @@ class Scan {
 			}
 			this.Update();
 		}
+		if (this.state == (this.step + 1)) {
+			_env.p.noLoop();
+		}
 	}
 }
 

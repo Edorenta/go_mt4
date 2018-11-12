@@ -78,7 +78,7 @@ class Snake {
 			this.skin.head[dir] = _env.p.loadImage("../../static/assets/images/games/snake_head[" + dir + "].png");
 		}
 	}
-	Move() {
+	async Move() {
 		this.frame++;
 		if (this.frame >= this.speed) {
 			// draw snake's body
@@ -119,7 +119,7 @@ class Snake {
 			_env.apple.Spawn();
 		}
 	}
-	Grow() {
+	async Grow() {
 		let _x = this.len ? this.tail[this.len - 1].x : this.head.x;
 		let _y = this.len ? this.tail[this.len - 1].y : this.head.y;
 		switch (this.dir) {
@@ -156,7 +156,7 @@ class Apple {
 		this.x = Math.floor(Math.random()*(_env.p.width/_env.tile.full));
 		this.y = Math.floor(Math.random()*(_env.p.height/_env.tile.full));
 	}
-	Draw() {
+	async Draw() {
 		(!this.x || !this.y) ? this.Spawn() : 0;
 		// _env.p.fill(255, 0, 0);
 		// _env.p.ellipse(this.x*_env.tile.full + (_env.tile.full/2), this.y*_env.tile.full + (_env.tile.full/2), _env.tile.inner, _env.tile.inner);
@@ -206,7 +206,7 @@ var s = function(p) {
 	}
 	_env.win.ratio = _env.win.w / _env.win.h;
 	_env.board = new Board();
-
+	Gesture.Listen("#" + _env.el_id);
 	p.setup = function() {
 		_env.fps_el = document.getElementById(_env.fps_el_id);
 		_env.score_el = document.getElementById(_env.score_el_id);
@@ -245,13 +245,14 @@ var s = function(p) {
 		_env.score_el.innerHTML = _env.score;
 		_env.fps_el.innerHTML = "FPS: " + _env.fps;
 	}
-	p.keyPressed = function() {
+	p.keyPressed = async function() {
 		if (p.keyCode == 38 && (_env.snake.dir != 2)) { _env.snake.dir = 0; }
 		if (p.keyCode == 39 && (_env.snake.dir != 3)) { _env.snake.dir = 1; }
 		if (p.keyCode == 40 && (_env.snake.dir != 0)) { _env.snake.dir = 2; }
 		if (p.keyCode == 37 && (_env.snake.dir != 1)) { _env.snake.dir = 3; }
 	}
-	Gesture.Swipe = function(_dir) { // create callback for touchscreen swipe event >> see generic.js
+	Gesture.Swipe = async function(_dir) { // create callback for touchscreen swipe event >> see generic.js
+		console.log("swiped " + _dir);
 		if (_dir == "up" && (_env.snake.dir != 2)) { _env.snake.dir = 0; }
 		if (_dir == "right" && (_env.snake.dir != 3)) { _env.snake.dir = 1; }
 		if (_dir == "down" && (_env.snake.dir != 0)) { _env.snake.dir = 2; }
@@ -274,7 +275,7 @@ var s = function(p) {
 			};
 		}
 	}
-	p.draw = function () {
+	p.draw = async function () {
 		// p.draw_board();
 		_env.board.Draw();
 		_env.apple.Draw();
