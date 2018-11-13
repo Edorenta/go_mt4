@@ -50,26 +50,8 @@ func parse_html_files()(*template.Template) {
 	//can also use template.ParseGlob("*.html")
 	tpl := template.Must(template.ParseGlob(
 		"../static/html/*.html"))
-		// // generics
-		// "../static/html/generic_head.html",
-		// "../static/html/generic_header.html",
-		// "../static/html/generic_navbar.html",
-		// "../static/html/generic_footer.html",
-		// // page specific heads
-		// "../static/html/captcha_head.html",
-		// "../static/html/index_head.html",
-		// "../static/html/log_in_head.html",
-		// "../static/html/sign_up_head.html",
-		// // page specific bodies
-		// "../static/html/captcha_body.html",
-		// "../static/html/log_in_body.html",
-		// "../static/html/sign_up_body.html",
-		// "../static/html/index_body.html",
-		// // page rendering templates
-		// "../static/html/captcha.html",
-		// "../static/html/index.html",
-		// "../static/html/log_in.html",
-		// "../static/html/sign_up.html")) //could use a wildcard as well, but better readability
+		// "../static/html/x.html",
+		// "../static/html/y.html",...)) //could use a wildcard as well, but better readability
 	fmt.Println("tpl:", tpl)
 	return tpl
 }

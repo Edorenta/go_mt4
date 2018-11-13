@@ -20,10 +20,6 @@ html,body {
 	box-shadow: 0 0 7px 0 rgba(0, 0, 0, 0.11);
 }
 @media (min-aspect-ratio: 1/1) {
-	.main .card-title {
-		padding: 5vh;
-		margin-bottom: 5vh;
-	}
 	.main .forgot_pwd {
 		margin-bottom:4vh;
 	}
@@ -52,17 +48,6 @@ html,body {
 	}
 }
 @media (max-aspect-ratio: 1/1) {
-	.main .card-title {
-		padding: 10vw;
-		margin-bottom: 10vw;
-	}
-	.main ._form {
-	    position: relative;
-	    left: 50%;
-	    top: 50%;
-	    width: 90%;
-	    transform: translateX(-50%);
-	}
 	.main .forgot_pwd {
 		margin-bottom:4vw;
 	}

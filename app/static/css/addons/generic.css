@@ -10,9 +10,6 @@ $dark: #0b0c10 !default;
 */
 /* Sweep To Right */
 
-.borderless {
-  border: 0;
-}
 .has-text-white{
   color: #ffffff;
 }
@@ -137,23 +134,6 @@ iframe {
   color:#fcad0f;
 }
 
-.navbar-link:not(.is-arrowless)::after{
-  border:3px solid transparent;
-  border-radius:2px;
-  border-right:0;
-  border-top:0;
-  content:" ";
-  display:block;
-  height:.625em;
-  margin-top:-.4375em;
-  pointer-events:none;
-  position:absolute;
-  top:50%;
-  transform:rotate(-45deg);
-  transform-origin:center;
-  transform: ;
-  width:.625em;
-}
 .checkbox_wrapper {
   display: block;
   margin-left: auto;
@@ -168,7 +148,13 @@ iframe {
   -ms-user-select: none;
   user-select: none;
 }
-
+.form {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  width: 90%;
+  transform: translateX(-50%);
+}
 /* Hide the browser's default checkbox */
 .checkbox_wrapper input {
   position: absolute;
@@ -333,6 +319,10 @@ span{
   .tiny-margin-bot {
     margin-bottom: 2.5vh;
   }
+  .banner-title {
+    padding: 5vh;
+    margin-bottom: 5vh;
+  }
   iframe {
     border-radius: 2vh;
     /*border-width: 0.2vh;*/
@@ -425,6 +415,10 @@ span{
     border-radius: 3vw;
     /*border-width: 0.2vh;*/
   }
+  .banner-title {
+    padding: 10vw;
+    margin-bottom: 10vw;
+  }
   .pulses {
     border-radius: 3vw;
     animation: Pulse 2s infinite;
@@ -478,4 +472,8 @@ span{
     min-width: 40vw;
     max-width: 85vw;
   }
+}
+
+.borderless {
+  border: 0;
 }

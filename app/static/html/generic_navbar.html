@@ -150,6 +150,18 @@ function set_navbar() {
   /*background-color:#fcad0f;*/
   color:#1f2833;
 }
+.navbar-link:not(.is-arrowless)::after{
+  border-right:0;
+  border-top:0;
+  content:" ";
+  display:block;
+  pointer-events:none;
+  position:absolute;
+  top:50%;
+  transform:rotate(-45deg);
+  transform-origin:center;
+  transform: ;
+}
 .navbar-item{
   display:block;
   flex-grow:0;
@@ -184,12 +196,20 @@ function set_navbar() {
   .navbar-item img{
     max-height:15vw;
   }
+  .navbar-link:not(.is-arrowless)::after{
+    border-bottom:1.5vw solid transparent;
+    border-left:1.5vw solid transparent;
+    border-radius:2px;
+    height:4.5vw;
+    width:4.5vw;
+    margin-top:-4.5vw;
+    top:50%;
+  }
   .navbar-link:not(.is-arrowless){
     padding-right:7.5vw;
   }
   .navbar-link:not(.is-arrowless)::after{
     border-color:#66fcf1;
-    margin-top:-1vw;
     right:3vw;
   }
   .navbar-dropdown .navbar-item{
@@ -252,13 +272,22 @@ function set_navbar() {
   .navbar-item img{
     max-height:8vh;
   }
+  .navbar-link:not(.is-arrowless)::after{
+    border-bottom:0.5vh solid transparent;
+    border-left:0.5vh solid transparent;
+    border-radius:2px;
+    height:1.5vh;
+    width:1.5vh;
+    margin-top:-1.5vh;
+    top:50%;
+  }
   .navbar-link:not(.is-arrowless){
     padding-right:5vh;
   }
   .navbar-link:not(.is-arrowless)::after{
     border-color:#66fcf1;
     margin-top:-1.5vh;
-    right:2vh;
+    right:1vh;
   }
   .navbar,.navbar-end,.navbar-menu,.navbar-start{
     align-items:stretch;
