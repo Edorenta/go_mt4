@@ -32,7 +32,9 @@ type Session struct {
 }
 
 type VisitorTemplate struct {
-	Visitor_id string
+	VisitorID string
+	Access bool //access to site (passed captcha)
+	Auth bool //access to client areas (passed login)
 }
 
 type ClientServer struct {
@@ -93,7 +95,7 @@ func GetReqParam(r *http.Request, key string) string {
 			// }
 			for end, c := range clean_query[start:n] {
 				if (c == '&' || c == '#' || c == ' ') {
-					return clean_query[start:end]
+					return clean_query[start:(end+1)]
 				}
 			}
 			return clean_query[start:n]
@@ -116,12 +118,16 @@ func (server *ClientServer)VerifySessionID(w http.ResponseWriter, r *http.Reques
 	// auth, _ := s.Values["auth"].(bool)
 	// if !ok { http.Error(w, "Forbidden", http.StatusForbidden) } //
 	visitor_id, _ := s.Values["visitor_id"].(string)
+	access, _ := s.Values["access"].(bool)
+	auth, _ := s.Values["auth"].(bool)
 	// fod, _ := s.Values["fod"].(bool)
 	// if !ok { http.Error(w, "Forbidden Session Access", http.StatusForbidden) } // couldn't read cookie
 	// temporarily set user as visitor if he just arrived to the site
 	if visitor_id == "" {// if (!auth && visitor_id == "") {
 		visitor_id = string(_scrypt.SaltGenerate(32))
 		s.Values["visitor_id"] = visitor_id
+		if (access || auth) { /*handle error, shouldnt have permissions*/ } 
+		s.Values["access"] = false
 		s.Values["auth"] = false
 		// s.Values["fod"] = false
 		s.Save(r, w)
@@ -137,7 +143,9 @@ func (server *ClientServer)VerifySessionID(w http.ResponseWriter, r *http.Reques
 	// fmt.Println("cookie from index:", s, "\nrequest data:", r)
 	// if err != nil { _error.Handle("GetClient() in HandleIndex() failed", err) }
 	id := VisitorTemplate{
-		Visitor_id: visitor_id,
+		VisitorID: visitor_id,
+		Access: access,
+		Auth: auth,
 		// Lst: []LstTpl{
 		// 	{Title: "", Done: false},
 		// 	{Title: "", Done: true},
@@ -219,12 +227,23 @@ func (server *ClientServer)HandleRoot(w http.ResponseWriter, r *http.Request, _ 
 
 func (server *ClientServer)HandleCaptcha(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	id := server.VerifySessionID(w, r)
+	access := GetReqParam(r, "access")
+	if access == "denied" { fmt.Println("access denied") }
 	server.t.ExecuteTemplate(w, "captcha.html", id) //nil = template data
 }
 
 func (server *ClientServer)HandleHome(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	id := server.VerifySessionID(w, r)
-	server.t.ExecuteTemplate(w, "home.html", id) //nil = template data
+	parsed_id := GetReqParam(r, "visitor_id")
+	// client := server.Clients[visitor_id]
+	if id.VisitorID == parsed_id {
+		s, _ := server.s.store.Get(r, server.s.name)
+		s.Values["access"] = true
+		server.t.ExecuteTemplate(w, "home.html", id) //nil = template data
+	} else {
+		fmt.Println(r)
+		http.Redirect(w, r, /*DOMAIN +*/ "/captcha?" + url.QueryEscape("access=denied&req=" + r.URL.RequestURI()[1:]), http.StatusSeeOther) //301 >> redirection= host + ":" + strconv.Itoa(int(APP_PORT))	
+	}
 }
 
 func (server *ClientServer)HandleSkills(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

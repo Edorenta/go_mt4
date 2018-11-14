@@ -7,8 +7,10 @@
     <body>
     	{{template "generic_header.html"}}
     	{{template "generic_navbar.html"}}
-		<h1 id="visitor_id">Welcome, {{.Visitor_id}}!<h1>
-    	{{template "sign_up_body.html"}}
+        <div id="visitor" class="hidden">
+            <span id="visitor_id">{{.VisitorID}}</span>
+        </div>
+        {{template "sign_up_body.html"}}
     	{{template "generic_footer.html"}}
     </body>
 </html>

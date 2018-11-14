@@ -101,8 +101,14 @@ var Gesture = {
   end_y : 0,
   Rec : ""
 }; // Gesture
+var VisitorID = "";
+var QueryParams = null;
+
 !function() {
   DocReady(function() {
+    QueryParams = new URL(decodeURIComponent(document.location)).searchParams;
+    VisitorID = document.getElementById("visitor_id").textContent;
+    // console.log("visitor id: " + visitor_id)
     Overlay.el = document.querySelector(".overlay");
     if (Overlay.el) {
       Overlay.On = function() { Overlay.el.style.display = "block"; }

@@ -60,10 +60,7 @@
 
 .core_tw {
     position: relative;
-    left: 50%;
-    top: 50%;
     width: 90%;
-	transform: translate(-50%, -50%);
 }
 
 .cookie_policy_tw {

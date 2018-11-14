@@ -98,12 +98,9 @@ html,body {
     /*font-weight: 400;*/
 }
 
-.main .center {
+.main .core_tw {
     position: absolute;
-    left: 50%;
-    top: 50%;
     width: 90%;
-    transform: translate(-50%, -50%);
 }
 
 #js_logo,

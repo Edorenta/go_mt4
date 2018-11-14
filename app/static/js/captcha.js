@@ -8,6 +8,7 @@ function init() {
     h : Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
   };
   win.landscape = (win.w > win.h);
+  console.log("access:", QueryParams.get("access"), "req", QueryParams.get("req"));
   init_logo();
 }
 
@@ -25,7 +26,8 @@ async function init_captcha() {
     `
   });
   svg_cookie.OnClick(function() {
-    window.location.replace(/*URI + */"/home"); //redirect on click to homepage
+    window.location.replace(/*URI + */"/home?" + encodeURIComponent("visitor_id=" + VisitorID));
+    // window.location.replace(/*URI + */"/home"); //redirect on click to homepage
   });
   svg_cookie.OnMouseOver(function() {
     svg_cookie.Fill("#fcad0f"); //color to orange
@@ -35,7 +37,7 @@ async function init_captcha() {
   })
   let cookie_div = document.getElementById("cookie_div");
   let box = cookie_div.parentNode.getBoundingClientRect();
-  console.log(box);
+  // console.log(box);
   let max_x = box.width - 100*cookie_scale_factor;//100*scale_factor; padding of 2%
   let max_y = box.height - 100*cookie_scale_factor;//100*scale_factor; padding of 2%
   let rnx = null;
@@ -49,13 +51,13 @@ async function init_captcha() {
   }
   cookie_div.style.left = ((rnx + 50*cookie_scale_factor) + 'px');
   cookie_div.style.top = ((rny + 50*cookie_scale_factor) + 'px');
-  svg_cookie.Spawn();
-  svg_cookie.Scale(0.5, 300);
+  await svg_cookie.Spawn(); //await if async
+  await svg_cookie.Scale(0.5, 300); //await if async
   svg_cookie.Spin();
 }
 
 async function init_logo() {
-  var logo_scale_factor = 0.45 * (win.landscape ? win.h : win.w) / 100;
+  var logo_scale_factor = 0.45 * (win.landscape ? win.h : (win.w*1.2)) / 100;
   // console.log(logo_scale_factor);
   var svg_P = new TinySVG({
     parent_id: '#logo_div',
@@ -94,8 +96,8 @@ async function init_logo() {
   svg_R.Spawn();
   svg_R.Scale(0.5, 300);
   await sleep(600);
-  svg_P.Pulse();
-  svg_R.Pulse();
+  svg_P.Pulse(2000);
+  svg_R.Pulse(2000);
 }
 
 async function init_core_tw() {

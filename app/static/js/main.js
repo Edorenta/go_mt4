@@ -7,15 +7,11 @@
 //     // test_socket();
 // }
 
-var uri = "paul-r.com";
-var port = "49152";
-var address = "ws://" + uri + ":" + port + "/ws";
+var address = "ws://" + URI "/ws"; //wss once SSL is enabled
 var ws_open = false;
 
 function init_socket() {
-    var visitor_id = document.getElementById("visitor_id").textContent
-    console.log("visitor id: " + visitor_id)
-    address = address + "?" + encodeURIComponent("visitor_id=" + visitor_id)
+    address = address + "?" + encodeURIComponent("visitor_id=" + VisitorID);
     var ws = new ReconnectingWebSocket(address);
 
     if (window.WebSocket === undefined)

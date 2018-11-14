@@ -42,18 +42,20 @@ class TinySVG {
 		//parent_id,id,w,h,vw,vh,scale,core,xmlns //core=path/gradients/shapes
 		let xmlns = input.xmlns || "http://www.w3.org/2000/svg";
 		let xmlns_link = input.xmlns_link || "http://www.w3.org/1999/xlink";
+		this.parent_id = input.parent_id;
 		this.parent_el = document.querySelector(input.parent_id);
 		this.id = input.id || ("TinySVG_" + (TinySVG++));
 		this.fill = input.fill || null;
 		this.stroke = input.stroke || null;
 		this.scale = input.scale || 1.0;
 		this.angle = input.angle || 0;
-		this.vw = input.vw || null;
-		this.vh = input.vh || null;
+		// this.vw = input.vw || null;
+		// this.vh = input.vh || null;
 		this.base_w = input.w || 100;
 		this.base_h = input.h || 100;
 		this.w = this.base_w * this.scale;
 		this.h = this.base_h * this.scale;
+		this.viewBox = input.viewBox || "0 0 " + this.w + " " + this.h;
 		this.rotate = this.angle ? ("rotate(" + this.angle + " " + this.w/2 + " " + this.h/2 + ")") : "";
 		this.mx = this.scale != 1.0 ? ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)") : "";
 		this.transform = (this.mx ? this.mx : "") + (this.rotate ? (" " + this.rotate) : "");
@@ -61,20 +63,26 @@ class TinySVG {
 		this.el.setAttribute("id", this.id);
 		this.el.setAttribute("xmlns", xmlns);
 		this.el.setAttribute("xmlns:xlink", xmlns_link);
-		if (this.vw && this.vh) { this.el.setAttributeNS(null, "viewBox", "0 0 " + this.vw + " " + this.vh); }
+		if (this.viewBox) { this.el.setAttributeNS(null, "viewBox", this.viewBox); }
 		if (this.w) { this.el.setAttributeNS(null, "width", this.w); }
 		if (this.h) { this.el.setAttributeNS(null, "height", this.h); }
 		//this.el.style.display = "block"; // recquired?
 		this.g_el = document.createElementNS(xmlns, "g");
 		this.el.appendChild(this.g_el);
+		// this.el.setAttribute("style", "position: absolute; inline-block; vertical-align: middle; text-align: center;");
 		if (this.transform) { this.g_el.setAttributeNS(null, "transform", this.transform); }
 		if (this.fill) { this.g_el.setAttributeNS(null, "fill", this.fill); }
 		if (this.stroke) { this.g_el.setAttributeNS(null, "stroke", this.stroke); }
+		// this.g_el.classList.add("center");
 		this.core = input.core;
 		this.g_el.innerHTML = this.core;
 	}
 	Spawn() {
-		this.parent_el.appendChild(this.el);
+		if (!this.parent_el) {
+			console.log("TinySVG.Spawn() error: " + this.parent_id + " does not exist");
+		} else {
+			this.parent_el.appendChild(this.el);
+		}
 	}
 	Remove() {
 		this.el.remove();
@@ -103,29 +111,69 @@ class TinySVG {
 	async Scale(factor, _ms_delay) {
 		let ms_delay = _ms_delay || 0;
 		let i = (ms_delay / 20) + 1;
+		let j = i;
 		let step = ((this.scale*factor) - this.scale) / i;
 		// console.log("scale:", this.scale, "factor:", factor, "step:", step, "n step:", i);
+		let small_w = 0;
+		let small_h = 0;
+		let new_w = 0;
+		let new_h = 0;
+		let margin_left = 0;
+		let margin_top = 0;
+		let coef = 0;
+		if (factor > 1) {
+			coef = 1;
+			small_w = this.w;
+			small_h = this.h;
+			this.ChangeWidth(this.w*(factor+0.0));
+			this.ChangeHeight(this.h*(factor+0.0));
+		} else {
+			coef = -1;
+			small_w = this.w*factor;
+			small_h = this.h*factor;
+		}
 		while (i-- > 0) {
 			this.scale += step;
+			new_w = small_w + ((this.w - small_w)*(coef == 1 ? ((j-i)/j) : (i/j)));
+			new_h = small_h + ((this.h - small_h)*(coef == 1 ? ((j-i)/j) : (i/j)));
+			margin_left = (-(this.w - new_w) / 2);
+			margin_top = (-(this.h - new_h) / 2);
+			// console.log(i/j, small_w, new_w, small_h, new_h);
 			this.mx = ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)");
-			if (this.w && this.h) {
-				this.w = this.base_w * this.scale;
-				this.h = this.base_h * this.scale;
-				this.el.setAttributeNS(null, "width", this.w);
-				this.el.setAttributeNS(null, "height", this.h);
-			}
+			this.viewBox = (margin_left /*- (coef == 1 ? small_w*2 : 0)*/) + " " //((this.w) * (1-factor) / i)/2
+						+ (margin_top /*- (coef == 1 ? small_h*2 : 0)*/) + " " 
+						+ this.w + " "
+						+ this.h;
+			if (margin_left && margin_top) this.UpdateViewBox();
 			this.Transform();
 			if (i > 0) { await this.Sleep(30); }
 		}
+		if (factor < 1) {
+			this.ChangeWidth(this.w*(factor+0.0));
+			this.ChangeHeight(this.h*(factor+0.0));
+		}
+		this.mx = ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)");
+		this.viewBox = "0 0 " + this.w + " " + this.h;
+		this.Transform();
+		this.UpdateViewBox();
 	}
-	async Pulse(_min_scale, _max_scale) {
-		let min_scale = _min_scale || this.scale * 0.92;
-		let max_scale = _max_scale || this.scale * 1.08;
+	async ChangeWidth(new_w) {
+		this.w = new_w;
+		await this.el.setAttributeNS(null, "width", this.w);
+	}
+	async ChangeHeight(new_h) {
+		this.h = new_h;
+		await this.el.setAttributeNS(null, "height", this.h);
+	}
+	async Pulse(_ms, _min_scale, _max_scale) {
+		let ms = _ms || 3000;
+		let min_scale = _min_scale || this.scale * 0.88;
+		let max_scale = _max_scale || this.scale * 1.0;
 		this.is_pulsing = true;
-		this.Scale(min_scale / this.scale, 1300);
+		this.Scale(max_scale / this.scale, ms/2);
 		while (this.is_pulsing) {
-			await this.Scale(max_scale / min_scale, 1300);
-			await this.Scale(min_scale / max_scale, 1300);
+			await this.Scale(min_scale / max_scale, ms/2);
+			await this.Scale(max_scale / min_scale, ms/2);
 		}
 	}
 	async Spin() {
@@ -140,6 +188,10 @@ class TinySVG {
 	async Transform() {
 		this.transform = (this.mx ? this.mx : "") + (this.rotate ? (" " + this.rotate) : "");
 		if (this.transform) { this.g_el.setAttributeNS(null, "transform", this.transform); }
+	}
+	async UpdateViewBox() {
+		// console.log(this.viewBox);
+		if (this.viewBox) { this.el.setAttributeNS(null, "viewBox", this.viewBox); }
 	}
 }
 

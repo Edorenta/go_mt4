@@ -35,8 +35,8 @@
         <div class="navbar-item borderless">
           <div class="buttons">
             <!-- <a class="button has-background-grey-lighter"><strong>Sign up</strong></a> -->
-            <a class="button has-background-grad1 hvr-sweep-to-right chat">Let's Chat</a>
-            <a class="button has-background-grad2 hvr-sweep-to-right log_in">Log In</a>
+            <a class="button padding-left padding-right has-background-grad1 hvr-sweep-to-right chat">Let's Chat</a>
+            <a class="button padding-left padding-right has-background-grad2 hvr-sweep-to-right log_in">Log In</a>
           </div>
         </div>
       </div>
@@ -73,6 +73,7 @@ function set_navbar() {
 }
   </script>
   <style type="text/css">
+
 .navbar-burger,.navbar-link,a.navbar-item{
   cursor:pointer;
 }
@@ -178,6 +179,10 @@ function set_navbar() {
   .navbar {
     min-height:18vw;
   }
+  .main {
+    height: calc(100vh - 18vw);
+    top:18vw;
+  }
   .navbar-brand {
     min-height:18vw;
   }
@@ -257,6 +262,10 @@ function set_navbar() {
 @media (min-aspect-ratio: 1/1) {
   .navbar {
     min-height:10vh;
+  }
+  .main {
+    height: 90vh;
+    top:10vh;
   }
   .navbar-brand {
     min-height:10vh;
@@ -354,6 +363,9 @@ function set_navbar() {
     justify-content:flex-start;
     line-height: 3vh;
   }
+}
+.borderless {
+  border: 0;
 }
   </style>
 </nav>

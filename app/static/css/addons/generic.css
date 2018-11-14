@@ -58,6 +58,17 @@ $dark: #0b0c10 !default;
 .has-background-grad2{
   background: linear-gradient(to bottom right, #1F2833, #0B0C10); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+
+.main {
+  width: 100vw;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "play-regular";
+}
+
 /* Sweep To Right */
 .hvr-sweep-to-right {
   display: inline-block;
@@ -150,11 +161,35 @@ iframe {
 }
 .form {
   position: relative;
+  width: 100%;
+}
+.card {
+  position: absolute;
+  margin: auto;
+  display: block;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255,0.1);;
+  box-shadow: 0 0 calc(1.5vh + 1.5vw) 0 rgba(0, 0, 0, 0.75);
+}
+.centerX {
   left: 50%;
-  top: 50%;
-  width: 90%;
   transform: translateX(-50%);
 }
+.centerY {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.centerXY {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+}
+.banner-title {
+  border-top-left-radius:inherit;
+  border-top-right-radius:inherit;
+}
+
 /* Hide the browser's default checkbox */
 .checkbox_wrapper input {
   position: absolute;
@@ -195,6 +230,7 @@ iframe {
   display: block;
 }
 .input {
+  color: #ffffff;
   text-align: center;
   /*display: block;*/
   background: transparent;
@@ -287,6 +323,17 @@ span{
 .buttons:last-child{
   margin-bottom:-.5rem;
 }
+.textarea {
+  text-justify: auto;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  /* Non standard for WebKit */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
 
 @media (min-aspect-ratio: 1/1) {
   .text-h1 {
@@ -300,6 +347,9 @@ span{
   }
   .text-h4 {
     font-size: 4vh;
+  }
+  .text-h5 {
+    font-size: 3vh;
   }
   .text-a {
     font-size: 2vh;
@@ -316,12 +366,58 @@ span{
   .margin-bot {
     margin-bottom: 2.5vh;
   }
-  .tiny-margin-bot {
-    margin-bottom: 2.5vh;
+  .padding-right {
+    padding-right: 2.5vh;
+  }
+  .padding-left {
+    padding-left: 2.5vh;
+  }
+  .padding-top {
+    padding-top: 2.5vh;
+  }
+  .padding-bot {
+    padding-bottom: 2.5vh;
+  }
+  .thin-margin-right {
+    margin-right: 1vh;
+  }
+  .thin-margin-left {
+    margin-left: 1vh;
+  }
+  .thin-margin-top {
+    margin-top: 1vh;
+  }
+  .thin-margin-bot {
+    margin-bottom: 1vh;
+  }
+  .thin-padding-right {
+    padding-right: 1vh;
+  }
+  .thin-padding-left {
+    padding-left: 1vh;
+  }
+  .thin-padding-top {
+    padding-top: 1vh;
+  }
+  .thin-padding-bot {
+    padding-bottom: 1vh;
+  }
+  .textarea {
+    padding: 1vh;
   }
   .banner-title {
-    padding: 5vh;
+    padding: 4vh;
     margin-bottom: 5vh;
+  }
+  .card {
+    min-width: 65vh;
+    max-width: 60vw;
+    border-radius: 2vh;
+  }
+  .card button {
+    max-width: 20vw;
+    margin-left: 0.5vh;
+    margin-right: 0.5vh;
   }
   iframe {
     border-radius: 2vh;
@@ -335,7 +431,7 @@ span{
     height: 3.5vh;
     line-height: 3.5vh;
     margin-bottom: 5vh;
-    font-size: 2.5vh;
+    font-size: 3.5vh;
   }
   .checkbox {
     height: 3.5vh;
@@ -360,12 +456,14 @@ span{
   .input {
     min-height: 5vh;
     min-width: 15vh;
-    max-width: 55vh;
-    font-size: 2.5vh;
-    margin-left: 2.5vh;
-    margin-right: 2.5vh;
-    margin-top: 2.5vw;
-    margin-bottom: 2.5vw;
+    /*max-width: 55vh;*/
+    font-size: 3.5vh;
+    margin: 1.5vh;
+/*    margin-left: 1.5vh;
+    margin-right: 1.5vh;
+    margin-top: 1.5vh;
+    margin-bottom: 1.5vh;
+*/    border-radius: 1vh;
     border-bottom: 0.4vh solid #45a29E;
   }
   .button {
@@ -376,8 +474,8 @@ span{
     border-width: 0.2vh;
     line-height: 4.5vh;
     min-height: 5vh;
-    min-width: 15vh;
-    max-width: 55vh;
+    min-width: calc(8vh + 5vw);
+    max-width: 40vh;
   }
 }
 @media (max-aspect-ratio: 1/1) {
@@ -393,31 +491,80 @@ span{
   .text-h4 {
     font-size: 6vw;
   }
+  .text-h5 {
+    font-size: 4.5vw;
+  }
   .text-a {
     font-size: 3vw;
   }
   .margin-right {
-    margin-right: 2.5vw;
+    margin-right: 6vw;
   }
   .margin-left {
-    margin-left: 2.5vw;
+    margin-left: 6vw;
   }
   .margin-top {
-    margin-top: 2.5vw;
+    margin-top: 6vw;
   }
   .margin-bot {
-    margin-bottom: 2.5vw;
+    margin-bottom: 6vw;
   }
-  .tiny-margin-bot {
-    margin-bottom: 2.5vw;
+  .padding-right {
+    padding-right: 6vw;
+  }
+  .padding-left {
+    padding-left: 6vw;
+  }
+  .padding-top {
+    padding-top: 6vw;
+  }
+  .padding-bot {
+    padding-bottom: 6vw;
+  }
+  .thin-margin-right {
+    margin-right: 2vw;
+  }
+  .thin-margin-left {
+    margin-left: 2vw;
+  }
+  .thin-margin-top {
+    margin-top: 2vw;
+  }
+  .thin-margin-bot {
+    margin-bottom: 2vw;
+  }
+  .thin-padding-right {
+    padding-right: 2vw;
+  }
+  .thin-padding-left {
+    padding-left: 2vw;
+  }
+  .thin-padding-top {
+    padding-top: 2vw;
+  }
+  .thin-padding-bot {
+    padding-bottom: 2vw;
   }
   iframe {
     border-radius: 3vw;
     /*border-width: 0.2vh;*/
   }
   .banner-title {
-    padding: 10vw;
-    margin-bottom: 10vw;
+    padding: 8vw;
+    margin-bottom: 6vw;
+  }
+  .textarea {
+    padding: 2vw;
+  }
+  .card {
+    min-width: 60vw;
+    max-width: 90vw;
+    border-radius: 3vw;
+  }
+  .card button {
+    max-width: 35vw;
+    margin-right: 1vw;
+    margin-left: 1vw;
   }
   .pulses {
     border-radius: 3vw;
@@ -452,28 +599,25 @@ span{
   .input {
     min-height: 10vw;
     min-width: 40vw;
-    max-width: 85vw;
+    max-width: 80vw;
     font-size: 5vw;
     margin-top: 2.5vw;
     margin-bottom: 2.5vw;
     /*margin-left: 1.5rem;*/
     /*margin-right: 1.5rem;*/
     /*padding: 0.75vw 0;*/
-    border-bottom: 0.4vw solid #45a29E;
+    border-radius: 1vw;
+    border-bottom: 0.8vw solid #45a29E;
   }
   .button {
     font-size: 5vw;
     padding-bottom:1vw;
     padding-top: 1vw;
-    border-radius: 1vw;
+    border-radius: 2.5vw;
     border-width: 0.2vw;
     line-height: 11vw;
     min-height: 5vw;
-    min-width: 40vw;
-    max-width: 85vw;
+    min-width: 25vw;
+    max-width: 60vw;
   }
-}
-
-.borderless {
-  border: 0;
 }

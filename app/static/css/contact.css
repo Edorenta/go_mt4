@@ -3,13 +3,13 @@ html,body {
 }
 
 .main {
-	position: relative;
-	font-family: "play-regular";
-	display: flex;
-	text-align: center;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
+}
+.main input {
+	padding: 0.5%;
+}
+.main #content {
+	background: none;
+	min-height: calc(22vh);
 }
 
 @media (min-aspect-ratio: 1/1) {
@@ -23,6 +23,10 @@ html,body {
 	.main .checkbox span {
 		margin-left: 0.5rem;
 	}*/
+	.main input, textarea {
+		width: 80vh;
+		max-width: 75%;
+	}
 	.main .options {
 		display: block;
 		margin-left: auto;
@@ -36,9 +40,13 @@ html,body {
 	.main label {
 		cursor: pointer;
 	}
-	.main #email, .main #password, .main button {
-		width: 50vh;
-		max-width: 80%;
+	.main #contact, .main #name, .main #subject, .main #content, .main button {
+		width: 100%;
+	}
+	#content {
+	    border-top: 0.2vh solid #45a29E;
+	    border-left: 0.2vh solid #45a29E;
+	    border-right: 0.2vh solid #45a29E;
 	}
 }
 @media (max-aspect-ratio: 1/1) {
@@ -62,12 +70,16 @@ html,body {
 		max-width: 70vw;
 		min-height: 7.4vw;
 	}
-	.main label {
+	.main label, textarea {
 		cursor: pointer;
 	}
-	.main #email, .main #password, .main button {
-		max-width: 100%;
-		width: 70vw;
+	.main #contact, .main #name, .main #subject, .main #content, .main button {
+		width: 100%;
+	}
+	#content {
+	    border-top: 0.4vw solid #45a29E;
+	    border-left: 0.4vw solid #45a29E;
+	    border-right: 0.4vw solid #45a29E;
 	}
 }
 	/*input:focus,
