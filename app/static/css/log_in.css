@@ -2,16 +2,6 @@ html,body {
     background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.main {
-	position: relative;
-	font-family: "play-regular";
-	display: flex;
-	text-align: center;
-	align-items: center;
-	justify-content: center;
-	height: 100%;
-}
-
 @media (min-aspect-ratio: 1/1) {
 	.main .forgot_pwd {
 		margin-bottom:4vh;
@@ -35,10 +25,6 @@ html,body {
 	}
 	.main label {
 		cursor: pointer;
-	}
-	.main #email, .main #password, .main button {
-		width: 50vh;
-		max-width: 80%;
 	}
 }
 @media (max-aspect-ratio: 1/1) {
@@ -64,10 +50,6 @@ html,body {
 	}
 	.main label {
 		cursor: pointer;
-	}
-	.main #email, .main #password, .main button {
-		max-width: 100%;
-		width: 70vw;
 	}
 }
 	/*input:focus,

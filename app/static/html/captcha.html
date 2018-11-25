@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html>
 	<head lang="en">
+        <title>Paul de Renty</title>
         {{template "generic_head.html"}}
-		{{template "captcha_head.html"}}
+        <link rel="stylesheet" type="text/css" href="static/css/captcha.css">
+        <script src="static/js/captcha.js"></script>
 	</head>
     <body>
-    	{{template "generic_header.html"}}
         <div id="visitor" class="hidden">
             <span id="visitor_id">{{.VisitorID}}</span>
     	</div>
-        {{template "captcha_body.html"}}
-    	{{template "generic_footer.html"}}
+        <div class="main before-footer">
+            {{template "captcha_body.html"}}
+        </div>
+        <footer>
+    	    {{template "generic_footer.html"}}
+        </footer>
     </body>
 </html>

@@ -3,10 +3,10 @@
         background: linear-gradient(0.42turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);
     }
     .logo_container {
-        width: 100%; height: 50%; top: 0%; left: 0%;
+        width: 100%; height: calc(50% - 4.5vw); top: 0%; left: 0%;
     }
     .captcha_container {
-        width: 100%; height: 50%; top: 50%; left: 0%;
+        width: 100%; height: calc(50% - 4.5vw); top: calc(50% - 2.5vh); left: 0%;
     }
 }
 @media (min-aspect-ratio: 1/1) {
@@ -14,10 +14,10 @@
         background: linear-gradient(0.33turn, #0b0c10, #1f2833 10%, #45a29e 25%, #55c6be 30%, #45a29e 35%, #1f2833 55%, #0b0c10 85%);
     }
     .logo_container {
-        width: 50%; height: 100%; top: 0%; left: 0%;
+        width: 50%; height: calc(100% - 5vh); top: 0%; left: 0%;
     }
     .captcha_container {
-        width: 50%; height: 100%; top: 0%; left: 50%;
+        width: 50%; height: calc(100% - 5vh); top: 0%; left: 50%;
     }
 }
 
@@ -46,10 +46,11 @@
     position: absolute;
 }
 
-#svg_R, #svg_P, #svg_cookie {
+#svg_R, #svg_P {
     position: absolute;
     left: 50%;
     top: 50%;
+    -webkit-transform: translate(-50%,-50%); /*KILLS THE SVGJS SCALING >> NEEDS TO BE DONE FROM JS*/
     transform: translate(-50%,-50%); /*KILLS THE SVGJS SCALING >> NEEDS TO BE DONE FROM JS*/
 }
 #logo_div {
@@ -67,6 +68,7 @@
 	position: absolute;
     left: 50%;
     bottom: 0%;
+    -webkit-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
     width: 98%;
 }

@@ -1,21 +1,18 @@
-<div class="main">
-	<div class="card has-text-white">
-		<div class="banner-title has-background-grad1 has-text-white text-h2">
-			Contact Me
-		</div>
-<!-- The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post"). -->
-		<form method="POST" action="/post_contact" class="form centerX">
-			<input id="name" class="input" type="" name="name" title="name" placeholder="Your Name and Surname" required autofocus>
-			<input id="contact" class="input" type="" name="contact" title="contact" placeholder="Your Email, Whatsapp or WeChat" required autofocus>
-			<input id="subject" class="input thin-margin-bot" type="" name="subject" title="subject" placeholder="Subject" required>
-			<textarea id="content" class="input textarea thin-margin-bot" type="" name="content" title="content" placeholder="Your Message" required>
-			</textarea>
-			<!-- Hi Paul, I see that you are very enthusiastic about PoS/PoP based algorithms and half-decentralized economics [...] How about a drink downtown next week? Regards, John Doe (MechaMind Partnes ltd) -->
-			<!-- <button type="submit" class="btn btn-primary">Login</button> -->
-			<div class="margin-bot">
-				<button class="button thin-margin-bot has-text-bold hvr-sweep-to-right has-background-grad1" onclick="void()">Send</button>
-				<button class="button thin-margin-bot has-text-bold hvr-sweep-to-right has-background-grad2" onclick="void()">Discard</button>
-			</div>
-		</form>
+<div class="card has-text-white centerXY">
+	<div class="banner-title has-background-grad1 has-text-white text-h2">
+		Contact Me
 	</div>
+<!-- The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post"). -->
+	<form class="form" id="contact_form" method="POST" action="/post_contact">
+		<input id="name" class="input" type="" name="name" title="name" placeholder="Your Name and Surname" required autofocus>
+		<input id="contact" class="input" type="" name="contact" title="contact" placeholder="Your Email, Whatsapp or WeChat" required autofocus>
+		<input id="subject" class="input thin-margin-bot" type="" name="subject" title="subject" placeholder="Subject" required>
+		<textarea id="content" class="input textarea thin-margin-bot" name="content" placeholder="Your Message" required></textarea>
+		<!-- Hi Paul, I see that you are very enthusiastic about PoS/PoP based algorithms and half-decentralized economics [...] How about a drink downtown next week? Regards, John Doe (MechaMind Partnes ltd) -->
+		<!-- <button type="submit" class="btn btn-primary">Login</button> -->
+		<div class="margin-bot">
+			<button class="button thin-margin-bot has-text-bold hvr-sweep-to-right has-background-grad1" onclick="void()">Send</button>
+			<button class="button thin-margin-bot has-text-bold hvr-sweep-to-right has-background-grad2" onclick="void()">Discard</button>
+		</div>
+	</form>
 </div>

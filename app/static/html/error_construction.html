@@ -1,19 +1,22 @@
 <!DOCTYPE html>
-<html class="has-navbar-fixed-top">
+<html>
     <head lang="en">
+        <title>Oups!</title>
         {{template "generic_head.html"}}
     </head>
     <body>
-        {{template "generic_header.html"}}
-        {{template "generic_navbar.html"}}
-        <div id="visitor" class="hidden">
-            <span id="VisitorID">{{.Visitor_id}}</span>
-        </div>
-        <div class="main">
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+        <div class="main after-header before-footer">
         	<div class="caption_wrapper">
         		<div class="center">
-        			<strong style="color:#fcad0f;font-size:3rem">Oups!</strong><br>
-        			This page is under construction.
+        			<strong class="has-text-warning text-h1">Oups!</strong><br>
+        			<span class="has-text-white text-h4">This page is under construction.</span>
         		</div>
         	</div>
 	    	<iframe class="iframe" id="iframe_1_bit_construction"
@@ -21,8 +24,10 @@
 	        	src="">
 	    	</iframe>
 	    </div>
-        {{template "generic_footer.html"}}
-        <!-- add chatbot???? better than a contact form -->
+        <footer>
+            {{template "generic_footer.html"}}
+        </footer>
+    	<!-- add chatbot???? better than a contact form -->
     </body>
 </html>
 <script type="text/javascript">
@@ -38,16 +43,7 @@
 	    width: 100%;
 	    background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 	}
-	.main {
-	    position: absolute;
-	    top: 3.25rem;
-	    height: calc(100% - 3.25rem);
-	    width:100%;
-	    font-family: "play-regular", "Play";
-	    /*color: #66fcf1;*/
-	    color: white;
-	}
-	.caption_wrapper{
+	.caption_wrapper {
 	    position:absolute;
 	    top:0%;
 	    width:100%;
@@ -56,7 +52,7 @@
 	    margin:0;
 	    font-size:1.5rem;
 	}
-	 .center{
+	.center {
 	    position:absolute;
 	    left:50%;
 	    top:50%;

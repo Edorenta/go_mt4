@@ -149,7 +149,7 @@ class Apple {
 		this.skin = [
 			_env.p.loadImage("../../static/assets/images/games/red_apple.png"),
 			_env.p.loadImage("../../static/assets/images/games/green_apple.png")
-		]
+		];
 	}
 	Spawn() {
 		this.skin[2] = this.skin[Math.floor(Math.random()*2)];

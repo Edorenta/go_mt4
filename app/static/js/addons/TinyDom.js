@@ -11,11 +11,11 @@ function DocReady(f) { //calling document.ready()
 
 // edge svg transform fix: ????
 void(new MutationObserver(function(muts) {
-  for(var i = muts.length; i--;) {
-    var mut = muts[i], objs = mut.target.querySelectorAll('foreignObject');
-    for(var j = objs.length; j--;) {
-        var obj = objs[j];
-        var val = obj.style.display;
+  for(let i = muts.length; i--;) {
+    let mut = muts[i], objs = mut.target.querySelectorAll('foreignObject');
+    for(let j = objs.length; j--;) {
+        let obj = objs[j];
+        let val = obj.style.display;
         obj.style.display = 'none';
         obj.getBBox();
         obj.style.display = val;
@@ -24,7 +24,18 @@ void(new MutationObserver(function(muts) {
 }).observe(document.documentElement, { attributes: true, attributeFilter: ['transform'], subtree: true }));
 
 // browser detection (consistent / non usual)
-var DomainName = window.location.hostname;
+var DomainName = function() {
+  return window.location.hostname;
+}
+function RawCookies() {
+  let cookies_list = document.cookie.split(';');
+  let concat = '';
+  for (let i = 1; i <= cookies_list.length; i++) {
+    concat += i + ' ' + cookies_list[i-1] + "\n";
+  }
+  return concat;
+}
+
 var BrowserName = function() {
   if (!!window.chrome && !!window.chrome.webstore) {
     return "chrome";
@@ -49,30 +60,29 @@ var BrowserName = function() {
 }
 
 // CSS insertion
-var DynamicStyleSheet = document.createElement('style');
-var addKeyFrames = null;
+var RuntimeStyle = document.createElement('style');
 
-document.head.appendChild(DynamicStyleSheet);
-
+document.head.appendChild(RuntimeStyle);
+var CSS_AddKeyFrames = null;
 if (CSS && CSS.supports && CSS.supports('animation: name')){
     // we can safely assume that the browser supports unprefixed version.
-    var CSS_AddKeyFrames = function(name, s){
+    CSS_AddKeyFrames = function(name, s){
         CSS_Insert("@keyframes " + name, s);
     }
 } else {
-    var CSS_AddKeyFrames = function(name, s){
-        // Ugly and terrible, but users with this terrible of a browser
-        // *cough* IE *cough* don't deserve a fast site
-        var str = name + s;
-		var pos = DynamicStyleSheet.length;
-        DynamicStyleSheet.sheet.insertRule("@-webkit-keyframes " + str, pos);
-        DynamicStyleSheet.sheet.insertRule("@keyframes " + str, pos + 1); //not sure about that, need to test
+    CSS_AddKeyFrames = function(name, s){
+      // Ugly and terrible, but users with this terrible of a browser
+      // *cough* IE *cough* don't deserve a fast site
+      let str = name + s;
+		  let pos = RuntimeStyle.length;
+      RuntimeStyle.sheet.insertRule("@-webkit-keyframes " + str, pos);
+      RuntimeStyle.sheet.insertRule("@keyframes " + str, pos + 1); //not sure about that, need to test
     }
 }
 
-var CSS_Insert = function(name, s){ //use to insert class/id/keyframes to DynamicStyleSheet
-    var pos = DynamicStyleSheet.length;
-    DynamicStyleSheet.sheet.insertRule(name + s, pos);
+var CSS_Insert = function(name, s){ //use to insert class/id/keyframes to RuntimeStyle
+    let pos = RuntimeStyle.length;
+    RuntimeStyle.sheet.insertRule(name + s, pos);
 }
 
 // HTML insertion
@@ -90,6 +100,98 @@ Element.prototype.appendAfter = function (element) {
 //var browser = (navigator.userAgent.toLowerCase().match(/(chrome|safari|firefox)/) || [null])[0];
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function FormParams(form_id) {
+  return Array.from(new FormData(document.getElementById(form_id)),
+    e => e.map(encodeURIComponent).join('=')).join('&')
+}
+
+function LoadComponentAPI(component_id, el_id) {
+  let req = _API("xhr", "GET", "/api/v1/private/component?id=" + component_id,
+    function(str) {
+      // console.log(str);
+      // let node = document.getElementById(el_id);
+      document.getElementById(el_id).innerHTML = str;
+    },
+    function(str) {
+      console.log("LoadComponentAPI error: " + str);
+    }
+  );
+  // return component;
+}
+
+function LoadSVG(svg_id, holder) {
+  let req = _API("xhr", "GET", "/static/assets/svg/" + svg_id + ".svg",
+    function(str) {
+      // console.log(str);
+      // let node = document.getElementById(el_id);
+      holder = str;
+    },
+    function(str) {
+      console.log("LoadSVG error: " + str);
+    }
+  );
+  // return component;
+}
+
+function LoadComponentiFrame(component_id, iframe_id, parent_id) {
+  let source = "/api/v1/private/component?id=" + component_id;
+  let el = document.createElement("iframe");
+  let parent_el = document.getElementByID("parent_id");
+  el.setAttribute("id", iframe_id);
+  el.setAttribute("title", iframe_id);
+  el.setAttribute("src", source);
+  el.setAttribute("width", "100%");
+  el.setAttribute("height", "100%");
+  parent_el.appendChild(el);
+}
+
+function _API(channel, method, path, onload, onerror/*, onabort*/) {
+  //channel: websocket/xhr/fetch
+  //method: GET/POST/PUT/PATCH/DELETE
+  //path: /api/v1/...
+  //onload: function(response){ console.log(response);... }
+  if (channel.toLowerCase() == "ajax" || channel.toLowerCase() == "xhr") {
+    let xhr = new XMLHttpRequest();
+    xhr.open(method, path, true);
+    // xhr.setRequestHeader(...);
+    // if (error_callback != null && error_callback !== undefined) { xhr.onerror = error_callback; }
+    // if (abort_callback != null && abort_callback !== undefined) { xhr.onabort = abort_callback; }
+    // if (load_callback != null && load_callback !== undefined) { xhr.onload = load_callback; }
+    // Process our return data
+    // Setup listener to process compeleted requests
+    // xhr.onreadystatechange = function() {
+    //   console.log("xhr status:", xhr.status, "xhr.response:", xhr.response);
+    //   if (xhr.readyState !== 4) return; // request isn't complete
+    //   if (xhr.status >= 200 && xhr.status < 300) { // == this.onload >> request is successful
+    //     onload(xhr.response/*responseText*/);
+    //   } else {
+    //     onerror("xhr request failed");
+    //   }
+    // };
+    xhr.onload = function() { onload(xhr.response); }
+    // xhr.onerror = onerror("xhr request failed");
+    // xhr.onerror = onerror("xhr request failed");
+    xhr.send();
+  } else if (channel.toLowerCase() == "websocket" || channel.toLowerCase() == "ws") {
+    let wsw = new WebSocketWrapper(VisitorID, "api");
+    wsw.DefaultCallbacks();
+    wsw.OnMessage(onload(e.data/*responseText*/));
+    wsw.OnError(onerror("websocket request failed"));
+    wsw.Send("{ method: " + method + ", path: " + path + " }"); // send JSON formatted WebSocket request to server 
+  } else if (channel.toLowerCase() == "fetch") {
+    // fetch method to implement (similar to xhr with promise)
+  }
+}
+
+function FormSubmit(form_id, method, action, destination, content_type, callback) {
+  // SubmitForm("POST", "/post_log_in", "application/x-www-form-urlencoded");
+  let xhr = new XMLHttpRequest();
+  xhr.open(method, destination, true);
+  xhr.setRequestHeader("Content-type", content_type);
+  xhr.send(/*"action=" + action + "&" + */FormParams(form_id));
+  xhr.onload = callback;
 }
 
 var Overlay = {}; // Overlay
@@ -128,7 +230,7 @@ var QueryParams = null;
             Gesture.Handle(Gesture.start_x, Gesture.start_y, Gesture.end_x, Gesture.end_y);
         }, false); 
       }
-      Gesture.Listen(".overlay");
+      Gesture.Listen("body");
       // let _dim = Gesture.el.getBoundingClientRect();
       // console.log("dim:",_dim);
       Gesture.Handle = async function(_x1, _y1, _x2, _y2) {
@@ -136,21 +238,17 @@ var QueryParams = null;
         let x_ratio = ((_x2 - _x1) / Gesture.el.offsetWidth);
         let y_ratio = -((_y2 - _y1) / Gesture.el.offsetHeight);
         // console.log(Gesture.w, Gesture.h, "xr:",x_ratio,"yr",y_ratio);
-        if (Math.abs(x_ratio) > Math.abs(y_ratio) && x_ratio > 0.05) {
-          // Gesture.Rec = "swipe-right";
-            if (is_callback) Gesture.Swipe("right");
+        if (Math.abs(x_ratio) > Math.abs(y_ratio) && x_ratio > 0.05) {// Gesture.Rec = "swipe-right";
+            if (is_callback) { Gesture.Swipe("right"); }
         }
-        if (Math.abs(x_ratio) < Math.abs(y_ratio) && y_ratio > 0.05) {
-          // Gesture.Rec = "swipe-down";
-            if (is_callback) Gesture.Swipe("up");
+        if (Math.abs(x_ratio) < Math.abs(y_ratio) && y_ratio > 0.05) {// Gesture.Rec = "swipe-up";
+            if (is_callback) { Gesture.Swipe("up"); }
         }
-        if (Math.abs(x_ratio) > Math.abs(y_ratio) && x_ratio < -0.05) {
-          // Gesture.Rec = "swipe-left";
-            if (is_callback) Gesture.Swipe("left");
+        if (Math.abs(x_ratio) > Math.abs(y_ratio) && x_ratio < -0.05) {// Gesture.Rec = "swipe-left";
+            if (is_callback) { Gesture.Swipe("left"); }
         }
-        if (Math.abs(x_ratio) < Math.abs(y_ratio) && y_ratio < -0.05) {
-          // Gesture.Rec = "swipe-up";
-            if (is_callback) Gesture.Swipe("down");
+        if (Math.abs(x_ratio) < Math.abs(y_ratio) && y_ratio < -0.05) {// Gesture.Rec = "swipe-down";
+            if (is_callback) { Gesture.Swipe("down"); }
         }
       }
     }

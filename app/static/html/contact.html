@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head lang="en">
+        <title>Contact</title>
         {{template "generic_head.html"}}
-        {{template "contact_head.html"}}
+        <link rel="stylesheet" type="text/css" href="static/css/contact.css">
+        <script src="static/js/contact.js"></script>
     </head>
     <body>
-        {{template "generic_header.html"}}
-        {{template "generic_navbar.html"}}
-        <div id="visitor" class="hidden">
-            <span id="visitor_id">{{.VisitorID}}</span>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+        <div class="main after-header before-footer">
+            {{template "contact_body.html"}}
         </div>
-        {{template "contact_body.html"}}
-        {{template "generic_footer.html"}}
+        <footer>
+            {{template "generic_footer.html"}}
+        </footer>
     </body>
 </html>

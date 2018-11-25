@@ -44,7 +44,7 @@ class TinySVG {
 		let xmlns_link = input.xmlns_link || "http://www.w3.org/1999/xlink";
 		this.parent_id = input.parent_id;
 		this.parent_el = document.querySelector(input.parent_id);
-		this.id = input.id || ("TinySVG_" + (TinySVG++));
+		this.id = input.id || ("TinySVG_" + (TinySVG_n++));
 		this.fill = input.fill || null;
 		this.stroke = input.stroke || null;
 		this.scale = input.scale || 1.0;
@@ -56,13 +56,17 @@ class TinySVG {
 		this.w = this.base_w * this.scale;
 		this.h = this.base_h * this.scale;
 		this.viewBox = input.viewBox || "0 0 " + this.w + " " + this.h;
+		// this.viewBox = input.viewBox || "0 0 100 100";
 		this.rotate = this.angle ? ("rotate(" + this.angle + " " + this.w/2 + " " + this.h/2 + ")") : "";
 		this.mx = this.scale != 1.0 ? ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)") : "";
 		this.transform = (this.mx ? this.mx : "") + (this.rotate ? (" " + this.rotate) : "");
+		console.log(this.viewBox, this.transform);
 		this.el = document.createElementNS(xmlns, "svg");
 		this.el.setAttribute("id", this.id);
 		this.el.setAttribute("xmlns", xmlns);
 		this.el.setAttribute("xmlns:xlink", xmlns_link);
+		this.el.setAttribute("style",`position: absolute; -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);`);
+		if (!input.display || input.display != "grid") { console.log(input.display); this.el.style.left = "50%"; this.el.style.right = "50%"; }
 		if (this.viewBox) { this.el.setAttributeNS(null, "viewBox", this.viewBox); }
 		if (this.w) { this.el.setAttributeNS(null, "width", this.w); }
 		if (this.h) { this.el.setAttributeNS(null, "height", this.h); }
@@ -74,10 +78,38 @@ class TinySVG {
 		if (this.fill) { this.g_el.setAttributeNS(null, "fill", this.fill); }
 		if (this.stroke) { this.g_el.setAttributeNS(null, "stroke", this.stroke); }
 		// this.g_el.classList.add("center");
-		this.core = input.core;
-		this.g_el.innerHTML = this.core;
+		this.awaits = false;
+		if (input.core) {
+			this.core = input.core;
+		} else {
+			// LoadSVG(input.id, this.core);
+			this.Load(input.id);
+		}
 	}
-	Spawn() {
+	async Load(svg_id) {
+		let promise = await fetch("/static/assets/svg/" + svg_id + ".svg");
+		this.core = await promise.text(); //.json();
+		if (this.awaits == true) { this.Spawn(); }
+		// let obj = this;
+		// let req = _API("xhr", "GET", "/static/assets/svg/" + svg_id + ".svg",
+		// 	function(str) {
+		// 		// console.log(str);
+		// 		// let node = document.getElementById(el_id);
+		// 		obj.core = str;
+		// 		if (obj.awaits == true) { obj.Spawn(); }
+		// 	},
+		// 	function(str) {
+		// 		console.log("LoadSVG error: " + str);
+		// 	}
+		// );
+	}
+	async Spawn() {
+		if (!this.core) {
+			this.awaits = true;
+			// console.log("TinySVG.Spawn() error: svg file not loaded");
+			return ;
+		}
+		this.g_el.innerHTML = this.core;
 		if (!this.parent_el) {
 			console.log("TinySVG.Spawn() error: " + this.parent_id + " does not exist");
 		} else {
@@ -114,6 +146,9 @@ class TinySVG {
 		let j = i;
 		let step = ((this.scale*factor) - this.scale) / i;
 		// console.log("scale:", this.scale, "factor:", factor, "step:", step, "n step:", i);
+		let base_w = this.w;
+		let base_h = this.h;
+		let base_scale = this.scale;
 		let small_w = 0;
 		let small_h = 0;
 		let new_w = 0;
@@ -125,35 +160,36 @@ class TinySVG {
 			coef = 1;
 			small_w = this.w;
 			small_h = this.h;
-			this.ChangeWidth(this.w*(factor+0.0));
-			this.ChangeHeight(this.h*(factor+0.0));
+			this.ChangeWidth(Math.round(this.w*(factor+0.0)));
+			this.ChangeHeight(Math.round(this.h*(factor+0.0)));
 		} else {
 			coef = -1;
 			small_w = this.w*factor;
 			small_h = this.h*factor;
 		}
+		// if eased, max scale maps to sin(90) => 1, min scale maps to sin(270) => -1
 		while (i-- > 0) {
-			this.scale += step;
+			this.scale = Math.round(1000*(this.scale + step))/1000;
 			new_w = small_w + ((this.w - small_w)*(coef == 1 ? ((j-i)/j) : (i/j)));
 			new_h = small_h + ((this.h - small_h)*(coef == 1 ? ((j-i)/j) : (i/j)));
 			margin_left = (-(this.w - new_w) / 2);
 			margin_top = (-(this.h - new_h) / 2);
 			// console.log(i/j, small_w, new_w, small_h, new_h);
 			this.mx = ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)");
-			this.viewBox = (margin_left /*- (coef == 1 ? small_w*2 : 0)*/) + " " //((this.w) * (1-factor) / i)/2
-						+ (margin_top /*- (coef == 1 ? small_h*2 : 0)*/) + " " 
+			this.viewBox = (Math.round(1000*margin_left)/1000 /*- (coef == 1 ? small_w*2 : 0)*/) + " " //((this.w) * (1-factor) / i)/2
+						+ (Math.round(1000*margin_top)/1000 /*- (coef == 1 ? small_h*2 : 0)*/) + " " 
 						+ this.w + " "
 						+ this.h;
-			if (margin_left && margin_top) this.UpdateViewBox();
-			this.Transform();
-			if (i > 0) { await this.Sleep(30); }
+			if (margin_left && margin_top) {
+				this.UpdateViewBox();
+				this.Transform();
+			}
+			if (i > 0) { await this.Sleep(20); }
 		}
-		if (factor < 1) {
-			this.ChangeWidth(this.w*(factor+0.0));
-			this.ChangeHeight(this.h*(factor+0.0));
-		}
-		this.mx = ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)");
-		this.viewBox = "0 0 " + this.w + " " + this.h;
+		this.ChangeWidth(Math.round(base_w*(factor)));
+		this.ChangeHeight(Math.round(base_h*(factor)));
+		this.mx = ("matrix(" + base_scale*factor + ",0,0," + base_scale*factor + ",0,0)");
+		this.viewBox = "0 0 " + Math.round(base_w*(factor)) + " " + Math.round(base_h*(factor));
 		this.Transform();
 		this.UpdateViewBox();
 	}
@@ -165,15 +201,19 @@ class TinySVG {
 		this.h = new_h;
 		await this.el.setAttributeNS(null, "height", this.h);
 	}
-	async Pulse(_ms, _min_scale, _max_scale) {
+	async Pulse(_ms, _ease, _min_scale, _max_scale) {
 		let ms = _ms || 3000;
 		let min_scale = _min_scale || this.scale * 0.88;
 		let max_scale = _max_scale || this.scale * 1.0;
 		this.is_pulsing = true;
 		this.Scale(max_scale / this.scale, ms/2);
-		while (this.is_pulsing) {
-			await this.Scale(min_scale / max_scale, ms/2);
-			await this.Scale(max_scale / min_scale, ms/2);
+		if (!_ease) {
+			while (this.is_pulsing) {
+				await this.Scale(min_scale / max_scale, ms/2);
+				await this.Scale(max_scale / min_scale, ms/2);
+			}
+		} else {
+
 		}
 	}
 	async Spin() {

@@ -1,0 +1,19 @@
+<div class="footer text-a has-text-white">
+	<span>Copyright &copy; </span>
+	<span id="copyright_year"></span>
+	<span> - Paul de Renty | </span>
+	<a href="#">Policies</a>
+</div>
+<script type="text/javascript">
+!function(){ DocReady(set_copyright); }();
+function set_copyright(){
+	let d = new Date();
+	document.getElementById("copyright_year").innerHTML = d.getFullYear();
+}
+</script>
+<style type="text/css">
+	.footer {
+		text-align: center;
+    	width: 100%;
+	}
+</style>

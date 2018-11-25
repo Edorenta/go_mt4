@@ -1,27 +1,25 @@
-<div class="main">
-	<div class="card has-text-white">
-		<div class="banner-title has-background-grad1 text-h2">
-			Please Log-in
-		</div>
-<!-- The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post"). -->
-		<form method="POST" action="/post_log_in" class="form centerX">
-			<input id="email" class="input" type="email" name="email" title="email" placeholder="Email" required autofocus>
-			<input id="password" class="input margin-bot" type="password" name="password" title="password" placeholder="Password" required>
-
-			<div class="options text-a">
-				<div class="margin-bot">
-					<a class="has-text-info" href="#">Forgot Password?</a>
-				</div>
-				<div class="margin-bot">
-					<label class="checkbox_wrapper">
-					<input type="checkbox"><!-- checked="check" -->
-					<span class="checkbox"></span>
-					<span class="checkbox_caption text-h5">Remember me</span>
-					</label>
-				</div>
-			</div>
-			<!-- <button type="submit" class="btn btn-primary">Login</button> -->
-			<button class="button margin-bot has-text-bold hvr-sweep-to-right has-background-grad2" onclick="void()">Proceed</button>
-		</form>
+<div class="card has-text-white centerXY">
+	<div class="banner-title has-background-grad1 text-h2">
+		Please Log-in
 	</div>
+<!-- The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post"). -->
+	<form class="form" id="log_in_form" method="" action="">
+		<input id="email" class="input" type="email" name="email" title="email" placeholder="Email" required autofocus>
+		<input id="password" class="input margin-bot" type="password" name="password" title="password" placeholder="Password" required>
+
+		<div class="options text-a">
+			<div class="margin-bot">
+				<a class="has-text-info" href="#">Forgot Password?</a>
+			</div>
+			<div class="margin-bot">
+				<label class="checkbox_wrapper">
+				<input type="checkbox"><!-- checked="check" -->
+				<span class="checkbox"></span>
+				<span class="checkbox_caption text-h5">Remember me</span>
+				</label>
+			</div>
+		</div>
+		<!-- <button type="submit" class="btn btn-primary">Login</button> -->
+		<button class="button margin-bot has-text-bold hvr-sweep-to-right has-background-grad2" onclick="log_in_submit()">Proceed</button>
+	</form>
 </div>

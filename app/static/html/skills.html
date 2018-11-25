@@ -1,28 +1,23 @@
 <!DOCTYPE html>
 <html>
-    <head>
-    	<link rel="shortcut icon" type="image/x-icon" href='static/assets/images/PR.ico'/>
-        <title>Skills</title>
-        <style type="text/css">
-            body, html
-            {
-                margin: 0; padding: 0; height: 100%; overflow: hidden;
-            }
-
-            #content
-            {
-                position:absolute; left: 0; right: 0; bottom: 0; top: 0px; 
-            }
-        </style>
+    <head lang="en">
+        {{template "generic_head.html"}}
+        {{template "skills_head.html"}}
     </head>
     <body>
-        <div id="content">
-            <iframe id="iframe_construction" width="100%" height="100%" frameborder="0" src="" /></iframe>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+        <div class="main after-header before-footer">
+            {{template "skills_body.html"}}
         </div>
+        <footer>
+            {{template "generic_footer.html"}}
+        </footer>
+        <!-- add chatbot???? funnier than a contact form -->
     </body>
 </html>
-<script type="text/javascript">
-	!function() {
-		document.querySelector("#iframe_construction").setAttribute("src", /*DomainName + */"/construction_site");
-	}();
-</script>

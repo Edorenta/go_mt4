@@ -2,46 +2,23 @@ html,body {
     background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-.main {
-}
-.main input {
+/*.main input {
 	padding: 0.5%;
 }
+*/
+.main label, textarea {
+	cursor: pointer;
+}
+
 .main #content {
 	background: none;
 	min-height: calc(22vh);
 }
 
 @media (min-aspect-ratio: 1/1) {
-	.main .forgot_pwd {
-		margin-bottom:4vh;
-	}
-	/*.main .checkbox {
-		color: #b5b5b5;
-		font-size: 0.8rem;
-	}
-	.main .checkbox span {
-		margin-left: 0.5rem;
-	}*/
 	.main input, textarea {
 		width: 80vh;
 		max-width: 75%;
-	}
-	.main .options {
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-		justify-content: center;
-		text-align: center;
-		align-items: center;
-		max-width: 70vh;
-		min-height: 7.5vh;
-	}
-	.main label {
-		cursor: pointer;
-	}
-	.main #contact, .main #name, .main #subject, .main #content, .main button {
-		width: 100%;
 	}
 	#content {
 	    border-top: 0.2vh solid #45a29E;
@@ -50,32 +27,6 @@ html,body {
 	}
 }
 @media (max-aspect-ratio: 1/1) {
-	.main .forgot_pwd {
-		margin-bottom:4vw;
-	}
-	/*.main .checkbox {
-		color: #b5b5b5;
-		font-size: 0.8rem;
-	}
-	.main .checkbox span {
-		margin-left: 0.5rem;
-	}*/
-	.main .options {
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
-		justify-content: center;
-		text-align: center;
-		align-items: center;
-		max-width: 70vw;
-		min-height: 7.4vw;
-	}
-	.main label, textarea {
-		cursor: pointer;
-	}
-	.main #contact, .main #name, .main #subject, .main #content, .main button {
-		width: 100%;
-	}
 	#content {
 	    border-top: 0.4vw solid #45a29E;
 	    border-left: 0.4vw solid #45a29E;

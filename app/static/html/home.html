@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
     <head lang="en">
+        <title>Paul de Renty</title>
         {{template "generic_head.html"}}
-        {{template "home_head.html"}}
+        <link rel="stylesheet" type="text/css" href="static/css/home.css">
+        <script src="static/js/home.js"></script>
     </head>
     <body>
-        {{template "generic_header.html"}}
-        {{template "generic_navbar.html"}}
-        <div id="visitor" class="hidden">
-            <span id="visitor_id">{{.VisitorID}}</span>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+        <div class="main after-header before-footer">
+            {{template "home_body.html"}}
         </div>
-        {{template "home_body.html"}}
-        {{template "generic_footer.html"}}
-        <!-- add chatbot???? better than a contact form -->
+        <footer>
+            {{template "generic_footer.html"}}
+        </footer>
+        <!-- add chatbot???? funnier than a contact form -->
     </body>
 </html>

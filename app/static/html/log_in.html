@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head lang="en">
+        <title>Log In</title>
         {{template "generic_head.html"}}
-        {{template "log_in_head.html"}}
+        <link rel="stylesheet" type="text/css" href="static/css/log_in.css">
+        <script src="static/js/log_in.js"></script>
     </head>
     <body>
-        {{template "generic_header.html"}}
-        {{template "generic_navbar.html"}}
-        <div id="visitor" class="hidden">
-            <span id="visitor_id">{{.VisitorID}}</span>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+        <div class="main after-header before-footer">
+            {{template "log_in_body.html"}}
         </div>
-        {{template "log_in_body.html"}}
-        {{template "generic_footer.html"}}
+        <footer>
+            {{template "generic_footer.html"}}
+        </footer>
     </body>
 </html>

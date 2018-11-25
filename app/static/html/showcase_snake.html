@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head lang="en">
+		<title>Snake</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
-		<title>Snake</title>
 		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
 		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
 		<link rel="stylesheet" type="text/css" href="../../static/css/addons/generic.css">
@@ -11,12 +11,15 @@
 		<script src="../../static/js/addons/p5.min.js"></script>
 		<script src="../../static/js/addons/TypeWriter.js"></script>
 		<script src="../../static/js/addons/MsgBox.js"></script>
-		<script src="../../static/js/showcase_snake.js"></script>
-	</head>
+		<script src="../../static/js/showcase_snake.js"></script>	</head>
     <body>
-        <div id="visitor" class="hidden">
-            <span id="visitor_id">{{.Visitor_id}}</span>
-        </div>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
 		<div id="p5_snake"></div>
 		<div class="overlay" id="_overlay">
         <div class="_mb_container">
