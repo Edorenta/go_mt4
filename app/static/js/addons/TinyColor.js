@@ -79,3 +79,9 @@ function GetPixRGBA(ctx, x, y) {
   let idx = Math.floor(4 * ((y * d) * ctx.width * d + (x * d)));
   return ([ctx.pixels[idx],ctx.pixels[idx+1],ctx.pixels[idx+2],ctx.pixels[idx+3]]);
 }
+
+function GetAngle(x1,y1,x2,y2) {
+  // let dx = x1 - x2;
+  // let dy = y1 - y2;
+  return Math.atan2(y1 - y2, x1 - x2);
+};

@@ -2,14 +2,15 @@
 
 var n_stars = 150;
 var starfield = null;
-var starship;
-var cross;
+var starship = null;
+var cross = null;
 var KEY_LEFT = false;
 var KEY_RIGHT = false;
 var KEY_FIRE = false;
 
 function setup() {
-	createCanvas(windowWidth, windowHeight);
+	let canvas = createCanvas(windowWidth, windowHeight);
+	canvas.parent(document.querySelector(".underlay"));
 	let min_size = 1;//width > height ? width*0.01 : height*0.01;
 	let max_size = width > height ? height*0.05 : width*0.05;
 	starfield = new Starfield(n_stars, width/2, height/3, min_size, max_size);
@@ -77,24 +78,41 @@ class Starship {
 		this.nh = this.nw;
 		this.x = -(this.nw / 2);
 		this.y = 1/3 * height;
-		this.max_x = width / 2.80 - this.nw;
-		this.min_x = -width / 2.80;
+		this.max_x = width / 2.80 - this.nw/2;
+		this.min_x = -width / 2.80 + this.nw/2;
 		this.max_y = height / 2 - this.nh;
 		this.min_y = -height / 2;
 		this.speed = 25; //dynamic fun: map(mouseX, 0, width, 0, 50);
 		this.cross = new Crosshair(color("#fcad0f"), Math.max(width/70, height/70), Math.max(width/70, height/70), (height * width) / 1000000);
 		this.lasers = [];
+		this.fire_lock = false;
+		this.target = null;
 	}
 	SetX(pos_x) {
+		// console.log("pos_x:", pos_x, "%:", ((width/2) + pos_x + this.nw/2)/width);
+		pos_x += this.nw/2;
 		this.x = (pos_x > this.max_x ? this.max_x : //this.x :
-		pos_x < this.min_x ? this.min_x : pos_x); //this.x : pos_x);
+		pos_x < this.min_x ? this.min_x : pos_x) - this.nw/2; //this.x : pos_x);
+		// console.log(this.min_x,pos_x,this.max_x);
+		if (typeof crosshair_hover === "function" && typeof crosshair_hover_reset === "function") {
+			if (pos_x > (this.max_x*2/3)) {
+				this.target = 2;
+				crosshair_hover(this.target);
+			} else if (pos_x < (this.min_x*2/3)) {
+				this.target = 0;
+				crosshair_hover(this.target);
+			} else if (pos_x > (this.min_x*1/3) && (pos_x < (this.max_x*1/3))) {
+				this.target = 1;
+				crosshair_hover(this.target);
+			} else { this.target = null; crosshair_hover_reset(); }
+		}
 	}
 	SetY(pos_y) {
 		this.y = (pos_y > this.max_y ? this.max_y : //this.x :
-			pos_y < this.min_y ? this.min_y : pos_y); //this.x : pos_x);
+		pos_y < this.min_y ? this.min_y : pos_y); //this.x : pos_x);
 	}
 	Rot() {
-		this.rad = atan2(this.y + this.nh / 2, this.x + this.nw / 2);
+		this.rad = Math.atan2(this.y + this.nh / 2, this.x + this.nw / 2);
 		rotate(-PI / 2 + this.rad);
 	}
 	MoveLeft() {
@@ -104,55 +122,76 @@ class Starship {
 		this.SetX(this.x += Math.max(width / 80, 3));
 	}
 	Plot() {
-		push();
+		// push();
 		translate(this.x + this.nw / 2, 0);
 		this.Rot();
 		this.cross.PlotOrigin(); //draw pink rotation origin
 		image(this.skin[Math.floor(Math.random()*2)], -(this.nw / 2), this.y, this.nw, this.nh);
 		//this.w = this.img.width;
 		//this.h = this.img.height;
+		// pop();
 		for (let i = 0; i < this.lasers.length; i++) {
 			this.lasers[i].Update();
-			if (this.lasers[i].pos.y < 0) {
+			if (this.target != null && this.lasers[i].pos.y < height/15) {
+				if (typeof laser_hit == "function") {
+					laser_hit(this.target);
+					this.lasers.splice(i, 1);
+				}
+			} else if (this.lasers[i].pos.y < height/50) {
 				this.lasers.splice(i, 1);
 			}
 		}
-		pop();
+		// pop();
 	}
-	Fire() {
-		this.lasers.push(new Laser(this, "right"));
-		this.lasers.push(new Laser(this, "left"));
+	async Fire() {
+		if (!this.fire_lock) {
+			this.fire_lock = true;
+			push();
+			for (let i = 0; i < 10; i++) {
+				await this.lasers.push(new Laser(this, "right", i));
+				await this.lasers.push(new Laser(this, "left", i));
+				await sleep(10);
+			}
+			pop();
+			await sleep(80);
+			this.fire_lock = false;
+		}
 	}
 }
 
 class Laser {
-	constructor(starship, side) { // crl, x/y..
+	constructor(starship, side, idx) { // crl, x/y..
 		this.ship = starship;
-		this.color = color(color('hsl(' + floor(random(349)) + ', 100%, 50%)'));
+		// this.color = color(color('hsl(' + floor(random(349)) + ', 100%, 50%)'));
+		this.color = ShadeBlend((idx+1)/10,"#66fcf1","#1f2833");
 		let speed = height*0.015;
-		let rot_bias = 0;
-		let perspective_bias = 0;
-		if (this.ship.rad < (PI / 1.95)) {
-			rot_bias = (Math.abs(this.ship.rad - (PI/2))/(PI/2)) * 1.5;
-			// console.log("positive fire bias");
-		} else if (this.ship.rad > (PI / 2.05)) {
-			// console.log("negative fire bias");
-			rot_bias = -(Math.abs(this.ship.rad - (PI/2))/(PI/2)) * 1.5;
-		} else {
-			// console.log("no bias");
-		}
-		if (side == "right") {
-			// perspective_bias = (3*PI)*((width/height)/100);
-			perspective_bias = height > width ? (PI/24) : (PI/14);
-		} else {
-			// perspective_bias = -(3*PI)*((width/height)/100);
-			perspective_bias = height > width ? (-(PI/24)) : (-(PI/14));
-		}
+		// let rot_bias = 0;
+		// let perspective_bias = 0;
+		// if (this.ship.rad < (PI / 1.95)) {
+		// 	rot_bias = (Math.abs(this.ship.rad - (PI/2))/(PI/2)) * 1.5;
+		// 	// console.log("positive fire bias");
+		// } else if (this.ship.rad > (PI / 2.05)) {
+		// 	// console.log("negative fire bias");
+		// 	rot_bias = -(Math.abs(this.ship.rad - (PI/2))/(PI/2)) * 1.5;
+		// } else {
+		// 	// console.log("no bias");
+		// }
+		// if (side == "right") {
+		// 	// perspective_bias = (3*PI)*((width/height)/100);
+		// 	perspective_bias = height > width ? (PI/24) : (PI/14);
+		// } else {
+		// 	// perspective_bias = -(3*PI)*((width/height)/100);
+		// 	perspective_bias = height > width ? (-(PI/24)) : (-(PI/14));
+		// }
+		// let test_rad1 = GetAngle(width/2+this.ship.nw/3, height/3-this.ship.y, starfield.origin.x, starfield.origin.y); //- PI/2;
+		// let test_rad2 = GetAngle(width/2-this.ship.nw/3, height/3-this.ship.y, starfield.origin.x, starfield.origin.y); //- PI/2;
+		let test_rad1 = GetAngle(width/2+this.ship.nw/3, height/3-this.ship.y, starfield.origin.x, starfield.origin.y); //- PI/2;
+		let test_rad2 = GetAngle(width/2-this.ship.nw/3, height/3-this.ship.y, starfield.origin.x, starfield.origin.y); //- PI/2;
 		// console.log("rad:", this.ship.rad, "PI/1.8:", PI/1.8, "rad - PI/2:", this.ship.rad - PI/2);
 		// console.log("rad:", this.ship.rad, "PI/1.8:", PI/1.8, "PI/2.2:", PI/2.2);
 		// this.pos = createVector(0,0);
-		this.pos = createVector((side == "right" ? -this.ship.nw/2 : -this.ship.nw/2 + this.ship.nw)*0.80, this.ship.y + (this.ship.nh/5));
-		this.vel = p5.Vector.fromAngle(this.ship.rad + rot_bias + perspective_bias - PI).mult(speed);
+		this.pos = createVector(/*(this.ship.x + this.ship.nw/2) + */(side == "left" ? -this.ship.nw/2.5 : this.ship.nw/2.5), this.ship.y + (this.ship.nh/5));
+		this.vel = p5.Vector.fromAngle(/*this.ship.rad + rot_bias + perspective_bias - PI*/ side == "left" ? test_rad1 : test_rad2).mult(speed);
 		this.size = width/60 + height/80;
 	}
 	Update() {

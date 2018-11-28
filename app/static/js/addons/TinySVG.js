@@ -160,8 +160,8 @@ class TinySVG {
 			coef = 1;
 			small_w = this.w;
 			small_h = this.h;
-			this.ChangeWidth(Math.round(this.w*(factor+0.0)));
-			this.ChangeHeight(Math.round(this.h*(factor+0.0)));
+			await this.ChangeWidth(Math.round(this.w*(factor+0.0)));
+			await this.ChangeHeight(Math.round(this.h*(factor+0.0)));
 		} else {
 			coef = -1;
 			small_w = this.w*factor;
@@ -181,17 +181,17 @@ class TinySVG {
 						+ this.w + " "
 						+ this.h;
 			if (margin_left && margin_top) {
-				this.UpdateViewBox();
-				this.Transform();
+				await this.UpdateViewBox();
+				await this.Transform();
 			}
 			if (i > 0) { await this.Sleep(20); }
 		}
-		this.ChangeWidth(Math.round(base_w*(factor)));
-		this.ChangeHeight(Math.round(base_h*(factor)));
+		await this.ChangeWidth(Math.round(base_w*(factor)));
+		await this.ChangeHeight(Math.round(base_h*(factor)));
 		this.mx = ("matrix(" + base_scale*factor + ",0,0," + base_scale*factor + ",0,0)");
 		this.viewBox = "0 0 " + Math.round(base_w*(factor)) + " " + Math.round(base_h*(factor));
-		this.Transform();
-		this.UpdateViewBox();
+		await this.Transform();
+		await this.UpdateViewBox();
 	}
 	async ChangeWidth(new_w) {
 		this.w = new_w;
@@ -227,11 +227,11 @@ class TinySVG {
 	}
 	async Transform() {
 		this.transform = (this.mx ? this.mx : "") + (this.rotate ? (" " + this.rotate) : "");
-		if (this.transform) { this.g_el.setAttributeNS(null, "transform", this.transform); }
+		if (this.transform) { await this.g_el.setAttributeNS(null, "transform", this.transform); }
 	}
 	async UpdateViewBox() {
 		// console.log(this.viewBox);
-		if (this.viewBox) { this.el.setAttributeNS(null, "viewBox", this.viewBox); }
+		if (this.viewBox) { await this.el.setAttributeNS(null, "viewBox", this.viewBox); }
 	}
 }
 

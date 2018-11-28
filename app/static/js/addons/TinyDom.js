@@ -195,6 +195,7 @@ function FormSubmit(form_id, method, action, destination, content_type, callback
 }
 
 var Overlay = {}; // Overlay
+var Underlay = {}; // Underlay
 var Gesture = {
   // touch start / end
   start_x : 0,
@@ -205,12 +206,14 @@ var Gesture = {
 }; // Gesture
 var VisitorID = "";
 var QueryParams = null;
-
+var MouseClick = null;
 !function() {
   DocReady(function() {
+    MouseClick = new MouseEvent("click", { view: window, bubbles: true, cancelable: true });
     QueryParams = new URL(decodeURIComponent(document.location)).searchParams;
     VisitorID = document.getElementById("visitor_id").textContent;
     // console.log("visitor id: " + visitor_id)
+    Underlay.el = document.querySelector(".underlay");
     Overlay.el = document.querySelector(".overlay");
     if (Overlay.el) {
       Overlay.On = function() { Overlay.el.style.display = "block"; }
