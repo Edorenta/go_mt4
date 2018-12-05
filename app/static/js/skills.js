@@ -13,6 +13,10 @@ const generic_style =
     align-items: center;`;
 var spawn = null;
 var win = null;
+var mb = null;
+var tw = null;
+var hit_lock = false;
+var logo = [];
 
 !function(){ DocReady(init) }();
 
@@ -30,8 +34,6 @@ function init() {
     pop_menu();
 }	
 
-var mb = null;
-var tw = null;
 async function init_mb() {
     mb = new MsgBox({
         parent_id : "_center",
@@ -48,17 +50,18 @@ async function init_mb() {
     // await tw.TypeClr([ [, "Welcome "],["#00ffff", player_id],[, "!"] ], false);
     // await tw.Add("<br>");
     await tw.TypeClr([ [," Use "],["#ff0000", "←→"],[, " to control the plane and chose the side of me you want to "],["#00ff00", "explore"],
-                      [, ". Don't feel like playing? You can just "],["#ff0000", "click"],[, " to navigate!"] ], false);
+                      [, ". Else You can just "],["#ff0000", "click"],[, " to navigate!"] ], false);
     await tw.Add("<br>");
-    await tw.TypeClr([ ["#00ffff","CLICK"],[," on this message to "],["#00ffff"," hide it"] ], false);
+    await tw.TypeClr([ ["#00ffff","Click"],[," here to "],["#00ffff","hide"] ], false);
     // await tw.Sleep(3000);
     // tmp = mb.span.innerHTML;
     // console.log(tmp);
-    mb.el.addEventListener('click', function(){
-        Overlay.Off();
-        // tw.DeleteBar();
+    mb.el.addEventListener('click', async function(){
+        // Overlay.Off();
+        await tw.Flush();
+        tw.DeleteBar();
+        await mb.Close();
         mb.span.innerHTML = "";
-        mb.Close();
         // mb.el.classList.remove("MsgBox");
     });
 }
@@ -74,14 +77,14 @@ async function pop_menu() {
     <div id="technical"></div>
     <div id="exotic"></div>`; // "what side of me do would you explore?"
     await sleep(1000);
-    init_logo("#interpersonal","interpersonal",100,100);
+    await init_logo("#interpersonal","interpersonal",100,100);
     await sleep(200);
-    init_logo("#technical","ui",100,100);
+    await init_logo("#technical","ui",100,100);
     await sleep(200);
-    init_logo("#exotic","analytics",100,100);
+    await init_logo("#exotic","analytics",100,100);
+    item_hover(logo[1]);
 }
 
-var logo = [];
 async function init_logo(_div_id,_svg_id,_width,_height/*,_markup*/) {
   let _logo = new TinySVG({
     parent_id: _div_id,
@@ -94,21 +97,28 @@ async function init_logo(_div_id,_svg_id,_width,_height/*,_markup*/) {
     display : "grid",
     core: ""/*_markup*/
   });
+  let n = logo.length;
   _logo.OnMouseOver(function() {
-    console.log("ok");
+    // console.log("ok");
     item_hover(_logo);
   });
   _logo.OnMouseOut(function() {
     crosshair_hover_reset();
   });
-  _logo.OnClick(function() {
+  _logo.OnClick(async function() {
+    if (starship.target != n) {
+        await starship.MoveTo(n);
+        await starship.Fire();
+        // console.log("clicked on", n);
+    }
     change_view(_logo.id);
   });
   _logo.Spawn();
   _logo.Scale(0.33, 300);
   _logo.hover = false;
   await sleep(500);
-  logo[logo.length] = _logo;
+  logo[n] = _logo;
+  // console.log("+1");
 }
 
 function item_hover(_logo) {
@@ -135,7 +145,9 @@ function crosshair_hover_reset() {
     }
 }
 
-function laser_hit(idx) {
+async function laser_hit(idx) {
+    // console.log("hit_lock:", hit_lock);
+    hit_lock = true;
     if (logo[idx]) {
         let click = logo[idx].el.dispatchEvent(MouseClick); // if false, click was canceled. here is simulated so no failure possible
     }

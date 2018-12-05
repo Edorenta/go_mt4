@@ -4,9 +4,11 @@ var n_stars = 150;
 var starfield = null;
 var starship = null;
 var cross = null;
+var boom = [];
 var KEY_LEFT = false;
 var KEY_RIGHT = false;
 var KEY_FIRE = false;
+var hit_lock = false;
 
 function setup() {
 	let canvas = createCanvas(windowWidth, windowHeight);
@@ -28,6 +30,9 @@ function draw() {
     translate(width / 2, height / 3);
     cross.PlotOrigin();
 	starship.Plot();
+	for (let i = 0; i < boom.length; i++) {
+		boom[i].Update(); //update all axplosions occuring
+	}
 }
 
 // void keyReleased(){
@@ -52,6 +57,44 @@ function keyReleased() {
     return (true); // false = prevent default behaviour
 }
 
+class Explosion {
+	constructor(i,x,y) {
+		console.log("explosion constructed");
+		this.pc = [];
+		(i && i > 10) ? 0 : i = 100;
+		while(i--) {
+			this.pc.push({
+				color: color(color('hsl(' + Math.floor(Math.random()*349) + ', 100%, 50%)')),
+				pos: createVector(x, y),
+				vel: p5.Vector.fromAngle(Math.random()*(2*PI)).mult(Math.random()*10),
+				size: Math.random()*100//((0.05 * (windowHeight + windowWidth) / 100)*3)
+			});
+		}
+	}
+	Update() {
+		console.log("explosion up");
+		for(let i = 0; i < this.pc.length; i++) {
+			this.pc[i].pos.add(this.pc[i].vel);
+			this.pc[i].size*=0.92;
+			if(this.pc[i].size > 3) {
+				stroke(this.pc[i].color);
+				strokeWeight(this.pc[i].size);
+				point(this.pc[i].pos.x, this.pc[i].pos.y);
+			} else {
+				this.pc.splice(i, 1);
+			}
+		}
+		if (this.pc.length == 0) {
+			for (var i = boom.length - 1; i >= 0; i--) {
+			    if (boom[i] == this) {
+					boom.splice(i,1);
+			        break;
+			    }
+			}
+		}
+	}
+}
+
 class Crosshair {
 	constructor(clr, crosshair_w, crosshair_h, crosshair_t) {
 		this.clr = clr;
@@ -66,6 +109,12 @@ class Crosshair {
 		line(-this.w, 0, this.w, 0);
 		line(0, -this.h, 0, this.h);
 	}
+}
+
+async function lock_hit() {
+	hit_lock = true;
+	await sleep(1000);
+	hit_lock = false;
 }
 
 class Starship {
@@ -106,10 +155,21 @@ class Starship {
 				crosshair_hover(this.target);
 			} else { this.target = null; crosshair_hover_reset(); }
 		}
+		console.log("x:", this.x);
 	}
 	SetY(pos_y) {
 		this.y = (pos_y > this.max_y ? this.max_y : //this.x :
 		pos_y < this.min_y ? this.min_y : pos_y); //this.x : pos_x);
+	}
+	async MoveTo(idx) {
+		let pos_x = this.x + this.nw/2;
+		if (this.target != idx) {
+			if (idx < 1) { KEY_LEFT = true; } else if (idx > 1) { KEY_RIGHT = true; }
+			else if (pos_x > 0) { KEY_LEFT = true; } else { KEY_RIGHT = true; }
+			// KEY_RIGHT = true : KEY_LEFT = true;
+		}
+		// KEY_RIGHT = false;
+		// KEY_LEFT = false;
 	}
 	Rot() {
 		this.rad = Math.atan2(this.y + this.nh / 2, this.x + this.nw / 2);
@@ -133,10 +193,12 @@ class Starship {
 		for (let i = 0; i < this.lasers.length; i++) {
 			this.lasers[i].Update();
 			if (this.target != null && this.lasers[i].pos.y < height/15) {
-				if (typeof laser_hit == "function") {
+				if (typeof laser_hit == "function" && hit_lock == false) {
+					lock_hit();
 					laser_hit(this.target);
-					this.lasers.splice(i, 1);
+					this.lasers[i].Explode();
 				}
+				this.lasers.splice(i, 1);
 			} else if (this.lasers[i].pos.y < height/50) {
 				this.lasers.splice(i, 1);
 			}
@@ -146,13 +208,13 @@ class Starship {
 	async Fire() {
 		if (!this.fire_lock) {
 			this.fire_lock = true;
-			push();
+			// push();
 			for (let i = 0; i < 10; i++) {
 				await this.lasers.push(new Laser(this, "right", i));
 				await this.lasers.push(new Laser(this, "left", i));
 				await sleep(10);
 			}
-			pop();
+			// pop();
 			await sleep(80);
 			this.fire_lock = false;
 		}
@@ -200,6 +262,9 @@ class Laser {
 		stroke(this.color);
 		strokeWeight(this.size);
 		point(this.pos.x, this.pos.y);
+	}
+	Explode() {
+		boom.push(new Explosion(40, (this.pos.x /*+ 0.5*/), (this.pos.y /*+ 0.5*/)));
 	}
 }
 

@@ -548,9 +548,9 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/home", server.HandleHome)
 	server.router.GET("/skills", server.HandleSkills)
 	server.router.GET("/contact", server.HandleContact)
-	server.router.GET("/showcase", server.HandleShowcase)
+	server.router.GET("/showcase", server.HandleErrConstruction)//server.HandleShowcase)
 	// showcase MISCELLANEOUS handlers
-	server.router.GET("/showcase/misc", server.HandleMisc)
+	server.router.GET("/showcase/misc", server.HandleErrConstruction)//server.HandleMisc)
 	server.router.GET("/showcase/misc/_1_bit", server.Handle1Bit)
 	server.router.GET("/showcase/misc/_1_bit_construction", server.Handle1BitConstruction)
 	server.router.GET("/showcase/misc/_typewriter", server.HandleTypeWriter)
@@ -560,7 +560,7 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/showcase/misc/_proc_gen", server.HandleProcGen)
 	server.router.GET("/showcase/misc/_fractal_trees", server.HandleFracTrees)
 	// showcase FINANCE handlers
-	server.router.GET("/showcase/finance", server.HandleFinance)
+	server.router.GET("/showcase/finance", server.HandleErrConstruction)//server.HandleFinance)
 	server.router.GET("/showcase/finance/_stock_generator", server.HandleStockGen)
 	// server.router.GET("/showcase/finance/_stock_screener", server.HandleStockScreener)
 	server.router.GET("/showcase/finance/_stock_chartist", server.HandleStockChartist)
@@ -569,10 +569,11 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/showcase/finance/_crypto_market_cap", server.HandleCryptoMarketCap)
 	server.router.GET("/showcase/finance/_crypto_heatmap", server.HandleCryptoHeatmap)
 	// showcase GAMING handlers
-	server.router.GET("/showcase/gaming", server.HandleGaming)
+	server.router.GET("/showcase/gaming", server.HandleErrConstruction)//server.HandleGaming)
 	server.router.GET("/showcase/gaming/_pong", server.HandlePong)
 	server.router.GET("/showcase/gaming/_tron", server.HandleTron)
 	server.router.GET("/showcase/gaming/_snake", server.HandleSnake)
+	server.router.GET("/snake", server.HandleSnake)
 	server.router.GET("/showcase/gaming/_tetris", server.HandleTetris)
 	server.router.GET("/showcase/gaming/_asteroids", server.HandleAsteroids)
 	server.router.GET("/showcase/gaming/_mine_sweeper", server.HandleMineSweeper)

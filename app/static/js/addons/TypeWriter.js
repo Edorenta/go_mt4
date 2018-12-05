@@ -117,7 +117,7 @@ class TypeWriter {
         for (let i = 0; i < n + 1; i++) {
             s = str.substring(0, str.length - i);
             this.focus.innerHTML = s;// + this.Bar();
-            await this.Sleep((this.delay * 10) / (str.length));
+            // await this.Sleep(10); //gets stuck in animation loop...
         }
         this.focus.innerHTML = "";
     }
