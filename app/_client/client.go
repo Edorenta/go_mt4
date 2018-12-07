@@ -1,7 +1,7 @@
 package _client
 
 import(
-	. "../_const"
+	// . "../_const"
 	"../_error"
 	// "net"
 	// "time"
@@ -12,6 +12,7 @@ import(
 
 // is_signed bool //if ud == nil user hasnt signed in
 type Client struct {
+	DB *_db.Database		//database storage reference
 	UD *_db.UserData		//persistant account data
 	WS_CONN *websocket.Conn	//browsing-time instant data
 	WS_READER chan string
@@ -19,21 +20,18 @@ type Client struct {
 	IP string
 	// CONN_TIME time.Time		//only if needed
 }
-
-var DB = _db.NewDatabase(DB_PORT, DB_HOST, DB_USER, DB_NAME, "disable")
-
 // all the above can be retrieved from _db >> to do: retrieve methods
 
 func (c *Client)GetData(email, pwd, ip string) error {
 	var err error
 
 	// fmt.Println("email:", email)
-	// fmt.Println("db:", DB.Info)
-	// if err := DB.PwdCheck(email, pwd); err != nil { return err } // wrong password!!!
-	c.UD, err = DB.GetUserData(email)
+	// fmt.Println("db:", c.DB.Info)
+	// if err := c.DB.PwdCheck(email, pwd); err != nil { return err } // wrong password!!!
+	c.UD, err = c.DB.GetUserData(email)
 	if err != nil { return err } // user doesn't exist or database is down!!!
 	if ip != c.UD.IP {// IP address has changed!!!!
-		err := DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
+		err := c.DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
 		if err != nil { return err }// _error.Handle("IP change failed", err) }
 	}
 	c.WS_READER = make(chan string)
@@ -41,14 +39,15 @@ func (c *Client)GetData(email, pwd, ip string) error {
 	return nil // all good son, return user
 }
 
-func NewClient(email, ip, user_name, pwd, first_name, last_name string, dob_epoch int64)(*Client, error) {
+func NewClient(database *_db.Database, email, ip, user_name, pwd, first_name, last_name string, dob_epoch int64)(*Client, error) {
 	var c Client
 	var err error
 
-	c.UD, err = DB.NewUser(ip, email, pwd, "r=f", user_name, first_name, last_name, dob_epoch)
+	c.DB = database
+	c.UD, err = c.DB.NewUser(ip, email, pwd, "r=f", user_name, first_name, last_name, dob_epoch)
 	if err != nil { return nil, err }
 	if ip != c.UD.IP {// ip has changed
-		err = DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
+		err = c.DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
 		if err != nil { _error.Handle("IP address change failed", err) }
 	}
 	return &c, nil
@@ -62,7 +61,7 @@ func NewVisitor(id, ip string) *Client {
 	c.UD = nil
 	c.IP = ip
 	// if ip != c.UD.IP {// email has changed
-	// 	err = DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
+	// 	err = c.DB.Modify("clients", "email", c.UD.EMAIL, "ip", ip)
 	// 	if err != nil { _error.Handle("IP change failed", err) }
 	// }
 	c.WS_READER = make(chan string)

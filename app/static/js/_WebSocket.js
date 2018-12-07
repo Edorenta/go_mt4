@@ -88,7 +88,7 @@ class WebSocketWrapper {
         // });
         _WebSocketWrapper.OnOpen(function(e){
             _WebSocketWrapper.open = true;
-            _WebSocketWrapper.ws.send(JSON.stringify("Hello from client to server"));
+            _WebSocketWrapper.ws.send(JSON.stringify("Client to Server >> OK"));
             console.log("Access to WebSocket " + _WebSocketWrapper.uri + " granted");
         });
         _WebSocketWrapper.OnClose(function(){

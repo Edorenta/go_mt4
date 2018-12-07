@@ -8,7 +8,7 @@ import(
 	"strconv"
 	"syscall"
 	//local imports
-	// . "../_const"
+	. "../_const"
 	_tx "../_toolbox"
 	"../_error"
 	"../_scrypt"
@@ -61,6 +61,10 @@ type UserData struct {		//only used for UserData retrieval
 // 	if err != nil { _error.Handle("crash", err) } else { fmt.Println("dob:", dob_fmt) }
 // 	if err = db.ModifyUser(usr, "Test123456789", "ip", "127.0.0.1"); err != nil { _error.Handle("crash", err) } else { fmt.Println("user:", usr) }
 // }
+
+func DefaultDatabase() *Database {
+	return NewDatabase(DB_PORT, DB_HOST, DB_USER, DB_NAME, "disable")
+}
 
 func NewDatabase(db_port uint16, db_host, db_user, db_name, db_ssl_mode string) *Database {
 	var db Database
@@ -316,6 +320,8 @@ func (db *Database)DeleteUser(id string) error {
 }
 
 func (db *Database)PwdCheck(id string, pwd string) error {
+	if id == "" { return errors.New("Email missing") }
+	if pwd == "" { return errors.New("Password missing") }
 	stored, err := db.LookupUser(id, "p_hash")
 	if err != nil { return err }
 	salt, err := db.GetUserSalt(id)

@@ -3,6 +3,10 @@ html,body {
 }
 
 @media (min-aspect-ratio: 1/1) {
+	.main input, textarea {
+		width: 80vh;
+		max-width: 75%;
+	}
 	.main .forgot_pwd {
 		margin-bottom:4vh;
 	}

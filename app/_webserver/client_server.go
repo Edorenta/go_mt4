@@ -7,11 +7,13 @@ import (
 	// "../_error"
 	"../_scrypt"
 	"../_client"
+	"../_email"
 	"../_db"
 	"os"
 	"net"
 	"fmt"
 	"log"
+	"errors"
 	"strconv"
 	"net/url"
 	"net/http"
@@ -56,6 +58,7 @@ type VisitorTemplate struct {
 
 type ClientServer struct {
 	db *_db.Database
+	ec *_email.EmailClient
 	Clients map[string]*_client.Client
 	s Session
 	router *httprouter.Router
@@ -193,7 +196,8 @@ func (server *ClientServer)HandleLogInPost(w http.ResponseWriter, r *http.Reques
 		{
 			"access": "denied",
 			"ud": "denied",
-			"status": "` + err.Error() + `"
+			"status": "failure",
+			"reason": "` + err.Error() + `"
 		}`
 		client.Send(res) // for WebSocket
 		fmt.Fprintf(w, "%s", res) // for AJAX (XHR)
@@ -215,14 +219,16 @@ func (server *ClientServer)HandleLogInPost(w http.ResponseWriter, r *http.Reques
 		{
 			"access": "granted",
 			"ud": "denied",
-			"status": "` + err.Error() + `"
+			"status": "failure",
+			"reason": "` + err.Error() + `"
 		}`
 	} else if client.UD == nil {
 		res = `
 		{
 			"access": "granted",
 			"ud": "null",
-			"status": "success"
+			"status": "success",
+			"reason": "na"
 		}`
 	} else {
 		// server.Clients[email] = client
@@ -231,7 +237,55 @@ func (server *ClientServer)HandleLogInPost(w http.ResponseWriter, r *http.Reques
 		{
 			"access": "granted",
 			"ud": "granted",
-			"status": "success"
+			"status": "success",
+			"reason": "na"
+		}`
+	}
+	client.Send(res) // for WebSocket
+	fmt.Fprintf(w, "%s", res) // for AJAX (XHR)
+	return
+	// if err != nil { _error.Handle("GetClient() in HandleLoginPost() failed", err) }
+	// http.Redirect(w, r, DOMAIN, http.StatusSeeOther) //301 >> redirection= host + ":" + strconv.Itoa(int(APP_PORT))
+}
+
+func (server *ClientServer)HandleContact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	server.SecureExec(w, r, "contact.html", "") //nil = template data
+}
+
+func (server *ClientServer)HandleContactPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "ParseForm() err: %v", err)
+		return
+	}
+	name := r.FormValue("name")
+	contact := r.FormValue("contact")
+	subject := r.FormValue("subject")
+	body := r.FormValue("content")
+	content := "Name: " + name + "\nContact: " + contact + "\n\n" + body
+	s, _ := server.s.store.Get(r, server.s.name)
+	visitor_id, _ := s.Values["visitor_id"].(string)
+	client := server.Clients[visitor_id]
+	var res string = ""
+	var err error = nil
+	if name == "" { err = errors.New("Name missing")
+	} else if contact == "" {
+		err = errors.New("Contact details missing")
+	} else if subject == "" {
+		err = errors.New("Subject missing")
+	} else if body == "" {
+		err = errors.New("Message body missing")
+	} else { err = server.ec.Send("contact@paul-r.com", subject, content) } // wrong password / email
+	if err != nil {
+		res = `
+		{
+			"status": "failure",
+			"reason": "` + err.Error() + `"
+		}`
+	} else {
+		res = `
+		{
+			"status": "success",
+			"reason": "na"
 		}`
 	}
 	client.Send(res) // for WebSocket
@@ -337,10 +391,6 @@ func (server *ClientServer)HandleSkills(w http.ResponseWriter, r *http.Request, 
 	server.t.ExecuteTemplate(w, "skills.html", id) //nil = template data
 }
 
-func (server *ClientServer)HandleContact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	server.SecureExec(w, r, "contact.html", "") //nil = template data
-}
-
 func (server *ClientServer)HandleShowcase(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	server.SecureExec(w, r, "showcase.html", "") //nil = template data
 }
@@ -372,6 +422,14 @@ func (server *ClientServer)Handle1Bit(w http.ResponseWriter, r *http.Request, _ 
 
 func (server *ClientServer)Handle1BitConstruction(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	server.t.ExecuteTemplate(w, "showcase_1_bit_construction.html", nil) //nil = template data
+}
+
+func (server *ClientServer)Handle1BitBrokser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	server.t.ExecuteTemplate(w, "showcase_1_bit_brokser.html", nil) //nil = template data
+}
+
+func (server *ClientServer)Handle1Bit404(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	server.t.ExecuteTemplate(w, "showcase_1_bit_404.html", nil) //nil = template data
 }
 
 func (server *ClientServer)HandleProcGen(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -524,7 +582,8 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 
 	server.host	= ":" + strconv.Itoa(int(port))			// host:port settings
 	server.t = parse_html_files()						// HTML files template settings
-	server.db = _client.DB 								// database settings
+	server.db = _db.DefaultDatabase()					// database settings
+	server.ec = _email.DefaultEmailClient()				// email settings
 	server.Clients = make(map[string]*_client.Client)	// client map settings
 	server.router = httprouter.New()					// httprouter settings
 	// route handlers
@@ -536,8 +595,10 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	// log-in and sign-in routes
 	server.router.GET("/log_in", server.HandleLogIn)
 	server.router.GET("/sign_up", server.HandleSignUp)
+	server.router.GET("/contact", server.HandleContact)
 	server.router.POST("/post_log_in", server.HandleLogInPost) // user login request
-	server.router.POST("/post_sign_up", server.HandleSignUpPost) // user login request
+	server.router.POST("/post_sign_up", server.HandleSignUpPost) // user sign up request
+	server.router.POST("/post_contact", server.HandleContactPost) // user contact request
 	// local files exposed from static/:
 	server.router.ServeFiles("/static/*filepath", http.Dir(static_dir)) // static dir fileserver
 	// api
@@ -547,12 +608,13 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/captcha", server.HandleCaptcha)
 	server.router.GET("/home", server.HandleHome)
 	server.router.GET("/skills", server.HandleSkills)
-	server.router.GET("/contact", server.HandleContact)
 	server.router.GET("/showcase", server.HandleErrConstruction)//server.HandleShowcase)
 	// showcase MISCELLANEOUS handlers
 	server.router.GET("/showcase/misc", server.HandleErrConstruction)//server.HandleMisc)
 	server.router.GET("/showcase/misc/_1_bit", server.Handle1Bit)
 	server.router.GET("/showcase/misc/_1_bit_construction", server.Handle1BitConstruction)
+	server.router.GET("/showcase/misc/_1_bit_brokser", server.Handle1BitBrokser)
+	server.router.GET("/showcase/misc/_1_bit_404", server.Handle1Bit404)
 	server.router.GET("/showcase/misc/_typewriter", server.HandleTypeWriter)
 	server.router.GET("/showcase/misc/_typefader", server.HandleTypeFader)
 	server.router.GET("/showcase/misc/_typedecoder", server.HandleTypeDecoder)
@@ -573,7 +635,7 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/showcase/gaming/_pong", server.HandlePong)
 	server.router.GET("/showcase/gaming/_tron", server.HandleTron)
 	server.router.GET("/showcase/gaming/_snake", server.HandleSnake)
-	server.router.GET("/snake", server.HandleSnake)
+	server.router.GET("/	snake", server.HandleSnake)
 	server.router.GET("/showcase/gaming/_tetris", server.HandleTetris)
 	server.router.GET("/showcase/gaming/_asteroids", server.HandleAsteroids)
 	server.router.GET("/showcase/gaming/_mine_sweeper", server.HandleMineSweeper)

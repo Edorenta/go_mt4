@@ -102,6 +102,10 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function FormReset(form_id) {
+  document.getElementById(form_id).reset();
+}
+
 function FormParams(form_id) {
   return Array.from(new FormData(document.getElementById(form_id)),
     e => e.map(encodeURIComponent).join('=')).join('&')
@@ -211,7 +215,8 @@ var MouseClick = null;
   DocReady(function() {
     MouseClick = new MouseEvent("click", { view: window, bubbles: true, cancelable: true });
     QueryParams = new URL(decodeURIComponent(document.location)).searchParams;
-    VisitorID = document.getElementById("visitor_id").textContent;
+    let visitor_id_div = document.getElementById("visitor_id");
+    if (visitor_id_div) { VisitorID = visitor_id_div.textContent; }
     // console.log("visitor id: " + visitor_id)
     Underlay.el = document.querySelector(".underlay");
     Overlay.el = document.querySelector(".overlay");

@@ -80,7 +80,7 @@ class Scan {
 var s = function(p) {
 	_env.p = p;
 	_env.el_id = "p5_1_bit";
-	_env.img.src = "../../static/assets/images/1_bit_portrait.png";
+	_env.img.src = img_src;
 	// img.src = "https://image.ibb.co/m4a1RL/image-ditherlicious.png";
 	//console.log(_env.img.width, img_b64.width);
 	_env.img.aspect_ratio = _env.img.width/_env.img.height || 1;

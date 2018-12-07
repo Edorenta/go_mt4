@@ -30,7 +30,7 @@ class Banner {
 			case "link": this.inner_clr = "rgba(252,173,15,0.75)"; break;
 			case "black": this.inner_clr = "rgba(255,255,255,0.75)"; break;
 		}
-        this.inner_clr = input.inner_clr || "rgba(216,34,34,0.6)";
+        // this.inner_clr = input.inner_clr || "rgba(216,34,34,0.6)";
         this.txt_clr = input.txt_clr || "rgba(255,255,255,1)";
         this.font = input.font || "play-regular";
 		this.el = document.createElement("div");

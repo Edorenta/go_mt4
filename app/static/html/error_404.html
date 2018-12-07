@@ -1,25 +1,71 @@
 <!DOCTYPE html>
-<html class="has-navbar-fixed-top">
+<html>
     <head lang="en">
+        <title>Oups!</title>
         {{template "generic_head.html"}}
     </head>
     <body>
-        {{template "generic_header.html"}}
-        {{template "generic_navbar.html"}}
-		<div class="main">
-<!-- 		  <div class="tw_container core_container">
-		    <div class="tw_wrapper">
-		      <div class="center">
-		        <span id="tw"></span>
-		      </div>
-		    </div>
-		  </div> -->
-		  <div class="picture_container core_container">
-		    <iframe id="iframe_1_bit"
-		        title="iframe_1_bit"
-		        src="http://localhost:8080/showcase/misc/_1_bit">
-		    </iframe>
-		  </div>
-		</div>
-	</body>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+        <div class="main after-header before-footer">
+        	<div class="caption_wrapper">
+        		<div class="center">
+        			<strong class="has-text-warning text-h1">Oups!</strong><br>
+        			<span class="has-text-white text-h4">Page not found.</span>
+        		</div>
+        	</div>
+	    	<iframe class="iframe" id="iframe_1_bit"
+	        	title="iframe_1_bit"
+	        	src="">
+	    	</iframe>
+	    </div>
+        <footer>
+            {{template "generic_footer.html"}}
+        </footer>
+    	<!-- add chatbot???? better than a contact form -->
+    </body>
 </html>
+<script type="text/javascript">
+	!function() { DocReady(set_iframe_src); }();
+	function set_iframe_src() {
+		document.querySelector("#iframe_1_bit").setAttribute("src", /*DomainName + */"/showcase/misc/_1_bit_404");
+	}
+</script>
+<style type="text/css">
+	html,body {
+	    overflow-y: hidden;
+	    height: 100%;
+	    width: 100%;
+	    background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+	}
+	.caption_wrapper {
+	    position:absolute;
+	    top:0%;
+	    width:100%;
+	    height:30%;
+	    text-align:center;
+	    margin:0;
+	    font-size:1.5rem;
+	}
+	.center {
+	    position:absolute;
+	    left:50%;
+	    top:50%;
+	    width:90%;
+	    transform:translate(-50%, -50%);
+	}
+    #iframe_1_bit {
+    	position: relative;
+    	top: 30%;
+    	border-radius: 0.5rem;
+	    border: 0.1rem;
+        height:60%;
+        width:90%;
+        transform: translate(5%, 5%);
+    }
+</style>
