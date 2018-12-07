@@ -392,12 +392,14 @@ func (server *ClientServer)HandleSkills(w http.ResponseWriter, r *http.Request, 
 }
 
 func (server *ClientServer)HandleShowcase(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	server.SecureExec(w, r, "showcase.html", "") //nil = template data
+	server.SecureExec(w, r, "error_construction.html", "")
+	//server.SecureExec(w, r, "showcase.html", "") //nil = template data
 }
 
 // server.HandleMisc
 func (server *ClientServer)HandleMisc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	server.SecureExec(w, r, "showcase_misc.html", "") //nil = template data
+	server.SecureExec(w, r, "error_construction.html", "")
+	//server.SecureExec(w, r, "showcase_misc.html", "") //nil = template data
 }
 
 func (server *ClientServer)HandleTypeWriter(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -441,7 +443,8 @@ func (server *ClientServer)HandleFracTrees(w http.ResponseWriter, r *http.Reques
 }
 
 func (server *ClientServer)HandleFinance(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	server.SecureExec(w, r, "showcase_finance.html", "") //nil = template data
+	server.SecureExec(w, r, "error_construction.html", "")
+	//server.SecureExec(w, r, "showcase_finance.html", "") //nil = template data
 }
 
 func (server *ClientServer)HandleStockGen(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -469,7 +472,8 @@ func (server *ClientServer)HandleCryptoHeatmap(w http.ResponseWriter, r *http.Re
 }
 
 func (server *ClientServer)HandleGaming(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	server.SecureExec(w, r, "showcase_gaming.html", "") //nil = template data
+	server.SecureExec(w, r, "error_construction.html", "")
+//	server.SecureExec(w, r, "showcase_gaming.html", "") //nil = template data
 }
 
 func (server *ClientServer)HandlePong(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -610,7 +614,7 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/skills", server.HandleSkills)
 	server.router.GET("/showcase", server.HandleErrConstruction)//server.HandleShowcase)
 	// showcase MISCELLANEOUS handlers
-	server.router.GET("/showcase/misc", server.HandleErrConstruction)//server.HandleMisc)
+	server.router.GET("/showcase/misc", server.HandleMisc)
 	server.router.GET("/showcase/misc/_1_bit", server.Handle1Bit)
 	server.router.GET("/showcase/misc/_1_bit_construction", server.Handle1BitConstruction)
 	server.router.GET("/showcase/misc/_1_bit_brokser", server.Handle1BitBrokser)
@@ -622,7 +626,7 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/showcase/misc/_proc_gen", server.HandleProcGen)
 	server.router.GET("/showcase/misc/_fractal_trees", server.HandleFracTrees)
 	// showcase FINANCE handlers
-	server.router.GET("/showcase/finance", server.HandleErrConstruction)//server.HandleFinance)
+	server.router.GET("/showcase/finance", server.HandleFinance)
 	server.router.GET("/showcase/finance/_stock_generator", server.HandleStockGen)
 	// server.router.GET("/showcase/finance/_stock_screener", server.HandleStockScreener)
 	server.router.GET("/showcase/finance/_stock_chartist", server.HandleStockChartist)
@@ -631,7 +635,7 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/showcase/finance/_crypto_market_cap", server.HandleCryptoMarketCap)
 	server.router.GET("/showcase/finance/_crypto_heatmap", server.HandleCryptoHeatmap)
 	// showcase GAMING handlers
-	server.router.GET("/showcase/gaming", server.HandleErrConstruction)//server.HandleGaming)
+	server.router.GET("/showcase/gaming", server.HandleGaming)
 	server.router.GET("/showcase/gaming/_pong", server.HandlePong)
 	server.router.GET("/showcase/gaming/_tron", server.HandleTron)
 	server.router.GET("/showcase/gaming/_snake", server.HandleSnake)
