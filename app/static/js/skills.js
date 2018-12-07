@@ -106,11 +106,7 @@ async function init_logo(_div_id,_svg_id,_width,_height/*,_markup*/) {
     crosshair_hover_reset();
   });
   _logo.OnClick(async function() {
-    if (starship.target != n) {
-        await starship.MoveTo(n);
-        await starship.Fire();
-        // console.log("clicked on", n);
-    }
+    starship.MoveTo(n);
     change_view(_logo.id);
   });
   _logo.Spawn();

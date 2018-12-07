@@ -67,7 +67,7 @@ class Explosion {
 				color: color(color('hsl(' + Math.floor(Math.random()*349) + ', 100%, 50%)')),
 				pos: createVector(x, y),
 				vel: p5.Vector.fromAngle(Math.random()*(2*PI)).mult(Math.random()*10),
-				size: Math.random()*100//((0.05 * (windowHeight + windowWidth) / 100)*3)
+				size: Math.random()*((windowHeight + windowWidth) / 10)
 			});
 		}
 	}
@@ -135,6 +135,7 @@ class Starship {
 		this.cross = new Crosshair(color("#fcad0f"), Math.max(width/70, height/70), Math.max(width/70, height/70), (height * width) / 1000000);
 		this.lasers = [];
 		this.fire_lock = false;
+		this.moving = -1;
 		this.target = null;
 	}
 	SetX(pos_x) {
@@ -146,28 +147,32 @@ class Starship {
 		if (typeof crosshair_hover === "function" && typeof crosshair_hover_reset === "function") {
 			if (pos_x > (this.max_x*2/3)) {
 				this.target = 2;
+				if (pos_x > (this.max_x*5/6) && this.moving == this.target) { this.moving = -1; this.Fire(); KEY_LEFT = false; KEY_RIGHT = false; }
 				crosshair_hover(this.target);
 			} else if (pos_x < (this.min_x*2/3)) {
 				this.target = 0;
+				if (pos_x < (this.min_x*5/6) && this.moving == this.target) { this.moving = -1;; this.Fire(); KEY_LEFT = false; KEY_RIGHT = false; }
 				crosshair_hover(this.target);
 			} else if (pos_x > (this.min_x*1/3) && (pos_x < (this.max_x*1/3))) {
 				this.target = 1;
+				if ((pos_x > (this.min_x*0.2/3) && (pos_x < (this.max_x*0.2/3))) && this.moving == this.target) { this.moving = -1; this.Fire(); KEY_LEFT = false; KEY_RIGHT = false; }
 				crosshair_hover(this.target);
 			} else { this.target = null; crosshair_hover_reset(); }
 		}
-		console.log("x:", this.x);
+		// console.log("x:", this.x);
 	}
 	SetY(pos_y) {
 		this.y = (pos_y > this.max_y ? this.max_y : //this.x :
 		pos_y < this.min_y ? this.min_y : pos_y); //this.x : pos_x);
 	}
-	async MoveTo(idx) {
+	MoveTo(idx) {
 		let pos_x = this.x + this.nw/2;
 		if (this.target != idx) {
-			if (idx < 1) { KEY_LEFT = true; } else if (idx > 1) { KEY_RIGHT = true; }
-			else if (pos_x > 0) { KEY_LEFT = true; } else { KEY_RIGHT = true; }
+			this.moving = idx;
+			if (idx < 1) { KEY_LEFT = true; console.log("movin left"); } else if (idx > 1) { KEY_RIGHT = true; console.log("movin right"); }
+			else if (pos_x > 0) { KEY_LEFT = true; console.log("movin left"); } else { KEY_RIGHT = true; console.log("movin right"); }
 			// KEY_RIGHT = true : KEY_LEFT = true;
-		}
+		} else { this.Fire(); }
 		// KEY_RIGHT = false;
 		// KEY_LEFT = false;
 	}
@@ -264,7 +269,7 @@ class Laser {
 		point(this.pos.x, this.pos.y);
 	}
 	Explode() {
-		boom.push(new Explosion(40, (this.pos.x /*+ 0.5*/), (this.pos.y /*+ 0.5*/)));
+		boom.push(new Explosion(60, (this.pos.x /*+ 0.5*/), (this.pos.y /*+ 0.5*/)));
 	}
 }
 
