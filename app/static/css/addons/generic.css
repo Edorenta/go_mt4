@@ -79,6 +79,10 @@ $dark: #0b0c10 !default;
   text-align: center;
 }
 
+.title {
+  text-align: center;
+}
+
 .block {
   display: block;
 }
@@ -331,7 +335,8 @@ iframe {
   display: block;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255,0.1);;
+  max-height: 95%;
+  background: rgba(255, 255, 255,0.1);
   box-shadow: 0 0 calc(1.5vh + 1.5vw) 0 rgba(0, 0, 0, 0.75);
 }
 .card .button {
@@ -339,6 +344,26 @@ iframe {
   max-width: 45%;
   margin-left: 1%;
   margin-right: 1%;
+}
+
+.li, li {
+  padding-left: calc(1vw + 1vh);
+  text-align: left;
+}
+
+.text-block {
+  padding: calc(1vw + 1vh);
+  overflow-y: scroll;
+  text-justify: auto;
+  text-align: justify;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  /* Non standard for WebKit */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
 }
 .centerX {
   left: 50%;
@@ -498,22 +523,34 @@ span{
 }
 
 @media (min-aspect-ratio: 1/1) {
-  .text-h1 {
+  .title {
+    padding-top: 2vh;
+    padding-bottom: 0.5vh;
+  }
+  p, .p {
+    padding-top: 1vh;
+    padding-bottom: 1.5vh;
+    font-size: 2vh;
+  }
+  li, .li {
+    font-size: 2vh;
+  }
+  .text-h1, h1 {
     font-size: 8vh;
   }
-  .text-h2 {
+  .text-h2, h2 {
     font-size: 6vh;
   }
-  .text-h3 {
+  .text-h3, h3 {
     font-size: 5vh;
   }
-  .text-h4 {
+  .text-h4, h4 {
     font-size: 4vh;
   }
-  .text-h5 {
+  .text-h5, h5 {
     font-size: 3vh;
   }
-  .text-a {
+  .text-a, a {
     font-size: 2vh;
   }
   .margin-right {
@@ -571,8 +608,8 @@ span{
     padding: 1vh;
   }
   .banner-title {
-    padding: 4vh;
-    margin-bottom: 5vh;
+    padding: 3vh;
+    /*margin-bottom: 5vh;*/
   }
   .card {
     min-width: 50vh;
@@ -639,23 +676,35 @@ span{
   }
 }
 @media (max-aspect-ratio: 1/1) {
-  .text-h1 {
+  .title {
+    padding-top: 4vw;
+    padding-bottom: 1vw;
+  }
+  p, .p {
+    padding-top: 2vw;
+    padding-bottom: 2.5vw;
+    font-size: 3.5vw;
+  }
+  li, .li {
+    font-size: 3.5vw;
+  }
+  .text-h1, h1 {
     font-size: 12vw;
   }
-  .text-h2 {
+  .text-h2, h2 {
     font-size: 10vw;
   }
-  .text-h3 {
+  .text-h3, h3 {
     font-size: 8vw;
   }
-  .text-h4 {
+  .text-h4, h4 {
     font-size: 6vw;
   }
-  .text-h5 {
+  .text-h5, h5 {
     font-size: 4.5vw;
   }
-  .text-a {
-    font-size: 3vw;
+  .text-a, a {
+    font-size: 3.5vw;
   }
   .margin-right {
     margin-right: 6vw;
@@ -710,8 +759,8 @@ span{
     /*border-width: 0.2vh;*/
   }
   .banner-title {
-    padding: 8vw;
-    margin-bottom: 6vw;
+    padding: 6vw;
+    /*margin-bottom: 6vw;*/
   }
   .textarea {
     border-top: 0.4vw solid #45a29E;

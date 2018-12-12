@@ -60,13 +60,13 @@ class TinySVG {
 		this.rotate = this.angle ? ("rotate(" + this.angle + " " + this.w/2 + " " + this.h/2 + ")") : "";
 		this.mx = this.scale != 1.0 ? ("matrix(" + this.scale + ",0,0," + this.scale + ",0,0)") : "";
 		this.transform = (this.mx ? this.mx : "") + (this.rotate ? (" " + this.rotate) : "");
-		console.log(this.viewBox, this.transform);
+		// console.log(this.viewBox, this.transform);
 		this.el = document.createElementNS(xmlns, "svg");
 		this.el.setAttribute("id", this.id);
 		this.el.setAttribute("xmlns", xmlns);
 		this.el.setAttribute("xmlns:xlink", xmlns_link);
 		this.el.setAttribute("style",`position: absolute; -webkit-transform: translate(-50%,-50%); transform: translate(-50%,-50%);`);
-		if (!input.display || input.display != "grid") { console.log(input.display); this.el.style.left = "50%"; this.el.style.right = "50%"; }
+		if (!input.display || input.display != "grid") { /*console.log(input.display); */this.el.style.left = "50%"; this.el.style.right = "50%"; }
 		if (this.viewBox) { this.el.setAttributeNS(null, "viewBox", this.viewBox); }
 		if (this.w) { this.el.setAttributeNS(null, "width", this.w); }
 		if (this.h) { this.el.setAttributeNS(null, "height", this.h); }

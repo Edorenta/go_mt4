@@ -396,6 +396,12 @@ func (server *ClientServer)HandleShowcase(w http.ResponseWriter, r *http.Request
 	//server.SecureExec(w, r, "showcase.html", "") //nil = template data
 }
 
+func (server *ClientServer)HandlePolicy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	// server.SecureExec(w, r, "skills.html", "")
+	id := server.VerifySessionID(w, r)
+	server.t.ExecuteTemplate(w, "policy.html", id) //nil = template data
+}
+
 // server.HandleMisc
 func (server *ClientServer)HandleMisc(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	server.SecureExec(w, r, "error_construction.html", "")
@@ -612,6 +618,7 @@ func NewClientServer(static_dir string, port uint16)(*ClientServer) { //static_d
 	server.router.GET("/captcha", server.HandleCaptcha)
 	server.router.GET("/home", server.HandleHome)
 	server.router.GET("/skills", server.HandleSkills)
+	server.router.GET("/policy", server.HandlePolicy)
 	server.router.GET("/showcase", server.HandleErrConstruction)//server.HandleShowcase)
 	// showcase MISCELLANEOUS handlers
 	server.router.GET("/showcase/misc", server.HandleMisc)

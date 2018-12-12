@@ -59,7 +59,7 @@ function keyReleased() {
 
 class Explosion {
 	constructor(i,x,y) {
-		console.log("explosion constructed");
+		// console.log("explosion constructed");
 		this.pc = [];
 		(i && i > 10) ? 0 : i = 100;
 		while(i--) {
@@ -72,7 +72,7 @@ class Explosion {
 		}
 	}
 	Update() {
-		console.log("explosion up");
+		// console.log("explosion up");
 		for(let i = 0; i < this.pc.length; i++) {
 			this.pc[i].pos.add(this.pc[i].vel);
 			this.pc[i].size*=0.92;
@@ -169,8 +169,8 @@ class Starship {
 		let pos_x = this.x + this.nw/2;
 		if (this.target != idx) {
 			this.moving = idx;
-			if (idx < 1) { KEY_LEFT = true; console.log("movin left"); } else if (idx > 1) { KEY_RIGHT = true; console.log("movin right"); }
-			else if (pos_x > 0) { KEY_LEFT = true; console.log("movin left"); } else { KEY_RIGHT = true; console.log("movin right"); }
+			if (idx < 1) { KEY_LEFT = true; /*console.log("movin left");*/ } else if (idx > 1) { KEY_RIGHT = true; /*console.log("movin right");*/ }
+			else if (pos_x > 0) { KEY_LEFT = true; /*console.log("movin left");*/ } else { KEY_RIGHT = true; /*console.log("movin right");*/ }
 			// KEY_RIGHT = true : KEY_LEFT = true;
 		} else { this.Fire(); }
 		// KEY_RIGHT = false;
@@ -197,6 +197,7 @@ class Starship {
 		// pop();
 		for (let i = 0; i < this.lasers.length; i++) {
 			this.lasers[i].Update();
+			console.log("target:", this.target);
 			if (this.target != null && this.lasers[i].pos.y < height/15) {
 				if (typeof laser_hit == "function" && hit_lock == false) {
 					lock_hit();

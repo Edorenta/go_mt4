@@ -2,10 +2,6 @@ html,body {
     background: linear-gradient(to bottom right, #0B0C10 20%, #1F2833 60%, #45A29E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
-/*.main input {
-	padding: 0.5%;
-}
-*/
 .main label, textarea {
 	cursor: pointer;
 }
@@ -15,11 +11,12 @@ html,body {
 		width: 80vh;
 		max-width: 75%;
 	}
+	#card_core {
+		max-height: calc(63vh - 0.8vw);
+	}
 }
-/*input:focus,
-select:focus,
-textarea:focus,
-button:focus {
-	outline: none;
+@media (max-aspect-ratio: 1/1) {
+	#card_core {
+		max-height: calc(91vh - 48vw);
+	}
 }
-*/
