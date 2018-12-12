@@ -50,8 +50,8 @@ function init() {
     Underlay.el.appendChild(spawn);
     Underlay.el.appendChild(caption);
     //init_mb();
-    starship.target = 1;
     change_view("home");
+    item_hover(starship ? logo[starship.target] : logo[1]);
 }	
 
 async function init_mb() {
@@ -104,7 +104,7 @@ async function pop_items(item_names, svgs_names) {
         // await sleep(200);
     }
     if (starship && starship.target != null) {
-        item_hover(starship.target);
+        item_hover(logo[starship.target]);
     }
 }
 
@@ -208,7 +208,7 @@ function change_view(view) {
 /*2123*/                case "NoSQL": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break; //non structured data
 /*2123*/                case "SQL": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break; //RDBM / ORDBM
 /*2123*/                case "Blockchain": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
-/*213 */        case "cloud": pop_items(["AWS","Google Cloud","Azure"],["aws_logo2","google_cloud_logo2","azure_logo2"]); break;
+/*213 */        case "cloud": pop_items(["AWS","google_cloud","Azure"],["aws_logo2","google_cloud_logo2","azure_logo2"]); break;
 /*2131*/            case "AWS": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
 /*2132*/            case "google_cloud": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
 /*2133*/            case "Azure": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
@@ -234,7 +234,7 @@ function change_view(view) {
 /*311 */        case "Mobile": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
 /*312 */        case "Desktop": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
 /*313 */        case "Network": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
-/*32  */    case "finance": pop_items(["Analysis","Trading","Execution"],["analytics2","analytics1","order_management"]); break;
+/*32  */    case "finance": pop_items(["Analysis","Trading","Execution"],["analytics2","analytics","order_management"]); break;
 /*321 */        case "Analysis": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
 /*322 */        case "Trading": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
 /*323 */        case "Execution": logo[starship.target].Fill('hsl(' + floor(random(349)) + ', 100%, 50%)'); break;
