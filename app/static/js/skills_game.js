@@ -197,7 +197,7 @@ class Starship {
 		// pop();
 		for (let i = 0; i < this.lasers.length; i++) {
 			this.lasers[i].Update();
-			console.log("target:", this.target);
+			// console.log("target:", this.target);
 			if (this.target != null && this.lasers[i].pos.y < height/15) {
 				if (typeof laser_hit == "function" && hit_lock == false) {
 					lock_hit();
@@ -271,6 +271,8 @@ class Laser {
 	}
 	Explode() {
 		boom.push(new Explosion(60, (this.pos.x /*+ 0.5*/), (this.pos.y /*+ 0.5*/)));
+		console.log(starship.target);
+		if (starship.target != null && logo[starship.target]) { change_view(logo[starship.target].parent_id.substring(1, logo[starship.target].parent_id.length)); }
 	}
 }
 

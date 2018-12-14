@@ -1,1 +1,168 @@
-showcase_stock_chartist.html
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<title>Snake</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
+		<link rel="shortcut icon" type="image/x-icon" href='../../static/assets/images/PR.ico'/>
+		<link rel="stylesheet" type="text/css" href="../../static/css/addons/pregeneric.css">
+		<link rel="stylesheet" type="text/css" href="../../static/css/addons/generic.css">
+		<script src="../../static/js/addons/TinyDom.js"></script>
+		<script src="../../static/js/addons/p5.min.js"></script>
+		<script src="../../static/js/addons/TypeWriter.js"></script>
+		<script src="../../static/js/addons/MsgBox.js"></script>
+		<script src="../../static/js/showcase_snake.js"></script>	</head>
+    <body>
+        <header>
+            {{template "generic_header.html"}}
+            {{template "generic_navbar.html"}}
+            <div id="visitor" class="hidden">
+                <span id="visitor_id">{{.VisitorID}}</span>
+            </div>
+        </header>
+		<div id="p5_snake"></div>
+		<div class="overlay" id="_overlay">
+        <div class="_mb_container">
+        	<div id="_wrapper" class="text-h4">
+        		<div id="_center">
+        			<div id="_game_over"></div>
+        		</div>
+        	</div>
+        </div>			
+		</div>
+		<div id="_score" class="text-h1"></div>
+		<div id="_fps" class="text-h3"></div>
+    </body>
+<style type="text/css">
+html,
+body {
+    position: fixed;
+    overflow-y: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(0,0,0,1);
+	font-family: 'joystix';
+    font-style: normal;
+}
+
+#p5_snake {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+._mb_container
+{
+	position : absolute;
+	margin: auto;
+    width: 100%; height: 100%; top: 0%; left: 0%;
+}
+
+#_wrapper
+{
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	float: left;
+    margin: 0;
+}
+
+#_center {
+    position: relative;
+    left: 50%;
+    top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#_score {
+	position: absolute;
+	left:5%;
+	top:5%;
+    color: #fcad0f;
+}
+
+#_fps {
+	position: absolute;
+	right:5%;
+	top:5%;
+    color: #fcad0f;
+}
+
+#_game_over {
+    color: #fcad0f;
+}
+
+</style>
+<script type="text/javascript">
+"use strict";
+!function(){ DocReady(init_showcase_snake) }();
+function init_showcase_snake() {
+	var p5_1 = new p5(s, document.getElementById(_env.el_id));
+	init_mb();
+}
+
+async function init_mb(){
+	var player_id = document.getElementById("visitor_id").innerHTML;
+	Overlay.On();
+	_env.mb = new MsgBox({
+		parent_id : "_center",
+		max_width : _env.win.ratio > 1 ? "60%" : "90%",
+		speed : 800,
+		pulse : true,
+		button : true,
+		// inner_clr : "rgba(0,0,0,0.5)",
+		txt_clr : "rgba(255,255,255,1)",
+		font_size : 1
+	});
+    await _env.mb.Open();
+    _env.tw = new TypeWriter(_env.mb.span.id, 15);
+	await _env.tw.TypeClr([ [, "Welcome "],["#00ffff", player_id],[, "!"] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ [," Use "],["#ff0000", "←↑↓→"],[, " to control the snake and grow by eating "],["#00ff00", "apples"],
+                      [, ". Run into a wall or on your tail and I'll call you a "],["#ff0000", "loser"],[, "!"] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ ["#00ffff","CLICK"],[," on this message to "],["#00ffff"," START"] ], false);
+	// await _env.tw.Sleep(3000);
+	_env.tmp = _env.mb.span.innerHTML;
+	console.log(_env.tmp);
+	_env.mb.el.addEventListener('click', function(){
+		Overlay.Off();
+	    // _env.tw.DeleteBar();
+	    _env.mb.span.innerHTML = "";
+	    _env.mb.Close();
+	    // _env.mb.el.classList.remove("MsgBox");
+	    _env.p.loop();
+	});
+	// _env.mb.el.addEventListener('mouseover', function(){
+	// });
+	// _env.mb.el.addEventListener('mouseleave', function(){
+	//     _env.mb.span.innerHTML = _env.tmp;
+	// });	
+};
+
+async function PlayAgain(){
+	Overlay.On();
+	_env.mb.el.addEventListener('click', function(){
+		Overlay.Off();
+	    // _env.tw.DeleteBar();
+	    _env.mb.span.innerHTML = "";
+	    _env.mb.Close();
+	    // _env.mb.el.classList.remove("MsgBox");
+	    _env.p.NewGame();
+	    _env.p.loop();
+	});
+	_env.score_el.innerHTML = "";
+	_env.mb.span.innerHTML = "";
+	await _env.mb.Open();
+	await _env.tw.TypeClr([ ["#ff0000","GAME OVER"],[," :("] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ [,"SCORE: "],["#00ff00",_env.score.toString()] ], false);
+	await _env.tw.Add("<br>");
+	await _env.tw.TypeClr([ ["#00ffff","CLICK TO RETRY"] ], false);
+};
+</script>
+</html>

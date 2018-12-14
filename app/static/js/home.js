@@ -32,8 +32,7 @@ async function init_tw() {
   await tw1.TypeClr([ [, ", "],
                       ["#fcad0f", "Golang"]
                     ], false);
-  await init_logo("#skill_go","go_logo",268,116);
-  logo[logo.length - 1].Scale(0.8, 100);
+  await init_logo("#skill_go","go_logo2",100,100);
   await tw1.Sleep(1000);
   await tw1.TypeClr([ [, ", and "],
                       ["#fcad0f", "C/C++"]
@@ -56,7 +55,7 @@ async function init_logo(_div_id,_svg_id,_width,_height/*,_markup*/) {
     id: _svg_id,
     w: _width,
     h: _height,
-    scale: (0.075 * (win.landscape ? win.h : win.w) / 100)*3,
+    scale: (0.25 * (win.landscape ? win.h : win.w) / 100),
     fill: "#ffffff",
     display : "grid",
     core: ""/*_markup*/
