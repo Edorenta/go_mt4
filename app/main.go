@@ -1,4 +1,4 @@
-package main
+package main // app core with trading module >> not used yet in production
 
 import (
 	"fmt"

@@ -1,5 +1,6 @@
 package _const
 
+//should I type the consts?
 const (
 	APP_PORT uint16 		= 8080
 	DOMAIN string			= "localhost:8080"

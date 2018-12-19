@@ -1,5 +1,5 @@
-// package main // for testing purposes
 package _email
+// package main // only for unit tests
 
 import(
 	"fmt"

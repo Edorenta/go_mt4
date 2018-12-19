@@ -1,4 +1,5 @@
 package _websockets
+// package main // only for unit tests
 
 import (
 	"fmt"

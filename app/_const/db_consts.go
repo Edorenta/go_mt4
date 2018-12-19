@@ -1,5 +1,6 @@
 package _const
 
+//should I type the consts?
 const (
 	DB_HOST			= "localhost"
 	DB_PORT uint16	= 5432

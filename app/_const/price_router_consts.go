@@ -1,5 +1,6 @@
 package _const
 
+//should I type the consts?
 //const PORT uint16 = 2xxxx >> the TCP range fits inside an unsignes 16 bits uint
 const ( //uint16
 	AUDCAD_PORT = 21001

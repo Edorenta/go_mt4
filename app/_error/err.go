@@ -1,4 +1,5 @@
 package _error
+// package main // only for unit tests
 
 import (
 	"os"

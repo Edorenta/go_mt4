@@ -95,6 +95,7 @@ func (c *Client)Get() (string, error) {
 	if err != nil { return "", err }
 	return string(bytes), nil
 }
+
 func (c *Client)Send(msg string) error {
 	// c.WS_CONN.WriteJSON(&writer); err != nil { fmt.Println(c.ID, "disconnected"); return } /*_error.Handle("Error reading json.", err)*/
 	if len(msg) > 2 {

@@ -1,5 +1,6 @@
 package _const
 
+//should I type the consts?
 const ( //strings?
 	IR_PORT	uint16 = 20001	//info routing port
 	N_BROKERS uint = 3		//brokers: [pepperstone,forex.com,xm.com]

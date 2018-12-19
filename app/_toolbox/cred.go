@@ -1,4 +1,5 @@
 package _toolbox
+// package main // only for unit tests
 
 import(
 	"../_error"

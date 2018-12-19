@@ -1,5 +1,5 @@
-// package _info_router
-package main
+package _info_router
+// package main // only for unit tests
 
 import(
 	"net"

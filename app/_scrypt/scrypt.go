@@ -1,5 +1,5 @@
-// package main
 package _scrypt
+// package main // only for unit tests
 
 import(
 	// "fmt" //only for main test

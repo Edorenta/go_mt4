@@ -3,6 +3,7 @@
  * it aims at being the only middleware between MT4 local accounts and the clients
  */
 package _mt4_router
+// package main // only for unit tests
 
 import(
 	"os"

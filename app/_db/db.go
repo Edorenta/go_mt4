@@ -1,5 +1,5 @@
 package _db
-// package main
+// package main // only for unit tests
 
 import(
 	//standard imports

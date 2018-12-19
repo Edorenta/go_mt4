@@ -1,4 +1,5 @@
 package _logger
+// package main // only for unit tests
 
 import(
 	"os"

@@ -1,5 +1,5 @@
 // package _webserver
-package main
+package main // only for temporary deployment
 
 import (
 	// _ws "../_websockets"

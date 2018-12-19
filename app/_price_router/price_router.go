@@ -1,4 +1,5 @@
 package _price_router
+// package main // only for unit tests
 
 import(
 	"os"
