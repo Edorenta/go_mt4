@@ -1,0 +1,7 @@
+/*
+>>> TODO <<<
+
+Get that website to work with end-to-end encryption (TLS and not SSL pleaaaase)
+So change deployment from port 80 to 443 (http to https)
+
+*/
